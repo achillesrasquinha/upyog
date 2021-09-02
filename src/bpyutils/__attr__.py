@@ -73,6 +73,6 @@ __build__                   = get_revision(pardir(__file__, 2), short = True, ra
 __author__                  = "Achilles Rasquinha"
 __email__                   = "achillesrasquinha@gmail.com"
 __description__             = "Utilities for BoilPy"
-__keywords__                = ['utilities', 'for', 'boilpy']
+__keywords__                = ['utilities', 'boilpy']
 __url__                     = "https://github.com/achillesrasquinha/bpyutils"
 __license__                 = "MIT License"
