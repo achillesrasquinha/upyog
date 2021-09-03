@@ -153,7 +153,6 @@ shell: install ## Launch an IPython shell.
 	$(IPYTHON) \
 		--no-banner
 
-
 dbshell:
 	$(call log,INFO,Launching SQLite Shell)
 	$(SQLITE) ~/.config/${PROJECT}/db.db

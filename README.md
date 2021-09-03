@@ -29,18 +29,20 @@
 
 ### Table of Contents
 * [Features](#features)
-* [Installation](#installation)
+* [Quick Start](#quick-start)
 * [Usage](#usage)
 * [License](#license)
 
-#### Features
+### Features
+* Python 2.7+ and Python 3.4+ compatible.
 
-
-#### Installation
+### Quick Start
 
 ```shell
 $ pip install bpyutils
 ```
+
+Check out [installation](docs/source/INSTALLATION.md) for more details.
 
 #### Usage
 
