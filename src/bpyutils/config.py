@@ -16,10 +16,13 @@ from bpyutils.util.types   import auto_typecast
 from bpyutils.util._dict   import autodict
 from bpyutils._compat      import iteritems, configparser as cp
 
+def get_config_path(name):
+    return osp.join(osp.expanduser("~"), ".config", name)
+
 PATH            = autodict()
 PATH["BASE"]    = pardir(__file__)
 PATH["DATA"]    = osp.join(PATH["BASE"], "data")
-PATH["CACHE"]   = osp.join(osp.expanduser("~"), ".config", NAME)
+PATH["CACHE"]   = get_config_path(NAME)
 PATH["JOBS"]    = osp.join(PATH["BASE"], "jobs")
 
 class Configuration(object):
@@ -94,8 +97,8 @@ class Settings(object):
                  "jobs": mp.cpu_count() 
     }
 
-    def __init__(self):
-        self.config = Configuration()
+    def __init__(self, location = PATH["CACHE"]):
+        self.config = Configuration(location = location)
 
         self._init()
 

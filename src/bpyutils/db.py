@@ -66,19 +66,25 @@ class DB(object):
 
         return results
 
+    def from_file(self, path):
+        buffer  = read(path)
+        queries = _get_queries(buffer)
+
+        for query in queries:
+            _CONNECTION.query(query)
+
 _CONNECTION = None
 
-def get_connection(bootstrap = True, log = False):
+def get_connection(location = PATH["CACHE"], bootstrap = True, log = False):
     global _CONNECTION
 
     if not _CONNECTION:
         if log:
             logger.info("Establishing a DataBase connection...")
 
-        basepath = PATH["CACHE"]
-        makedirs(basepath, exist_ok = True)
+        makedirs(location, exist_ok = True)
 
-        abspath  = osp.join(basepath, "db.db")
+        abspath  = osp.join(location, "db.db")
 
         _CONNECTION = DB(abspath)
         _CONNECTION.connect(
@@ -90,11 +96,6 @@ def get_connection(bootstrap = True, log = False):
                 logger.info("Bootstrapping DataBase...")
 
             abspath = osp.join(config.PATH["DATA"], "bootstrap.sql")
-            buffer  = read(abspath)
-
-            queries = _get_queries(buffer)
-
-            for query in queries:
-                _CONNECTION.query(query)
+            _CONNECTION.from_file(abspath)
 
     return _CONNECTION
