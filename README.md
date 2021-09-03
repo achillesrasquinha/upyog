@@ -44,16 +44,15 @@ $ pip install bpyutils
 
 Check out [installation](docs/source/INSTALLATION.md) for more details.
 
-#### Usage
+### Usage
 
-##### Application Interface
+#### Application Interface
 
 ```python
 >>> import bpyutils
 ```
 
-
-##### Command-Line Interface
+#### Command-Line Interface
 
 ```console
 $ bpyutils
@@ -69,7 +68,6 @@ Commands:
   help     Show this message and exit.
   version  Show version and exit.
 ```
-
 
 #### License
 
