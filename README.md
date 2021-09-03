@@ -1,9 +1,9 @@
 <div align="center">
-  <img src=".github/assets/logo.png" height="128">
+  <img src="https://raw.githubusercontent.com/achillesrasquinha/boilpy/develop/.github/assets/logo.png" height="128">
   <h1>
       bpyutils
   </h1>
-  <h4>Utilities for BoilPy</h4>
+  <h4>A collection of various common Python utilities</h4>
 </div>
 
 <p align="center">

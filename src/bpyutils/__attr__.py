@@ -72,7 +72,7 @@ __version__                 = read(osp.join(pardir(__file__), "VERSION"))
 __build__                   = get_revision(pardir(__file__, 2), short = True, raise_err = False)
 __author__                  = "Achilles Rasquinha"
 __email__                   = "achillesrasquinha@gmail.com"
-__description__             = "Utilities for BoilPy"
-__keywords__                = ['utilities', 'boilpy']
+__description__             = "A collection of various common Python utilities"
+__keywords__                = ['utilities', 'python', 'boilpy']
 __url__                     = "https://github.com/achillesrasquinha/bpyutils"
 __license__                 = "MIT License"
