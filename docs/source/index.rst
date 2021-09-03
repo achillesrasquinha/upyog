@@ -27,7 +27,7 @@ Release v\ |version|. (:ref:`Installation <installation>`)
 .. image:: https://img.shields.io/badge/donate-💵-f44336.svg?style=flat-square
     :target: https://paypal.me/achillesrasquinha
 
-Utilities for BoilPy
+A collection of various common Python utilities.
 
 The API Guide
 -------------

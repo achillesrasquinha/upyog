@@ -17,6 +17,13 @@ class HandlerRegistry(dict):
 _HANDLER_REGISTRY = HandlerRegistry()
 
 def import_handler(name):
+    """
+        Import anything from module path.
+
+        Example
+        >>> from bpyutils.util.imports import import_handler
+        >>> abspath = import_handler("os.path.abspath")
+    """
     handler = _HANDLER_REGISTRY[name]
     return handler
 

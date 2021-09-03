@@ -3,12 +3,12 @@
   <h1>
       bpyutils
   </h1>
-  <h4>A collection of various common Python utilities</h4>
+  <h4>A collection of various common Python utilities.</h4>
 </div>
 
 <p align="center">
-    <a href="https://travis-ci.org/achillesrasquinha/bpyutils">
-      <img src="https://img.shields.io/travis/achillesrasquinha/bpyutils.svg?style=flat-square">
+    <a href="https://github.com/achillesrasquinha/bpyutils/actions/workflows/ci.yml">
+      <img src="https://img.shields.io/github/workflow/status/achillesrasquinha/bpyutils/ci.svg?style=flat-square">
     </a>
     <a href="https://coveralls.io/github/achillesrasquinha/bpyutils">
       <img src="https://img.shields.io/coveralls/github/achillesrasquinha/bpyutils.svg?style=flat-square">
@@ -57,7 +57,7 @@ $ pip install bpyutils
 $ bpyutils
 Usage: bpyutils [OPTIONS] COMMAND [ARGS]...
 
-  Utilities for BoilPy
+  A collection of various common Python utilities.
 
 Options:
   --version   Show the version and exit.
