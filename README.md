@@ -42,7 +42,7 @@
 $ pip install bpyutils
 ```
 
-Check out [installation](docs/source/INSTALLATION.md) for more details.
+Check out [installation](docs/source/installation.md) for more details.
 
 ### Usage
 
