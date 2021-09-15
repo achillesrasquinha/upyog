@@ -12,7 +12,7 @@ DOCSDIR = osp.join(BASEDIR, "docs")
 SRCDIR  = osp.join(BASEDIR, "src")
 NOW     = dt.datetime.now()
 
-sys.path.insert(0, BASEDIR)
+sys.path.insert(0, SRCDIR)
 
 import bpyutils
 
@@ -40,7 +40,7 @@ templates_path      = [
     osp.join(DOCSDIR, "source", "_templates")
 ]
 
-html_theme          = "alabaster"
+html_theme          = "renku"
 
 html_static_path    = [
     osp.join(DOCSDIR, "source", "_static")

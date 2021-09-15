@@ -23,22 +23,25 @@ def _check_node(node, query):
     return result
 
 class Node(object):
-    """
-        Construct a Tree in Python.
+    """Construct a Tree.
 
-        Examples:
-            >>> from bpyutils.tree import Node
-            >>> family = Node('grandparent', [Node('parent-1', [Node('child-1'), Node('child-2')]), Node('parent-2', [Node('child-3'), Node('child-4')])])
-            >>> print(family.render())
-            grandparent
-                parent-1
-                    child-1
-                    child-2
-                parent-2
-                    child-3
-                    child-4
+    :param obj: Object within the node.
+    :param children: Children of the node.
 
+    Usage::
+
+        >>> from bpyutils.tree import Node
+        >>> family = Node('grandparent', [Node('parent-1', [Node('child-1'), Node('child-2')]), Node('parent-2', [Node('child-3'), Node('child-4')])])
+        >>> print(family.render())
+        grandparent
+            parent-1
+                child-1
+                child-2
+            parent-2
+                child-3
+                child-4
     """
+    
     def __init__(self, obj, children = [ ], parent = None):
         self.obj        = obj
         self._children  = [ ]

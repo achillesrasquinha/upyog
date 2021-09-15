@@ -37,6 +37,9 @@ class DB(object):
         return _connected
 
     def connect(self, bootstrap = True, **kwargs):
+        """
+        Connect to database.
+        """
         if not self.connected:
             self._connection = sqlite3.connect(self.path,
                 timeout = self.timeout, **kwargs)

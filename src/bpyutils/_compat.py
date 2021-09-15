@@ -7,6 +7,9 @@ import platform
 PYTHON_VERSION = sys.version_info
 
 def _is_python_version(*args, **kwargs):
+    """
+    Determines the current python version.
+    """
     major  = kwargs.get("major", None)
     minor  = kwargs.get("minor", None)
     patch  = kwargs.get("patch", None)

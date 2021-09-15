@@ -2,6 +2,7 @@ sphinx
 recommonmark
 ipykernel
 nbsphinx
+renku-sphinx-theme
 pylint
 autopep8
 pytest

@@ -1,7 +1,7 @@
 bpyutils
 ========
 
-Release v\ |version|. (:ref:`Installation <installation>`)
+Release v\ |version|. (:ref:`Installation <installation.md>`)
 
 .. image:: https://img.shields.io/travis/achillesrasquinha/ccapi.svg?style=flat-square
     :target: https://travis-ci.org/achillesrasquinha/ccapi
@@ -35,6 +35,6 @@ The API Guide
 If you are looking for information on a specific function, class, or method, this part of the documentation is for you.
 
 .. toctree::
-   :maxdepth: 2
-
-   api
+   :maxdepth: 3
+   
+   guides/util
