@@ -9,14 +9,15 @@ import multiprocessing as mp
 from   functools import partial
 import traceback
 
+from bpyutils.util.jobs         import run_all
 from bpyutils.commands.util 	import cli_format
 from bpyutils.util.array    	import flatten, sequencify
-from bpyutils.util._dict     import merge_dict
+from bpyutils.util._dict        import merge_dict
 from bpyutils.util.system   	import (read, write, touch, popen, which)
 from bpyutils.util.environ  	import getenvvar
 from bpyutils.util.datetime 	import get_timestamp_str
-from bpyutils.util.imports   import import_or_raise
-from bpyutils 		      	import (request as req, cli,
+from bpyutils.util.imports      import import_or_raise
+from bpyutils 		      	    import (request as req, cli,
     log, parallel
 )
 from bpyutils._compat		import builtins, iteritems
@@ -27,6 +28,7 @@ from bpyutils.exception      import DependencyNotFoundError
 logger   = log.get_logger(level = log.DEBUG)
 
 ARGUMENTS = dict(
+    run_job                     = None,
     jobs						= 1,
     check		 				= False,
     interactive  				= False,
@@ -85,3 +87,8 @@ def _command(*args, **kwargs):
         touch(file_)
     
     logger.info("Using %s jobs..." % a.jobs)
+
+    if a.run_jobs:
+        logger.info("Running Jobs %s" % a.run_jobs)
+
+        run_all(a.run_jobs)

@@ -34,6 +34,9 @@ def get_parser():
         add_help        = False,
         formatter_class = ArgumentParserFormatter
     )
+    parser.add_argument("--run-jobs",
+        help    = "Run Jobs"
+    )
     parser.add_argument("-y", "--yes",
         action  = "store_true",
         default = getenv("ACCEPT_ALL_DIALOGS", False),

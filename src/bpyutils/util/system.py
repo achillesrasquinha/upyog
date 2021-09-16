@@ -146,6 +146,9 @@ def make_temp_dir():
     shutil.rmtree(dir_path)
 
 def check_gzip(f, raise_err = True):
+    """
+    Check if a given file is a gzipped file.
+    """
     if osp.exists(f):
         with open(f, "rb") as f:
             content = f.read(2)
