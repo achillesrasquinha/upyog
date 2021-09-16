@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/achillesrasquinha/boilpy/develop/.github/assets/logo.png" height="128">
+  <img src="https://raw.githubusercontent.com/boilpy/boilpy/develop/.github/assets/logo.png" height="128">
   <h1>
       bpyutils
   </h1>
@@ -7,24 +7,24 @@
 </div>
 
 <p align="center">
-    <a href="https://github.com/achillesrasquinha/bpyutils/actions/workflows/ci.yml">
-      <img src="https://img.shields.io/github/workflow/status/achillesrasquinha/bpyutils/ci.svg?style=flat-square">
-    </a>
-    <a href="https://coveralls.io/github/achillesrasquinha/bpyutils">
-      <img src="https://img.shields.io/coveralls/github/achillesrasquinha/bpyutils.svg?style=flat-square">
-    </a>
-    <a href="https://pypi.org/project/bpyutils/">
-      <img src="https://img.shields.io/pypi/v/bpyutils.svg?style=flat-square">
-    </a>
-    <a href="https://pypi.org/project/bpyutils/">
-      <img src="https://img.shields.io/pypi/l/bpyutils.svg?style=flat-square">
-    </a>
-    <a href="https://pypi.org/project/bpyutils/">
-		  <img src="https://img.shields.io/pypi/pyversions/bpyutils.svg?style=flat-square">
-	  </a>
-    <a href="https://git.io/boilpy">
-      <img src="https://img.shields.io/badge/made%20with-boilpy-red.svg?style=flat-square">
-    </a>
+  <a href='https://github.com/achillesrasquinha/bpyutils/actions?query=workflow:"Continuous Integration"'>
+    <img src="https://img.shields.io/github/workflow/status/achillesrasquinha/bpyutils/Continuous Integration?style=flat-square">
+  </a>
+  <a href="https://coveralls.io/github/achillesrasquinha/bpyutils">
+    <img src="https://img.shields.io/coveralls/github/achillesrasquinha/bpyutils.svg?style=flat-square">
+  </a>
+  <a href="https://pypi.org/project/bpyutils/">
+    <img src="https://img.shields.io/pypi/v/bpyutils.svg?style=flat-square">
+  </a>
+  <a href="https://pypi.org/project/bpyutils/">
+    <img src="https://img.shields.io/pypi/l/bpyutils.svg?style=flat-square">
+  </a>
+  <a href="https://pypi.org/project/bpyutils/">
+    <img src="https://img.shields.io/pypi/pyversions/bpyutils.svg?style=flat-square">
+  </a>
+  <a href="https://git.io/boilpy">
+    <img src="https://img.shields.io/badge/made%20with-boilpy-red.svg?style=flat-square">
+  </a>
 </p>
 
 ### Table of Contents
