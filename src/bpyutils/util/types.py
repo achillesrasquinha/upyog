@@ -2,16 +2,17 @@
 
 # imports - compatibility imports
 from bpyutils             import _compat
-from bpyutils._compat     import zip, _is_python_version
+from bpyutils._compat     import zip
 from bpyutils.util._dict  import dict_from_list
 
 # imports - standard imports
 import sys
 import inspect
-import collections
-import itertools
 
 def get_function_arguments(fn):
+    """
+    Get arguments of a function.
+    """
     # https://stackoverflow.com/a/2677263
     params  = dict()
     success = False
@@ -41,6 +42,18 @@ def get_function_arguments(fn):
     return params
 
 def auto_typecast(value):
+    """
+    Convert a string into its data type automatically.
+
+    :param value: The value to be converted.
+
+    Example::
+
+        >>> bpy.auto_typecast("True")
+        True
+        >>> bpy.auto_typecast("1.2345")
+        1.2345
+    """
     str_to_bool = lambda x: { "True": True, "False": False, "None": None}[x]
 
     for type_ in (str_to_bool, int, float):

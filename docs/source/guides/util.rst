@@ -20,3 +20,8 @@ Datetime
 .. automodule:: bpyutils.util.datetime
    :members:
 
+Types
+-----
+
+.. automodule:: bpyutils.util.types
+   :members:
