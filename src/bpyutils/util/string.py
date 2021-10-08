@@ -2,6 +2,8 @@
 import re
 import uuid
 
+from bpyutils._compat import urlparse
+
 _REGEX_ANSI_ESCAPE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 _REGEX_HTML        = re.compile("<.*?>")
 
@@ -82,3 +84,17 @@ def get_random_str():
     string  = string.replace("-", "")
 
     return string
+
+def check_url(s, raise_err = True):
+    is_url = False
+    
+    try:
+        result = urlparse(s)
+        is_url = all([result.scheme, result.netloc])
+    except:
+        pass
+
+    if raise_err:
+        raise ValueError("Invalid URL: %s" % s)
+
+    return is_url

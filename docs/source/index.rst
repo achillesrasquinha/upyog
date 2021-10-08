@@ -38,3 +38,4 @@ If you are looking for information on a specific function, class, or method, thi
    :maxdepth: 3
    
    guides/util
+   guides/tree

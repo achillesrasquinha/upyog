@@ -9,9 +9,9 @@ import inspect
 
 # imports - module imports
 from bpyutils._compat         import EX_OK
-from bpyutils.util.imports    import import_handler
 from bpyutils.util.system     import write
 from bpyutils.util.string     import strip_ansi
+from bpyutils.util.environ    import getenv
 
 _ACCEPTABLE_INPUTS_YES      = ("", "y", "Y")
 _ACCEPTABLE_INPUTS_QUIT     = ("q", "Q")
@@ -70,3 +70,18 @@ def echo(string = "", file = None, nl = True):
     if file:
         string = strip_ansi(string)
         write(file, string + nl, append = True)
+
+def add_github_args(parser, env_prefix = None):
+    parser.add_argument("--github-access-token",
+        help    = "GitHub Access Token",
+        default = getenv("GITHUB_ACCESS_TOKEN", prefix = env_prefix)
+    )
+    parser.add_argument("--github-reponame",
+        help    = "GitHub Repository Name",
+        default = getenv("GITHUB_REPONAME", prefix = env_prefix)
+    )
+    parser.add_argument("--github-username",
+        help    = "GitHub Username",
+        default = getenv("GITHUB_USERNAME", prefix = env_prefix)
+    )
+    return parser

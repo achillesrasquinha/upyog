@@ -94,7 +94,8 @@ class Settings(object):
     _DEFAULTS = {
               "version": __version__,
         "cache_timeout": 60 * 60 * 24, # 1 day
-                 "jobs": mp.cpu_count() 
+                 "jobs": mp.cpu_count(),
+        "max_chunk_download_bytes": 1024
     }
 
     def __init__(self, location = PATH["CACHE"]):

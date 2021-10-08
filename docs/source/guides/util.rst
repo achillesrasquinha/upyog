@@ -25,3 +25,9 @@ Types
 
 .. automodule:: bpyutils.util.types
    :members:
+
+Request
+-------
+
+.. automodule:: bpyutils.util.request
+   :members:

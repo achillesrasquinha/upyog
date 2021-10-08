@@ -31,7 +31,7 @@ def import_or_raise(package, name = None):
     name = name or package
 
     try:
-        import_handler(package)
+        return import_handler(package)
     except ImportError:
         raise DependencyNotFoundError((
             "Unable to import {package} for resolving dependencies. "

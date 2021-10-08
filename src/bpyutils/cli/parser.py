@@ -34,8 +34,13 @@ def get_parser():
         add_help        = False,
         formatter_class = ArgumentParserFormatter
     )
-    parser.add_argument("--run-jobs",
-        help    = "Run Jobs"
+    parser.add_argument("--run-job",
+        action  = "append",
+        help    = "Run a specific job"
+    )
+    parser.add_argument("--method",
+        action  = "append",
+        help    = "Run Method"
     )
     parser.add_argument("-y", "--yes",
         action  = "store_true",
@@ -89,11 +94,11 @@ def get_parser():
         version = __version__,
         help    = "Show %s's version number and exit." % __name__
     )
-    parser.add_argument("-h", "--help",
-        action  = "help",
-        default = argparse.SUPPRESS,
-        help    = "Show this help message and exit."
-    )
+    # parser.add_argument("-h", "--help",
+    #     action  = "help",
+    #     default = argparse.SUPPRESS,
+    #     help    = "Show this help message and exit."
+    # )
 
     return parser
 

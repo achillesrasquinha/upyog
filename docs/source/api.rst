@@ -8,9 +8,3 @@ Utilities
 
 .. automodule:: bpyutils.util._dict
    :members:
-
-Tree
-----
-
-.. autoclass:: bpyutils.tree.Node
-   :members:

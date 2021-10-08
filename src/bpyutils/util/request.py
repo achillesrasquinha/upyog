@@ -1,4 +1,5 @@
 import re
+import os.path as osp
 
 import requests
 
@@ -8,6 +9,12 @@ from bpyutils.db import get_connection
 from bpyutils.util.proxy     import get_random_requests_proxies
 from bpyutils.util._dict     import merge_dict
 from bpyutils.util.imports   import import_or_raise
+from bpyutils.util.string    import get_random_str
+from bpyutils.util.system    import makepath
+from bpyutils.util.imports   import import_handler
+from bpyutils import request as req
+
+import bpyutils as bpy
 
 # user_agent = UserAgent(verify_ssl = False)
 
@@ -60,3 +67,45 @@ def check_url(url, raise_err = True):
         return False
     
     return True
+
+def download_file(url, path = None, chunk_size = None, req_kwargs = { }):
+    chunk_size  = chunk_size or bpy.settings.get("max_chunk_download_bytes")
+    response    = req.get(url, stream = True, **req_kwargs)
+    response.raise_for_status()
+
+    headers     = response.headers
+
+    size_total  = int(headers.get('content-length', 0))
+
+    tqdm         = import_handler("tqdm.tqdm")
+    progress_bar = None
+
+    if tqdm:
+        progress_bar = tqdm(total = size_total, unit = 'iB', unit_scale = True)
+
+    if not path:
+        header  = headers.get("content-disposition")
+
+        if header:
+            name    = re.findall("filename=(.+)", header)[0]
+            path    = osp.abspath(name)
+        else:
+            path    = get_random_str()
+
+    makepath(path)
+
+    with open(path, "wb") as f:
+        for content in response.iter_content(chunk_size = chunk_size):
+            if progress_bar:
+                progress_bar.update(len(content))
+
+            if content:
+                f.write(content)
+
+    if progress_bar:
+        progress_bar.close()
+
+        if size_total != 0 and progress_bar.n != size_total:
+            raise ValueError("Unable to read downloaded file into path %s." % path)
+
+    return path

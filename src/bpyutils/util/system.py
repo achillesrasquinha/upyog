@@ -4,7 +4,7 @@ from bpyutils._compat import iteritems
 # imports - standard imports
 import sys, os, os.path as osp
 import errno
-import platform
+import zipfile
 import subprocess  as sp
 import shutil
 import tempfile
@@ -12,6 +12,7 @@ import contextlib
 from   distutils.spawn import find_executable
 
 # imports - module imports
+from bpyutils.util._dict      import merge_dict
 from bpyutils.exception       import PopenError
 from bpyutils.util.string     import strip, safe_decode
 from bpyutils.util.environ    import SECRETS
@@ -116,6 +117,12 @@ def makedirs(dirs, exist_ok = False):
         if not exist_ok or e.errno != errno.EEXIST:
             raise
 
+def makepath(path):
+    dirs = osp.dirname(path)
+    makedirs(dirs, exist_ok = True)
+
+    write(path)
+
 def touch(filename):
     if not osp.exists(filename):
         with open(filename, "w") as f:
@@ -160,3 +167,39 @@ def check_gzip(f, raise_err = True):
                     raise ValueError("File %s is not a gzip file." % f)
 
     return False
+
+class BaseShell:
+    def __init__(self, *args, **kwargs):
+        self._kwargs = kwargs
+
+    def __call__(self, *args, **kwargs):
+        kwargs = merge_dict(self._kwargs, kwargs)
+        return popen(*args, **kwargs)
+
+if PY2:
+    def ShellEnvironment(**kwargs):
+        yield BaseShell(**kwargs)
+else:
+    class ShellEnvironment(BaseShell, contextlib.ContextDecorator):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+def get_os():
+    platform = sys.platform
+    
+    if platform.startswith("linux"):
+        return "linux"
+    elif platform == "darwin":
+        return "macos"
+    elif platform == "win32":
+        return "windows"
+
+def unzip(path, target = None):
+    target = target or osp.dirname(path)
+    makedirs(target, exist_ok = True)
+
+    with zipfile.ZipFile(path, "r") as zf:
+        zf.extractall(target)

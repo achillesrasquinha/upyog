@@ -1,5 +1,6 @@
 # imports - compatibility imports
 from __future__ import absolute_import
+from subprocess import call
 
 # imports - standard imports
 import sys, os
@@ -16,7 +17,7 @@ from bpyutils.util._dict        import merge_dict
 from bpyutils.util.system   	import (read, write, touch, popen, which)
 from bpyutils.util.environ  	import getenvvar
 from bpyutils.util.datetime 	import get_timestamp_str
-from bpyutils.util.imports      import import_or_raise
+from bpyutils.util.imports      import import_or_raise, import_handler
 from bpyutils 		      	    import (request as req, cli,
     log, parallel
 )
@@ -29,6 +30,7 @@ logger   = log.get_logger(level = log.DEBUG)
 
 ARGUMENTS = dict(
     run_job                     = None,
+    run_jobs                    = None,
     jobs						= 1,
     check		 				= False,
     interactive  				= False,
@@ -88,7 +90,10 @@ def _command(*args, **kwargs):
     
     logger.info("Using %s jobs..." % a.jobs)
 
-    if a.run_jobs:
-        logger.info("Running Jobs %s" % a.run_jobs)
+    if a.run_job:
+        logger.info("Running a specific job %s" % a.run_job)
 
-        run_all(a.run_jobs)
+    if a.method:
+        for method in a.method:
+            callable = import_handler(method)
+            callable()
