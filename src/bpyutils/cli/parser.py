@@ -42,6 +42,10 @@ def get_parser():
         action  = "append",
         help    = "Run Method"
     )
+    parser.add_argument("-p", "--param",
+        action  = "append",
+        help    = "Parameters"
+    )
     parser.add_argument("-y", "--yes",
         action  = "store_true",
         default = getenv("ACCEPT_ALL_DIALOGS", False),

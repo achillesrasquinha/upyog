@@ -63,3 +63,6 @@ def auto_typecast(value):
             pass
 
     return value
+
+def lmap(*args, **kwargs):
+    return list(map(*args, **kwargs))

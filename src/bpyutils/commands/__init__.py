@@ -3,34 +3,26 @@ from __future__ import absolute_import
 from subprocess import call
 
 # imports - standard imports
-import sys, os
-import re
-import json
-import multiprocessing as mp
-from   functools import partial
 import traceback
 
-from bpyutils.util.jobs         import run_all
 from bpyutils.commands.util 	import cli_format
-from bpyutils.util.array    	import flatten, sequencify
 from bpyutils.util._dict        import merge_dict
-from bpyutils.util.system   	import (read, write, touch, popen, which)
-from bpyutils.util.environ  	import getenvvar
-from bpyutils.util.datetime 	import get_timestamp_str
-from bpyutils.util.imports      import import_or_raise, import_handler
-from bpyutils 		      	    import (request as req, cli,
-    log, parallel
-)
-from bpyutils._compat		import builtins, iteritems
+from bpyutils.util.types        import lmap, auto_typecast
+from bpyutils.util.string       import strip
+from bpyutils.util.imports      import import_handler
+from bpyutils 		      	    import (cli, log)
+from bpyutils._compat		    import iteritems
+from bpyutils.config            import environment
 from bpyutils.__attr__      	import __name__
-from bpyutils.config			import environment
-from bpyutils.exception      import DependencyNotFoundError
+from bpyutils.exception         import DependencyNotFoundError
+
 
 logger   = log.get_logger(level = log.DEBUG)
 
 ARGUMENTS = dict(
     run_job                     = None,
-    run_jobs                    = None,
+    run_method                  = None,
+    params                      = None,
     jobs						= 1,
     check		 				= False,
     interactive  				= False,
@@ -73,6 +65,19 @@ def to_params(kwargs):
 
     return params
 
+def format_params(params):
+    params = params or []
+    params = lmap(lambda x: lmap(strip, x.split(";")), params)
+    
+    args   = {}
+    
+    for param in params:
+        for p in param:
+            key, value = p.split("=")
+            args[key]  = auto_typecast(value)
+
+    return args
+            
 def _command(*args, **kwargs):
     a = to_params(kwargs)
 
@@ -95,5 +100,7 @@ def _command(*args, **kwargs):
 
     if a.method:
         for method in a.method:
+            args = format_params(a.param)
+
             callable = import_handler(method)
-            callable()
+            callable(**args)
