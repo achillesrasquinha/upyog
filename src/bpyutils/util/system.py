@@ -10,6 +10,7 @@ import shutil
 import tempfile
 import contextlib
 from   distutils.spawn import find_executable
+from   glob import glob
 
 # imports - module imports
 from bpyutils.util._dict      import merge_dict
@@ -203,3 +204,6 @@ def unzip(path, target = None):
 
     with zipfile.ZipFile(path, "r") as zf:
         zf.extractall(target)
+
+def get_files(dir, type_ = "*.*"):
+    return glob("%s/**/%s" % (dir, type_), recursive = True)

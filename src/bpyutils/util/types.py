@@ -64,5 +64,10 @@ def auto_typecast(value):
 
     return value
 
-def lmap(*args, **kwargs):
-    return list(map(*args, **kwargs))
+def gen_to_seq(gen, type_ = list):
+    def fn(*args, **kwargs):
+        return type_(gen(*args, **kwargs))
+    return fn
+
+lfilter = gen_to_seq(filter)
+lmap    = gen_to_seq(map)

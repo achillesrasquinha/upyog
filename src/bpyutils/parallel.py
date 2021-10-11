@@ -9,10 +9,17 @@ from bpyutils._compat import PYTHON_VERSION
 
 USE_PROCESS_POOL_EXECUTOR = not (PYTHON_VERSION.major == 2 or (PYTHON_VERSION.major == 3 and PYTHON_VERSION.minor <= 7))
 
+class PoolMixin:
+    def lmap(self, *args, **kwargs):
+        return list(self.map(*args, **kwargs))
+
+class BasePool(Pool, PoolMixin):
+    pass
+
 if USE_PROCESS_POOL_EXECUTOR:
     from concurrent.futures import ProcessPoolExecutor
 
-    class NoDaemonPool(ProcessPoolExecutor):
+    class NoDaemonPool(ProcessPoolExecutor, PoolMixin):
         def __init__(self, *args, **kwargs):
             if "processes" in kwargs:
                 kwargs["max_workers"] = kwargs.pop("processes")
@@ -45,7 +52,8 @@ else:
             pass
 
     # https://github.com/nipy/nipype/pull/2754
-    class NoDaemonPool(Pool):
+
+    class NoDaemonPool(BasePool):
         def __init__(self, *args, **kwargs):
             self.super = super(NoDaemonPool, self)
             self.super.__init__(*args, **kwargs)
