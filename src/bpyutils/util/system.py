@@ -207,3 +207,6 @@ def unzip(path, target = None):
 
 def get_files(dir, type_ = "*.*"):
     return glob("%s/**/%s" % (dir, type_), recursive = True)
+
+def get_basename(path):
+    return osp.basename(osp.normpath(path))
