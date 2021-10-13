@@ -210,3 +210,11 @@ def get_files(dir, type_ = "*.*"):
 
 def get_basename(path):
     return osp.basename(osp.normpath(path))
+
+def make_archive(base_name, *args, **kwargs):
+    with make_temp_dir() as tmp_dir:
+        source_archive = osp.join(tmp_dir, "archive")
+        target_archive = shutil.make_archive(source_archive, *args, **kwargs)
+
+        makepath(base_name)
+        shutil.move(target_archive, base_name)
