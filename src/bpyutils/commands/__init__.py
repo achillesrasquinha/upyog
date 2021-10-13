@@ -10,6 +10,7 @@ from bpyutils.util._dict        import merge_dict
 from bpyutils.util.types        import lmap, auto_typecast
 from bpyutils.util.string       import strip
 from bpyutils.util.imports      import import_handler
+from bpyutils.util.system       import touch
 from bpyutils 		      	    import (cli, log)
 from bpyutils._compat		    import iteritems
 from bpyutils.config            import environment
@@ -21,7 +22,6 @@ logger   = log.get_logger(level = log.DEBUG)
 
 ARGUMENTS = dict(
     run_job                     = None,
-    run_method                  = None,
     params                      = None,
     jobs						= 1,
     check		 				= False,
@@ -103,4 +103,18 @@ def _command(*args, **kwargs):
             args = format_params(a.param)
 
             callable = import_handler(method)
+            callable(**args)
+
+    if a.run_ml:
+        args = format_params(a.param)
+        pipelines = [
+            "data.get_data",
+            "data.preprocess_data",
+            "pipelines.train"
+        ]
+
+        for pipeline in pipelines:
+            args = format_params(a.param)
+
+            callable = import_handler("%s.%s" % (a.run_ml, pipeline))
             callable(**args)

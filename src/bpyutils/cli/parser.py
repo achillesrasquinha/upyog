@@ -42,6 +42,9 @@ def get_parser():
         action  = "append",
         help    = "Run Method"
     )
+    parser.add_argument("--run-ml",
+        help    = "Run ML pipeline"
+    )
     parser.add_argument("-p", "--param",
         action  = "append",
         help    = "Parameters"
