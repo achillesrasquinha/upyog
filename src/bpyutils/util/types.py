@@ -41,6 +41,18 @@ def get_function_arguments(fn):
 
     return params
 
+def _str_to_bool(x):
+    if x in ("True", "true"):
+        return True
+    
+    if x in ("False", "false"):
+        return False
+    
+    if x in ("None", "none", "Null", "null", "NULL", ""):
+        return None
+
+    return x
+
 def auto_typecast(value):
     """
     Convert a string into its data type automatically.
@@ -54,9 +66,8 @@ def auto_typecast(value):
         >>> bpy.auto_typecast("1.2345")
         1.2345
     """
-    str_to_bool = lambda x: { "True": True, "False": False, "None": None}[x]
 
-    for type_ in (str_to_bool, int, float):
+    for type_ in (_str_to_bool, int, float):
         try:
             return type_(value)
         except (KeyError, ValueError, TypeError):

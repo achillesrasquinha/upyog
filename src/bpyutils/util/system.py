@@ -15,7 +15,11 @@ from   glob import glob
 # imports - module imports
 from bpyutils.util._dict      import merge_dict
 from bpyutils.exception       import PopenError
-from bpyutils.util.string     import strip, safe_decode
+from bpyutils.util.string     import (
+    strip,
+    safe_decode,
+    get_random_str
+)
 from bpyutils.util.environ    import SECRETS
 from bpyutils._compat         import iteritems, PY2
 from bpyutils.log             import get_logger
@@ -153,6 +157,16 @@ def make_temp_dir():
     yield dir_path
     shutil.rmtree(dir_path)
 
+@contextlib.contextmanager
+def make_temp_file():
+    with make_temp_dir() as tmp_dir:
+        hash_    = get_random_str()
+        tmp_file = osp.join(tmp_dir, hash_)
+
+        touch(tmp_file)
+        
+        yield tmp_file
+
 def check_gzip(f, raise_err = True):
     """
     Check if a given file is a gzipped file.
@@ -218,3 +232,7 @@ def make_archive(base_name, *args, **kwargs):
 
         makepath(base_name)
         shutil.move(target_archive, base_name)
+
+def move(*files, dest):
+    for f in files:
+        shutil.move(f, dest)
