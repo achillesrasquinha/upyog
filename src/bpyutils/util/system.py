@@ -236,3 +236,7 @@ def make_archive(base_name, *args, **kwargs):
 def move(*files, dest):
     for f in files:
         shutil.move(f, dest)
+
+def copy(*files, dest):
+    for f in files:
+        shutil.copy2(f, dest)

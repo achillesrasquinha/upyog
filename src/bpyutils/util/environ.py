@@ -27,6 +27,22 @@ def getenv(name, default = None, cast = True, prefix = PREFIX, seperator = "_", 
 
     return value
 
+def setenv(name, value, overwrite = False, prefix = PREFIX, seperator = "_", raise_err = False):
+	envvar = getenvvar(name, prefix = prefix, seperator = seperator)
+	set_   = False
+	
+	if envvar in list(os.environ):
+		if overwrite:
+			set_ = True
+		else:
+			if raise_err:
+				raise ValueError("Environment Variable %s already set." % envvar)
+	else:
+		set_ = True
+
+	if set_:
+		os.environ[envvar] = value
+
 def value_to_envval(value):
 	"""
 	Convert python types to environment values
