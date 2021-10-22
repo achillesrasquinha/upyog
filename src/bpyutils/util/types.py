@@ -66,8 +66,9 @@ def auto_typecast(value):
         >>> bpy.auto_typecast("1.2345")
         1.2345
     """
+    str_to_bool = lambda x: { "True": True, "False": False, "None": None}[x]
 
-    for type_ in (_str_to_bool, int, float):
+    for type_ in (str_to_bool, int, float):
         try:
             return type_(value)
         except (KeyError, ValueError, TypeError):

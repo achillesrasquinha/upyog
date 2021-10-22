@@ -17,8 +17,7 @@ from bpyutils.config            import environment
 from bpyutils.__attr__      	import __name__
 from bpyutils.exception         import DependencyNotFoundError
 
-
-logger   = log.get_logger(level = log.DEBUG)
+logger    = log.get_logger(level = log.DEBUG)
 
 ARGUMENTS = dict(
     run_job                     = None,
