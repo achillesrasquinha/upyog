@@ -219,8 +219,9 @@ def unzip(path, target = None):
     with zipfile.ZipFile(path, "r") as zf:
         zf.extractall(target)
 
-def get_files(dir, type_ = "*.*"):
-    return glob("%s/**/%s" % (dir, type_), recursive = True)
+def get_files(dir_, type_ = "*.*"):
+    dir_ = osp.abspath(dir_)
+    return glob("%s/**/%s" % (dir_, type_), recursive = True)
 
 def get_basename(path):
     return osp.basename(osp.normpath(path))
