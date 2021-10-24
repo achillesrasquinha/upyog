@@ -27,6 +27,9 @@ if USE_PROCESS_POOL_EXECUTOR:
             self.super = super(NoDaemonPool, self)
             self.super.__init__(*args, **kwargs)
 
+        def imap(self, *args, **kwargs):
+            return self.map(*args, **kwargs)
+
         def imap_unordered(self, *args, **kwargs):
             return self.map(*args, **kwargs)
 

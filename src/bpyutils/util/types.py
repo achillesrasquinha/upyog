@@ -1,4 +1,5 @@
 # pylint: disable=E1101
+from functools import partial
 
 # imports - compatibility imports
 from bpyutils             import _compat
@@ -83,3 +84,6 @@ def gen_to_seq(gen, type_ = list):
 
 lfilter = gen_to_seq(filter)
 lmap    = gen_to_seq(map)
+
+def build_fn(fn, **kwargs):
+    return partial(fn, **kwargs)
