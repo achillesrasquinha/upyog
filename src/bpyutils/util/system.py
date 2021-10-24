@@ -238,6 +238,9 @@ def move(*files, dest):
     for f in files:
         shutil.move(f, dest)
 
-def copy(*files, dest):
+def copy(*files, dest, raise_err = True):
     for f in files:
-        shutil.copy2(f, dest)
+        if not osp.exists(f) and raise_err:
+            raise FileNotFoundError("No file %s found." % f)
+        else:
+            shutil.copy2(f, dest)
