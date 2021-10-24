@@ -116,11 +116,15 @@ def popen(*args, **kwargs):
         return code
 
 def makedirs(dirs, exist_ok = False):
+    dirs = osp.abspath(dirs)
+
     try:
         os.makedirs(dirs)
     except OSError as e:
         if not exist_ok or e.errno != errno.EEXIST:
             raise
+
+    return dirs
 
 def makepath(path):
     dirs = osp.dirname(path)
@@ -154,8 +158,10 @@ def remove(path, recursive = False, raise_err = True):
 @contextlib.contextmanager
 def make_temp_dir():
     dir_path = tempfile.mkdtemp()
-    yield dir_path
-    shutil.rmtree(dir_path)
+    try:
+        yield dir_path
+    finally:
+        shutil.rmtree(dir_path)
 
 @contextlib.contextmanager
 def make_temp_file():
@@ -240,7 +246,9 @@ def move(*files, dest):
 
 def copy(*files, dest, raise_err = True):
     for f in files:
-        if not osp.exists(f) and raise_err:
-            raise FileNotFoundError("No file %s found." % f)
+        abspath = osp.abspath(f)
+
+        if not osp.exists(abspath) and raise_err:
+            raise FileNotFoundError("No file %s found." % abspath)
         else:
-            shutil.copy2(f, dest)
+            shutil.copy2(abspath, dest)
