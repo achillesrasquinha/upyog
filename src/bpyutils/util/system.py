@@ -156,8 +156,8 @@ def remove(path, recursive = False, raise_err = True):
                 raise
 
 @contextlib.contextmanager
-def make_temp_dir():
-    dir_path = tempfile.mkdtemp()
+def make_temp_dir(root_dir = None):
+    dir_path = tempfile.mkdtemp(root_dir = root_dir)
     try:
         yield dir_path
     finally:

@@ -28,10 +28,11 @@ if USE_PROCESS_POOL_EXECUTOR:
             self.super.__init__(*args, **kwargs)
 
         def imap(self, *args, **kwargs):
-            return self.map(*args, **kwargs)
+            for _ in self.map(*args, **kwargs):
+                yield _
 
-        def imap_unordered(self, *args, **kwargs):
-            return self.map(*args, **kwargs)
+        # def imap_unordered(self, *args, **kwargs):
+        #     return self.map(*args, **kwargs)
 
         def _shutdown(self):
             self.shutdown()
