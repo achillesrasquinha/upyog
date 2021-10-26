@@ -41,7 +41,7 @@ class Configuration(object):
             self.name     = osp.basename(config)
             self.location = osp.dirname(config)
             
-        self.config   = self.read()
+        self.config = self.read()
 
     @classmethod
     def __del__(self):
@@ -98,13 +98,13 @@ class Settings(object):
         "max_chunk_download_bytes": 1024
     }
 
-    def __init__(self, location = PATH["CACHE"]):
+    def __init__(self, location = PATH["CACHE"], defaults = None):
         self.config = Configuration(location = location)
 
-        self._init()
+        self._init(defaults = defaults)
 
-    def _init(self):
-        for k, v in iteritems(Settings._DEFAULTS):
+    def _init(self, defaults = None):
+        for k, v in iteritems(defaults or Settings._DEFAULTS):
             self.set(k, v)
 
     def get(self, key):
