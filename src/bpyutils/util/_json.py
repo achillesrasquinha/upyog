@@ -51,5 +51,5 @@ class JSONLogger(MutableMapping):
 
         data    = json.dumps(self._store, indent = indent)
 
-        # with self.locks["io"]:
-        write(path, data, force = True)
+        with self.locks["io"]:
+            write(path, data, force = True)
