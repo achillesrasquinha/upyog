@@ -54,4 +54,6 @@ def autodict(*args, **kwargs):
         {'foo': {'bar': {'baz': 'boo'}}}
     """
     _autodict = AutoDict(autodict)
+    _autodict.update(dict(*args, **kwargs))
+    
     return _autodict
