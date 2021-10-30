@@ -24,9 +24,6 @@ class JSONLogger(MutableMapping):
 
     def __setitem__(self, key, value):
         self._store[key] = value
-        print("\n\n\n")
-        print("___SETITEM___")
-        print("\n\n\n")
         self.save()
 
     def __delitem__(self, key):
