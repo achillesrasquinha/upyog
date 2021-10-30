@@ -43,7 +43,7 @@ def dict_from_list(keys, values):
 class AutoDict(collections.defaultdict):
     __repr__ = dict.__repr__
 
-def autodict():
+def autodict(*args, **kwargs):
     """
     Automatically adds a key to a dictionary.
 

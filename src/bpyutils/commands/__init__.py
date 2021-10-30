@@ -47,7 +47,8 @@ def command(**ARGUMENTS):
 
             cli.echo(cli_format("""\
 An error occured while performing the above command. This could be an issue with
-"bpyutils". Kindly post an issue at https://github.com/achillesrasquinha/bpyutils/issues""", cli.RED))
+"bpyutils". Kindly post an issue at https://github.com/achillesrasquinha/bpyutils/issues
+""", cli.RED))
         else:
             raise e
 
