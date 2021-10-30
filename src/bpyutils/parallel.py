@@ -28,8 +28,9 @@ if USE_PROCESS_POOL_EXECUTOR:
             self.super.__init__(*args, **kwargs)
 
         def imap(self, *args, **kwargs):
-            for _ in self.map(*args, **kwargs):
-                yield _
+            results = self.map(*args, **kwargs)
+            for result in results:
+                yield result
 
         # def imap_unordered(self, *args, **kwargs):
         #     return self.map(*args, **kwargs)
