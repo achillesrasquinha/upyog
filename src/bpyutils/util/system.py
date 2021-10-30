@@ -252,3 +252,6 @@ def copy(*files, dest, raise_err = True):
             raise FileNotFoundError("No file %s found." % abspath)
         else:
             shutil.copy2(abspath, dest)
+
+def extract_all(source, dest):
+    shutil.unpack_archive(source, dest)
