@@ -22,6 +22,12 @@ CRITICAL    = logging.CRITICAL
 SUCCESS     = 10
 logging.addLevelName(SUCCESS, "SUCCESS")
 
+def success(self, message, *args, **kwargs):
+    if self.isEnabledFor(SUCCESS):
+        self._log(SUCCESS, message, args, **kwargs)
+
+logging.Logger.success = success
+
 _FORMAT     = '%(asctime)s | %(levelname)s | %(message)s'
 _LOGGER     = None
 
@@ -43,10 +49,6 @@ class LogFormatter(logging.Formatter):
         formatter = logging.Formatter(format_)
         return formatter.format(record)
 
-def success(self, message, *args, **kwargs):
-    if self.isEnabledFor(SUCCESS):
-        self._log(SUCCESS, message, args, **kwargs)
-
 def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
     global _LOGGER
 
@@ -61,8 +63,6 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
         logger.setLevel(level)
 
         logger.addHandler(handler)
-
-        logger.success = success
         
         _LOGGER   = logger
     
