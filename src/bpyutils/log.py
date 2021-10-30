@@ -45,7 +45,7 @@ class LogFormatter(logging.Formatter):
 
 def success(self, message, *args, **kwargs):
     if self.isEnabledFor(SUCCESS):
-        self._log(SUCCESS, message, *args, **kwargs)
+        self._log(SUCCESS, message, args, **kwargs)
 
 def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
     global _LOGGER
