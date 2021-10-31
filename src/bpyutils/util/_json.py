@@ -1,12 +1,13 @@
 import os.path as osp
 from threading import Lock
 import json
+from typing import MutableMapping
 
-from bpyutils.util._dict  import autodict, AutoDict, merge_dict
+from bpyutils.util._dict  import autodict, merge_dict
 from bpyutils.util.system import write, read
 from bpyutils.util.string import strip
 
-class JSONLogger(AutoDict):
+class JSONLogger(MutableMapping):
     locks = {
         "io": Lock()
     }
