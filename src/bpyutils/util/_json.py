@@ -3,11 +3,11 @@ from threading import Lock
 import json
 from typing import MutableMapping
 
-from bpyutils.util._dict  import autodict, merge_dict
+from bpyutils.util._dict  import AutoDict, merge_dict
 from bpyutils.util.system import write, read
 from bpyutils.util.string import strip
 
-class JSONLogger(MutableMapping):
+class JSONLogger(AutoDict):
     locks = {
         "io": Lock()
     }
@@ -16,7 +16,7 @@ class JSONLogger(MutableMapping):
         self._path   = osp.abspath(path)
         self._indent = indent
 
-        self._store  = autodict()
+        self._store  = dict()
         self.update(dict(*args, **kwargs))
 
         self._store  = self.read()
@@ -31,7 +31,7 @@ class JSONLogger(MutableMapping):
         else:
             with self.locks['io']:
                 content = read(path)
-                data    = autodict(json.loads(content))
+                data    = json.loads(content)
 
         return data
 
@@ -60,7 +60,7 @@ class JSONLogger(MutableMapping):
         with self.locks["io"]:
             if osp.exists(path):
                 content = json.loads(strip(read(path)) or r"{}")
-                store   = autodict(merge_dict(content, store))
+                store   = merge_dict(content, store)
 
             data = json.dumps(store, indent = indent)
                 
@@ -68,3 +68,6 @@ class JSONLogger(MutableMapping):
 
     def __repr__(self):
         return str(self._store)
+
+    def __missing__(self, key):
+        return dict()
