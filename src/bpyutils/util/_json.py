@@ -4,6 +4,7 @@ import json
 
 from bpyutils.util._dict  import autodict, AutoDict, merge_dict
 from bpyutils.util.system import write, read
+from bpyutils.util.string import strip
 
 class JSONLogger(AutoDict):
     locks = {
@@ -48,12 +49,13 @@ class JSONLogger(AutoDict):
     def save(self):
         path    = self._path
         indent  = self._indent
+        store   = self._store
 
         with self.locks["io"]:
             if osp.exists(path):
-                content     = json.loads(read(path) or r"{}")
-                self._store = autodict(merge_dict(content, self._store))
+                content = json.loads(strip(read(path)) or r"{}")
+                store   = autodict(merge_dict(content, store))
 
-            data = json.dumps(self._store, indent = indent)
+            data = json.dumps(store, indent = indent)
                 
             write(path, data, force = True)
