@@ -1,6 +1,8 @@
 # imports - standard imports
 import collections
 
+from bpyutils._compat import iteritems
+
 def merge_dict(*args):
     """
     Merge Dictionaries.
@@ -54,6 +56,14 @@ def autodict(*args, **kwargs):
         {'foo': {'bar': {'baz': 'boo'}}}
     """
     _autodict = AutoDict(autodict)
-    _autodict.update(dict(*args, **kwargs))
+    update    = dict(*args, **kwargs)
+
+    for key, value in iteritems(update):
+        if isinstance(value, collections.Mapping):
+            value = autodict(value)
+        
+        _autodict.update({
+            key: value
+        })
     
     return _autodict

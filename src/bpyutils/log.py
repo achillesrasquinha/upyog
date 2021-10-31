@@ -37,7 +37,7 @@ class LogFormatter(logging.Formatter):
         NOTSET:     _cli.GRAY,
         DEBUG:      _cli.GRAY,
         INFO:       _cli.CYAN,
-        WARNING:    _cli.ORANGE,
+        WARNING:    _cli.YELLOW,
         ERROR:      _cli.RED,
         CRITICAL:   _cli.RED,
         SUCCESS:    _cli.GREEN
