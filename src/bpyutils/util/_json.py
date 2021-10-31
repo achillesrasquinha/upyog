@@ -3,7 +3,7 @@ from threading import Lock
 import json
 from typing import MutableMapping
 
-from bpyutils.util._dict  import AutoDict, merge_dict
+from bpyutils.util._dict  import AutoDict, autodict, merge_dict
 from bpyutils.util.system import write, read
 from bpyutils.util.string import strip
 
@@ -70,4 +70,4 @@ class JSONLogger(AutoDict):
         return str(self._store)
 
     def __missing__(self, key):
-        return dict()
+        return autodict()
