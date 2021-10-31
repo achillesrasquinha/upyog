@@ -12,22 +12,27 @@ class JSONLogger(AutoDict):
     }
 
     def __init__(self, path, indent = 2, *args, **kwargs):
-        self._path   = path
+        self._path   = osp.abspath(path)
         self._indent = indent
 
         self._store  = autodict()
         self.update(dict(*args, **kwargs))
 
-    # def read(self):
-    #     path = self._path
-    #     data = autodict()
+        self._store  = self.read()
 
-    #     if osp.exists(path):
-    #         with self.locks['io']:
-    #             content = read(path)
-    #             data    = autodict(json.loads(content))
+    def read(self):
+        path = self._path
+        data = self._store
 
-    #     return data
+        if not osp.exists(path):
+            if data:
+                self.save()
+        else:
+            with self.locks['io']:
+                content = read(path)
+                data    = autodict(json.loads(content))
+
+        return data
 
     def __getitem__(self, key):
         value = self._store[key]
@@ -59,3 +64,6 @@ class JSONLogger(AutoDict):
             data = json.dumps(store, indent = indent)
                 
             write(path, data, force = True)
+
+    def __repr__(self):
+        return self._store
