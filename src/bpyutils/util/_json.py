@@ -3,11 +3,11 @@ from threading import Lock
 import json
 from typing import MutableMapping
 
-from bpyutils.util._dict  import autodict, merge_dict
+from bpyutils.util._dict  import AutoDict, autodict, merge_dict
 from bpyutils.util.system import write, read
 from bpyutils.util.string import strip
 
-class JSONLogger(MutableMapping):
+class JSONLogger(AutoDict):
     locks = {
         "io": Lock()
     }
@@ -45,6 +45,7 @@ class JSONLogger(MutableMapping):
 
     def __delitem__(self, key):
         del self._store[key]
+        self.save()
 
     def __iter__(self):
         return iter(self._store)
