@@ -66,4 +66,4 @@ class JSONLogger(AutoDict):
             write(path, data, force = True)
 
     def __repr__(self):
-        return self._store
+        return str(self._store)
