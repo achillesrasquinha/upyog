@@ -111,6 +111,6 @@ def group_by(data, group):
 
     for d in data:
         key = d.pop(group)
-        results[d] = key
-        
+        results[key] = d
+
     return results
