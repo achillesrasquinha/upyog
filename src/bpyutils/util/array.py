@@ -1,7 +1,8 @@
 # pylint: disable=E1101
 
 # imports - compatibility imports
-from bpyutils._compat import _is_python_version, range
+from bpyutils._compat    import _is_python_version, range
+from bpyutils.util._dict import AutoDict
 
 # imports - standard imports
 import itertools
@@ -104,3 +105,12 @@ def chunkify(arr, n):
     """
     for i in range(0, len(arr), n):
         yield arr[i:i + n]
+
+def group_by(data, group):
+    results = AutoDict(list)
+
+    for d in data:
+        key = d.pop(group)
+        results.append({ key: d })
+
+    return results
