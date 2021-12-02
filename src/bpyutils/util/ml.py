@@ -15,3 +15,9 @@ def get_data_dir(name, data_dir = None):
     makedirs(data_dir, exist_ok = True)
 
     return data_dir
+
+def get_dataset_tag(name):
+    prefix = name.upper()
+    is_ci  = getenv("CI", prefix = prefix, default = False)
+
+    return "ci" if is_ci else "latest"
