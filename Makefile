@@ -10,7 +10,9 @@ PROJECT					= bpyutils
 PROJDIR					= ${BASEDIR}/src/bpyutils
 TESTDIR					= ${BASEDIR}/tests
 DOCSDIR					= ${BASEDIR}/docs
+
 NOTEBOOKSDIR			= ${DOCSDIR}/source/notebooks
+
 
 PYTHONPATH		 	   ?= python
 
@@ -23,6 +25,7 @@ PIP					   ?= ${VENVBIN}pip
 PYTEST				   ?= ${VENVBIN}pytest
 TOX						= ${VENVBIN}tox
 COVERALLS			   ?= ${VENVBIN}coveralls
+DOCSTR_COVERAGE		   ?= ${VENVBIN}docstr-coverage
 IPYTHON					= ${VENVBIN}ipython
 
 JUPYTER					= ${VENVBIN}jupyter
@@ -30,10 +33,13 @@ JUPYTER					= ${VENVBIN}jupyter
 SAFETY					= ${VENVBIN}safety
 PRECOMMIT				= ${VENVBIN}pre-commit
 SPHINXBUILD				= ${VENVBIN}sphinx-build
+SPHINXAUTOBUILD			= ${VENVBIN}sphinx-autobuild
 TWINE					= ${VENVBIN}twine
 
+DOCKER_IMAGE		   ?= ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${PROJECT}
 
-SQLITE					= sqlite
+
+SQLITE				   ?= sqlite
 
 
 JOBS				   ?= $(shell $(PYTHON) -c "import multiprocessing as mp; print(mp.cpu_count())")
@@ -91,9 +97,9 @@ endif
 
 	$(call log,INFO,Installing Requirements)
 ifeq (${ENVIRONMENT},test)
-	$(PIP) install -r $(BASEDIR)/requirements-test.txt $(OUT)
+	$(PIP) install -r $(BASEDIR)/requirements-test.txt $(PIP_ARGS) $(OUT)
 else
-	$(PIP) install -r $(BASEDIR)/requirements-dev.txt  $(OUT)
+	$(PIP) install -r $(BASEDIR)/requirements-dev.txt  $(PIP_ARGS) $(OUT)
 endif
 
 	$(call log,INFO,Installing ${PROJECT} (${ENVIRONMENT}))
@@ -110,7 +116,7 @@ ifneq (${ENVIRONMENT},test)
 	@clear
 
 	$(call log,INFO,Cleaning Python Cache)
-	@find $(BASEDIR) | grep -E "__pycache__|\.pyc" | xargs rm -rf
+	@find $(BASEDIR) | grep -E "__pycache__|\.pyc|\.egg-info" | xargs rm -rf
 
 	@rm -rf \
 		$(BASEDIR)/*.egg-info \
@@ -122,6 +128,7 @@ ifneq (${ENVIRONMENT},test)
 		$(BASEDIR)/htmlcov \
 		$(BASEDIR)/dist \
 		$(BASEDIR)/build \
+		$(BASEDIR)/*.log \
 		~/.config/$(PROJECT)
 
 	$(call log,SUCCESS,Cleaning Successful)
@@ -139,6 +146,9 @@ ifeq (${ENVIRONMENT},development)
 endif
 
 	$(PYTEST) -s -n $(JOBS) --cov $(PROJDIR) $(IARGS) -vv $(ARGS)
+
+doc-coverage: install ## Display documentation coverage.
+	$(DOCSTR_COVERAGE) $(PROJDIR)
 
 ifeq (${ENVIRONMENT},development)
 	$(call browse,file:///${BASEDIR}/htmlcov/index.html)
@@ -188,10 +198,30 @@ ifeq (${launch},true)
 	$(call browse,file:///${DOCSDIR}/build/index.html)
 endif
 
-docker-build: clean ## Build the Docker Image.
+docker-pull: ## Pull Latest Docker Images
+	$(call log,INFO,Pulling latest Docker Image)
+
+	if [[ -d "${BASEDIR}/docker/files" ]]; then \
+		for folder in `ls ${BASEDIR}/docker/files`; do \
+			docker pull $(DOCKER_IMAGE):$$folder || true; \
+		done; \
+	fi
+
+	@docker pull $(DOCKER_IMAGE):latest || true
+
+docker-build: clean docker-pull ## Build the Docker Image.
 	$(call log,INFO,Building Docker Image)
 
-	@docker build $(BASEDIR) --tag $(DOCKER_HUB_USERNAME)/$(PROJECT) $(DOCKER_BUILD_ARGS)
+	if [[ -d "${BASEDIR}/docker/files" ]]; then \
+		for folder in `ls ${BASEDIR}/docker/files`; do \
+			docker build ${BASEDIR}/docker/files/$$folder --tag $(DOCKER_IMAGE):$$folder $(DOCKER_BUILD_ARGS) ; \
+		done \
+	fi
+
+	@docker build $(BASEDIR) --tag $(DOCKER_IMAGE) $(DOCKER_BUILD_ARGS)
+
+docker-push: ## Push Docker Image to Registry.
+	@docker push $(DOCKER_IMAGE)$(DOCKER_IMAGE_TAG)
 
 docker-tox: clean ## Test using Docker Tox Image.
 	$(call log,INFO,Running Tests using Docker Tox)

@@ -6,7 +6,7 @@ import subprocess as sp
 # imports - module imports
 from bpyutils.util.system import popen
 from bpyutils.exception   import (
-    BpyutilsError,
+    BPyUtilsError,
     PopenError
 )
 
@@ -14,8 +14,8 @@ from bpyutils.exception   import (
 import pytest
 
 def test_bpyutils_error():
-    with pytest.raises(BpyutilsError):
-        raise BpyutilsError
+    with pytest.raises(BPyUtilsError):
+        raise BPyUtilsError
 
 def test_popen_error():
     with pytest.raises(PopenError):
@@ -23,6 +23,6 @@ def test_popen_error():
 
     assert isinstance(
         PopenError(0, "echo foobar"),
-        (BpyutilsError, sp.CalledProcessError)
+        (BPyUtilsError, sp.CalledProcessError)
     )
-    assert isinstance(BpyutilsError(), Exception)
+    assert isinstance(BPyUtilsError(), Exception)

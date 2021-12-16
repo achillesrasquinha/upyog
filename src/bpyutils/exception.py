@@ -1,10 +1,10 @@
 # imports - standard imports
 import subprocess as sp
 
-class BpyutilsError(Exception):
+class BPyUtilsError(Exception):
     pass
 
-class PopenError(BpyutilsError, sp.CalledProcessError):
+class PopenError(BPyUtilsError, sp.CalledProcessError):
     pass
 
 class DependencyNotFoundError(ImportError):

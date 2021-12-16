@@ -3,3 +3,4 @@ recommonmark
 ipykernel
 nbsphinx
 renku-sphinx-theme
+sphinx-autobuild

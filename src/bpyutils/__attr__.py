@@ -1,12 +1,18 @@
+
+
+
 from __future__ import absolute_import
+
 
 import sys
 import os, os.path as osp
 import subprocess
 
 PY2 = sys.version_info.major == 2
+
     
 if PY2:
+    
     FileNotFoundError = OSError
 
 def read(fname):
@@ -66,7 +72,7 @@ __version__                 = read(osp.join(pardir(__file__), "VERSION"))
 __build__                   = get_revision(pardir(__file__, 2), short = True, raise_err = False)
 __author__                  = "Achilles Rasquinha"
 __email__                   = "achillesrasquinha@gmail.com"
-__description__             = "A collection of various common Python utilities"
+__description__             = "A collection of various common Python utilities."
 __keywords__                = ['utilities', 'python', 'boilpy']
 __url__                     = "https://github.com/achillesrasquinha/bpyutils"
 __license__                 = "MIT License"

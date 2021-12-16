@@ -12,9 +12,10 @@ RUN apk add --no-cache \
 COPY . $BPYUTILS_PATH
 COPY ./docker/entrypoint.sh /entrypoint.sh
 
-RUN pip install $BPYUTILS_PATH
-
 WORKDIR $BPYUTILS_PATH
+
+RUN pip install -r ./requirements.txt && \
+    python setup.py install
 
 ENTRYPOINT ["/entrypoint.sh"]
 
