@@ -138,7 +138,7 @@ endif
 
 test: install ## Run tests.
 	$(call log,INFO,Running Python Tests using $(JOBS) jobs.)
-	$(TOX) $(ARGS)
+	$(TOX) --parallel all $(ARGS)
 
 coverage: install ## Run tests and display coverage.
 ifeq (${ENVIRONMENT},development)

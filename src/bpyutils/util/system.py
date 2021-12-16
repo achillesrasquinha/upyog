@@ -252,7 +252,10 @@ def move(*files, **kwargs):
     for f in files:
         shutil.move(f, dest)
 
-def copy(*files, dest, raise_err = True):
+def copy(*files, **kwargs):
+    dest = kwargs["dest"]
+    raise_err = kwargs.get("raise_err", False)
+    
     for f in files:
         abspath = osp.abspath(f)
 
