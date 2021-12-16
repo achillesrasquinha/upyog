@@ -2,7 +2,7 @@ from bpyutils.api.base import BaseAPI
 from bpyutils import request as req
 
 class GitHub(BaseAPI):
-    BASE_URL = "https://api.github.com"
+    url = "https://api.github.com"
 
     def __init__(self, token = None, *args, **kwargs):
         self._super = super(GitHub, self)
@@ -23,5 +23,5 @@ class GitHub(BaseAPI):
             raise ValueError("Repo username or reponame not found.")
 
         url = "repos/%s/%s/pulls" % (self._repo_username, self._repo_reponame)
-        response = self.post(url)
+        response = self.get(url)
         return response

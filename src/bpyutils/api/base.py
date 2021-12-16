@@ -28,7 +28,7 @@ def _path_to_method_name(path):
 
     return method_name
 
-class BaseAPI:
+class BaseAPI(object):
     """
     :param url: A base URL to use.
     :param proxies: A dictionary/list of proxies to use. If a list is passed,
@@ -124,7 +124,7 @@ class BaseAPI:
         return fn
         
     def _build_api(self):
-        api_config = getattr(self, "api") or {}
+        api_config = getattr(self, "api", {})
         if api_config:
             if "paths" in api_config:
                 for api in api_config["paths"]:
@@ -233,5 +233,5 @@ class BaseAPI:
             >>> client.ping()
             'pong'
         """
-        response = self.request("HEAD" , "/")
+        response = self.request("HEAD", "")
         return "pong"
