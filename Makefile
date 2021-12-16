@@ -37,7 +37,7 @@ SPHINXAUTOBUILD			= ${VENVBIN}sphinx-autobuild
 TWINE					= ${VENVBIN}twine
 
 DOCKER_IMAGE		   ?= ${DOCKER_REGISTRY}/${DOCKER_USERNAME}/${PROJECT}
-
+DOCKER_BUILDKIT		   ?= 1
 
 SQLITE				   ?= sqlite
 
