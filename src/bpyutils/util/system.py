@@ -139,7 +139,10 @@ def touch(filename):
         with open(filename, "w") as f:
             pass
 
-def remove(*paths, recursive = False, raise_err = True):
+def remove(*paths, **kwargs):
+    recursive = kwargs.get("recursive", False)
+    raise_err = kwargs.get("raise_err", True)
+
     for path in paths:
         path = osp.realpath(path)
 
