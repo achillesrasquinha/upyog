@@ -11,8 +11,22 @@ import sys
 import inspect
 
 def get_function_arguments(fn):
-    """
-    Get arguments of a function.
+    """Get arguments of a function
+
+    Args:
+        fn (function): The function to retrieve arguments from.
+
+    Returns:
+        dict: A dictionary of arguments. If there is no default argument, the value 
+        associated to that argument would be inpsect._empty.
+
+    Example
+
+        >>> def add(a = 0, b = 1):
+                return a + b
+        >>> params = bpy.get_function_arguments(add)
+        >>> params
+        {'a': 0, 'b': 1}
     """
     # https://stackoverflow.com/a/2677263
     params  = dict()
@@ -42,21 +56,21 @@ def get_function_arguments(fn):
 
     return params
 
-def _str_to_bool(x):
-    if x in ("True", "true"):
-        return True
+# def _str_to_bool(x):
+#     if x in ("True", "true"):
+#         return True
     
-    if x in ("False", "false"):
-        return False
+#     if x in ("False", "false"):
+#         return False
     
-    if x in ("None", "none", "Null", "null", "NULL", ""):
-        return None
+#     if x in ("None", "none", "Null", "null", "NULL", ""):
+#         return None
 
-    return x
+#     return x
 
 def auto_typecast(value):
     """
-    Convert a string into its data type automatically.
+    Automatically convert a string into its desired data type.
 
     :param value: The value to be converted.
 
@@ -77,13 +91,29 @@ def auto_typecast(value):
 
     return value
 
-def gen_to_seq(gen, type_ = list):
+def _gen_to_seq(gen, type_ = list):
     def fn(*args, **kwargs):
         return type_(gen(*args, **kwargs))
     return fn
 
-lfilter = gen_to_seq(filter)
-lmap    = gen_to_seq(map)
+lfilter = _gen_to_seq(filter)
+lmap    = _gen_to_seq(map)
 
 def build_fn(fn, **kwargs):
+    """Build a function caller with default arguments.
+
+    Args:
+        fn (function): The function to be called.
+
+    Returns:
+        function: A function wrapper with default arguments passed.
+
+    Example:
+        
+        >>> def add(a, b):
+                return a + b
+        >>> fn = bpy.build_fn(add, a = 1, b = 2)
+        >>> fn()
+        3
+    """
     return partial(fn, **kwargs)

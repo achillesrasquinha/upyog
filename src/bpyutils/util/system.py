@@ -28,7 +28,21 @@ logger = get_logger()
 
 __STDOUT__ = None
 
-def read(fname, mode = None):
+def read(fname, mode = "r"):
+    """Read content from a given file.
+
+    Args:
+        fname (str, Path): The path to the file.
+        mode (str): File mode while opening. Defaults to "r".
+
+    Returns:
+        [type]: The content within the file.
+
+    Example
+
+        >>> bpy.read("path/to/file")
+        'Hello, World!'
+    """
     with open(fname, mode = mode or "r") as f:
         data = f.read()
     return data
@@ -247,12 +261,36 @@ def make_archive(base_name, *args, **kwargs):
         shutil.move(target_archive, base_name)
 
 def move(*files, **kwargs):
+    """Move a file or a list of files to destination
+
+    Args:
+        files (str, `Path`): The source file to move. (Can be a file or a directory).
+        dest (str, `Path`): The destination path to move files to (Can be a file or a directory).
+
+    Example:
+
+        >>> bpy.move("path/to/file1", "path/to/file2", dest = "path/to/dest")
+    """
     dest = kwargs["dest"]
 
     for f in files:
         shutil.move(f, dest)
 
 def copy(*files, **kwargs):
+    """Copy a file or a list of files to destination
+
+    Args:
+        files (str, `Path`): The source file to copy. (Can be a file or a directory).
+        dest (str, `Path`): The destination path to copy files to (Can be a file or a directory).
+        raise_err (bool): Raise `FileNotFoundError` if a give file isn't found, else ignore.
+
+    Raises:
+        FileNotFoundError: If a given file isn't found and `raise_err` is not flagged.
+
+    Example:
+
+        >>> bpy.copy("path/to/file1", "path/to/file2", dest = "path/to/dest")
+    """
     dest = kwargs["dest"]
     raise_err = kwargs.get("raise_err", False)
     
@@ -265,4 +303,14 @@ def copy(*files, **kwargs):
             shutil.copy2(abspath, dest)
 
 def extract_all(source, dest):
+    """Unpack an archive to a desired destination.
+
+    Args:
+        source (str, Path): The source path to the archive file.
+        dest (str, Path): The destination path to extract the archive to.
+
+    Example
+
+        >>> bpy.extract_all("path/to/src", "path/to/dest")
+    """
     shutil.unpack_archive(source, dest)
