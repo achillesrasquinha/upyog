@@ -246,7 +246,9 @@ def make_archive(base_name, *args, **kwargs):
         makepath(base_name)
         shutil.move(target_archive, base_name)
 
-def move(*files, dest):
+def move(*files, **kwargs):
+    dest = kwargs["dest"]
+
     for f in files:
         shutil.move(f, dest)
 
