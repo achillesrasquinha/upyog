@@ -13,3 +13,8 @@ def read(path, *args, **kwargs):
         data = lmap(lambda x: dict_from_list(header, lmap(auto_typecast, x)), reader)
 
     return data
+
+def write(path, row, mode = "w", *args, **kwargs):
+    with open(path, mode = mode) as f:
+        writer = csv.writer(f, *args, **kwargs)
+        writer.writerow(row)
