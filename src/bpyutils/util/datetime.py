@@ -5,6 +5,8 @@ from __future__ import absolute_import
 import time
 import datetime as dt
 
+now = dt.datetime.now
+
 _DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 def get_timestamp_str(format_ = _DEFAULT_TIMESTAMP_FORMAT):
