@@ -32,8 +32,8 @@ if USE_PROCESS_POOL_EXECUTOR:
             for result in results:
                 yield result
 
-        # def imap_unordered(self, *args, **kwargs):
-        #     return self.map(*args, **kwargs)
+        def imap_unordered(self, *args, **kwargs):
+            return self.map(*args, **kwargs)
 
         def _shutdown(self):
             self.shutdown()
