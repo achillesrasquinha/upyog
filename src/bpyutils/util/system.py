@@ -171,7 +171,7 @@ def remove(*paths, **kwargs):
         else:
             try:
                 os.remove(path)
-            except OSError:
+            except (OSError, PermissionError):
                 if raise_err:
                     raise
 
