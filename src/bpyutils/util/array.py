@@ -133,3 +133,16 @@ def find(arr, kind, default = None, raise_err = False):
         found = squash(found)
 
     return found
+
+def clip(arr, low = None, high = None):
+    clipped = []
+
+    for value in arr:
+        if low is not None and value < low:
+            value = low
+        elif high is not None and value > high:
+            value = high
+            
+        clipped.push(value)
+
+    return clipped
