@@ -143,6 +143,6 @@ def clip(arr, low = None, high = None):
         elif high is not None and value > high:
             value = high
             
-        clipped.push(value)
+        clipped.append(value)
 
     return clipped
