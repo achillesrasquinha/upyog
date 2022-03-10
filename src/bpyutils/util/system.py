@@ -9,7 +9,6 @@ import subprocess  as sp
 import shutil
 import tempfile
 import contextlib
-from   distutils.spawn import find_executable
 from   glob import glob
 
 # imports - module imports
@@ -63,6 +62,8 @@ def which(executable, raise_err = False):
             pass
 
     if not exec_:
+        # worst to worst case.
+        from distutils.spawn import find_executable
         exec_ = find_executable(executable)
         
     if not exec_ and raise_err:

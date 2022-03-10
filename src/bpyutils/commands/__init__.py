@@ -1,6 +1,6 @@
 # imports - compatibility imports
 from __future__ import absolute_import
-from subprocess import call
+import collections
 
 # imports - standard imports
 import traceback
@@ -94,6 +94,21 @@ def _command(*args, **kwargs):
         touch(file_)
     
     logger.info("Using %s jobs..." % a.jobs)
+
+    if a.run_jobs:
+        logger.info("Running module %s" % a.run_jobs)
+
+        for module in a.run_jobs:
+            jobs = import_handler("%s.jobs" % module)
+
+            for job in jobs:
+                name = job
+
+                if isinstance(job, collections.Mapping):
+                    name = job["name"]
+                
+                job_module_runner = import_handler("%s.%s.run" % (module, name))
+                job_module_runner()
 
     if a.run_job:
         logger.info("Running a specific job %s" % a.run_job)

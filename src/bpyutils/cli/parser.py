@@ -37,6 +37,10 @@ def get_parser():
         action  = "append",
         help    = "Run a specific job"
     )
+    parser.add_argument("--run-jobs",
+        action  = "append",
+        help    = "Run all jobs"
+    )
     parser.add_argument("-m", "--method",
         action  = "append",
         help    = "Run Method"
