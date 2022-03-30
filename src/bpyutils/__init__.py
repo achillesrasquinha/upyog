@@ -39,6 +39,7 @@ from bpyutils.util.types    import (
     get_function_arguments,
     auto_typecast
 )
+from bpyutils.i18n import _
 
 settings = Settings()
 
