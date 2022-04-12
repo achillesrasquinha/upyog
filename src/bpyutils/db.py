@@ -1,14 +1,16 @@
 from __future__ import absolute_import
 
 # imports - standard imports
+import sys
 import os.path as osp
 import sqlite3
 
 # imports - module imports
-from bpyutils.config      import PATH
-from bpyutils.util.string import strip
-from bpyutils.util.system import makedirs, read
-from bpyutils             import config, log
+from bpyutils.config        import PATH
+from bpyutils.util.string   import strip
+from bpyutils.util.system   import makedirs, read, popen, which
+from bpyutils.util.imports  import import_handler
+from bpyutils               import config, log, cli
 
 logger = log.get_logger()
 
@@ -102,3 +104,14 @@ def get_connection(location = PATH["CACHE"], bootstrap = True, log = False):
             _CONNECTION.from_file(abspath)
 
     return _CONNECTION
+
+def run_db_shell(path):
+    exec_sqlite = which("litecli")
+
+    if not exec_sqlite:
+        cli.echo(cli.format("For a more interactive shell, install litecli (https://github.com/dbcli/litecli) using the command: pip install litecli", cli.YELLOW))
+        exec_sqlite = which("sqlite3", raise_err = True)
+    
+    code = popen("%s %s" % (exec_sqlite, path))
+
+    sys.exit(code)

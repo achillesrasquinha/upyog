@@ -100,6 +100,7 @@ def _command(*args, **kwargs):
 
         for module in a.run_jobs:
             jobs = import_handler("%s.jobs" % module)
+            args = format_params(a.param)
 
             for job in jobs:
                 name = job
@@ -108,7 +109,7 @@ def _command(*args, **kwargs):
                     name = job["name"]
                 
                 job_module_runner = import_handler("%s.%s.run" % (module, name))
-                job_module_runner()
+                job_module_runner(**args)
 
     if a.run_job:
         logger.info("Running a specific job %s" % a.run_job)
