@@ -10,6 +10,7 @@ import shutil
 import tempfile
 import contextlib
 from   glob import glob
+import traceback
 
 # imports - module imports
 from bpyutils.util._dict      import merge_dict
@@ -22,6 +23,7 @@ from bpyutils.util.string     import (
 from bpyutils.util.environ    import SECRETS
 from bpyutils._compat         import iteritems, PY2
 from bpyutils.log             import get_logger
+from bpyutils.cli import util as _cli
 
 logger = get_logger()
 
@@ -315,3 +317,19 @@ def extract_all(source, dest):
         >>> bpy.extract_all("path/to/src", "path/to/dest")
     """
     shutil.unpack_archive(source, dest)
+
+def pretty_print_error(e):
+    summary    = traceback.extract_stack()
+    
+    error_type = type(e)
+    error_name = error_type.__name__
+    error_msg  = e.message
+    newline    = "\n\n"
+
+    _cli.echo(
+        "  " + _cli.format(error_name, _cli.RED)  + newline +
+        "  " + _cli.format(error_msg,  _cli.BOLD) + newline
+    )
+
+    error_str = traceback.format_exc()
+    _cli.echo(error_str)
