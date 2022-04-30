@@ -29,7 +29,7 @@ def success(self, message, *args, **kwargs):
 logging.Logger.success = success
 
 _FORMAT     = '%(asctime)s | %(levelname)s | %(message)s'
-_LOGGER     = None
+_LOGGER     = {}
 
 
 class LogFormatter(logging.Formatter):
@@ -45,14 +45,14 @@ class LogFormatter(logging.Formatter):
 
     def format(self, record):
         color     = LogFormatter.COLORS[record.levelno]
-        format_   = _cli.format('%(asctime)s | %(levelname)s | ', _cli.BOLD + color) + '%(message)s'
+        format_   = _cli.format('%(name)s | %(asctime)s | %(levelname)s | ', _cli.BOLD + color) + '%(message)s'
         formatter = logging.Formatter(format_)
         return formatter.format(record)
 
 def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
     global _LOGGER
 
-    if not _LOGGER:
+    if not name in _LOGGER:
         formatter = LogFormatter(format_)
 
         handler   = logging.StreamHandler()
@@ -64,6 +64,6 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
 
         logger.addHandler(handler)
         
-        _LOGGER   = logger
+        _LOGGER[name] = logger
     
-    return _LOGGER
+    return _LOGGER[name]
