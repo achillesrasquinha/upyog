@@ -3,7 +3,18 @@ import collections
 
 from bpyutils._compat import iteritems
 
-def merge_dict(*args):
+def merge_deep(source, dest):
+    # https://stackoverflow.com/a/20666342
+    for key, value in iteritems(source):
+        if isinstance(value, dict):
+            node = dest.setdefault(key, {})
+            merge_deep(value, node)
+        else:
+            dest[key] = value
+            
+    return dest
+
+def merge_dict(*args, **kwargs):
     """
     Merge Dictionaries.
     
@@ -18,11 +29,17 @@ def merge_dict(*args):
         >>> bpy.merge_dict({ 'foo': 'bar' }, { 'foo': 'baz', 'bar': 'boo' })
         {'foo': 'baz', 'bar': 'boo'}
     """
+    deep = kwargs.get("deep", False)
+
     merged = dict()
 
     for arg in args:
         copy = arg.copy()
-        merged.update(copy)
+
+        if deep:
+            merged = merge_deep(copy, merged)
+        else:
+            merged.update(copy)
 
     return merged
 
