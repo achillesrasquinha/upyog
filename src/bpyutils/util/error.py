@@ -5,43 +5,48 @@ import re
 from bpyutils.cli import util as _cli
 from bpyutils.util.string import strip, nl, tb
 from bpyutils.util.types  import lmap
+from bpyutils.util.array  import find
 from bpyutils.util.system import read
 
-_REGEX_PATTERN_TEXT_QUOTES = r'"([A-Za-z0-9_\./\\-]*)"'
+_REGEX_PATTERN_TEXT_QUOTES = r'"([^"]*)"'
 _COLOR_LINE_NUMBER = _cli.GRAY
 _INDENT = 4
 
 def _extract_and_format_snippet(path_file, from_ = 0, offset = 3, indent = 4):
-    content     = read(path_file)
-    lines       = content.split("\n")
+    formatted = ""
 
-    lines       = lines[ from_ - offset : from_ + offset ]
+    try:
+        content = read(path_file)
+        lines       = content.split("\n")
 
-    formatted   = ""
+        lines       = lines[ from_ - offset : from_ + offset ]
 
-    for i, line in enumerate(lines):
-        line_num = from_ + i - offset + 1
-        line_indent = indent
 
-        line_num_format = ""
-        line_num_color  = _COLOR_LINE_NUMBER
+        for i, line in enumerate(lines):
+            line_num = from_ + i - offset + 1
+            line_indent = indent
 
-        if line_num == from_:
-            line_num_format = "%s%s" % (_cli.format("→ ", _cli.RED), line_num_format)
-            line_indent = 2
-            line_num_color = _cli.BOLD
+            line_num_format = ""
+            line_num_color  = _COLOR_LINE_NUMBER
 
-        line_num_format += _cli.format(line_num, line_num_color) + _cli.format("|", _COLOR_LINE_NUMBER)
+            if line_num == from_:
+                line_num_format = "%s%s" % (_cli.format("→ ", _cli.RED), line_num_format)
+                line_indent = 2
+                line_num_color = _cli.BOLD
 
-        formatted_line = nl(tb(line_num_format, line_indent) + tb(line, indent))
+            line_num_format += _cli.format(line_num, line_num_color) + _cli.format("|", _COLOR_LINE_NUMBER)
 
-        formatted += formatted_line
-        
+            formatted_line = nl(tb(line_num_format, line_indent) + tb(line, indent))
+
+            formatted += formatted_line
+    except FileNotFoundError:
+        pass
+            
     return formatted
 
 def _get_error_line_info(error_line):
     strips = lmap(strip, error_line.split("\n"))
-    strip_info  = strips[0]
+    strip_info  = find(strips, lambda x: x.startswith("File"))
     info_strips = lmap(strip, strip_info.split(","))
 
     info_file, info_line, info_method = info_strips
