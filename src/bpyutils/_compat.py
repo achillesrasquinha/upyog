@@ -88,6 +88,8 @@ if PY2: # pragma: no cover
     string_types = basestring
     
     range        = xrange
+
+    from Queue import Queue
 else:
     # moves
     from urllib.request import urlopen, Request
@@ -111,6 +113,8 @@ else:
     import configparser
 
     string_types = str
+
+    from queue import Queue
 
 if platform.system() in ['Linux', 'Darwin']:
     EX_OK      = os.EX_OK

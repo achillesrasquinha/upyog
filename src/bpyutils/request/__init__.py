@@ -14,6 +14,7 @@ import json
 from bpyutils.request.response import Response
 from bpyutils.util.string      import safe_encode
 from bpyutils.log              import get_logger
+from bpyutils._compat          import Queue
 
 logger = get_logger()
 

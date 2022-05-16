@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 # imports - compatibility imports
 from bpyutils._compat import iteritems
 
@@ -23,7 +25,6 @@ from bpyutils.util.string     import (
 from bpyutils.util.environ    import SECRETS
 from bpyutils._compat         import iteritems, PY2
 from bpyutils.log             import get_logger
-from bpyutils.cli import util as _cli
 
 logger = get_logger()
 
@@ -326,10 +327,12 @@ def pretty_print_error(e):
     error_msg  = e.message
     newline    = "\n\n"
 
-    _cli.echo(
-        "  " + _cli.format(error_name, _cli.RED)  + newline +
-        "  " + _cli.format(error_msg,  _cli.BOLD) + newline
-    )
+    # cli_echo(
+    #     "  " + cli_format(error_name, RED)  + newline +
+    #     "  " + cli_format(error_msg,  BOLD) + newline
+    # )
 
     error_str = traceback.format_exc()
-    _cli.echo(error_str)
+    # cli_echo(error_str)
+
+    print(error_str)

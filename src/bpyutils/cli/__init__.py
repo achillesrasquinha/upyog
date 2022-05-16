@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 # imports - module imports
 from bpyutils.cli.util   import *
 from bpyutils.cli.parser import get_args
