@@ -147,6 +147,10 @@ endif
 
 	$(PYTEST) -s -n $(JOBS) --cov $(PROJDIR) $(IARGS) -vv $(ARGS)
 
+ifeq (${ENVIRONMENT},development)
+	$(call browse,file:///${BASEDIR}/htmlcov/index.html)
+endif
+
 doc-coverage: install ## Display documentation coverage.
 	$(DOCSTR_COVERAGE) $(PROJDIR)
 

@@ -93,8 +93,8 @@ def check_url(s, raise_err = True):
         is_url = all([result.scheme, result.netloc])
     except:
         pass
-
-    if raise_err:
+    
+    if not is_url and raise_err:
         raise ValueError("Invalid URL: %s" % s)
 
     return is_url

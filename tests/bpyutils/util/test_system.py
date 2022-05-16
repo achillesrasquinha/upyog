@@ -9,7 +9,9 @@ from testutils import PATH
 
 # imports - module imports
 from bpyutils.util.system import (read, write, popen, which, makedirs,
-    touch, check_gzip)
+    touch, check_gzip, makepath, remove, make_temp_dir, make_temp_file,
+    get_os, unzip, get_files, get_basename, make_archive, move, 
+    extract_all)
 
 def test_read(tmpdir):
     directory = tmpdir.mkdir("tmp")
@@ -121,3 +123,10 @@ def test_check_gzip():
     
     with pytest.raises(ValueError):
         check_gzip(path_txt)
+
+def test_makepath(tmpdir):
+    directory = tmpdir.mkdir("tmp")
+    path      = osp.join(str(directory), "foo", "bar", "baz.txt")
+
+    makepath(path)
+    assert osp.isfile(path)

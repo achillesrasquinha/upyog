@@ -36,7 +36,7 @@ class BaseAPI(object):
         ``{ protocol: ip }``.
     :param test: Attempt to test the connection to the base url.
     """
-    def __init__(self, url = None, proxies = [ ], test = True, verbose = False):
+    def __init__(self, url = None, proxies = [ ], test = True, verbose = False, rate = None):
         self._url     = url or getattr(self, "url")
         
         self._session = req.Session()
@@ -52,6 +52,7 @@ class BaseAPI(object):
             proxies = [proxies]
 
         self._proxies = proxies
+        self._rate    = rate
 
         self._build_api()
 
