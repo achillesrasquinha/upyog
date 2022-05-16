@@ -106,11 +106,13 @@ def get_parser():
         version = __version__,
         help    = "Show %s's version number and exit." % __name__
     )
-    # parser.add_argument("-h", "--help",
-    #     action  = "help",
-    #     default = argparse.SUPPRESS,
-    #     help    = "Show this help message and exit."
-    # )
+
+    if any("bpyutils" in arg for arg in sys.argv):
+        parser.add_argument("-h", "--help",
+            action  = "help",
+            default = argparse.SUPPRESS,
+            help    = "Show this help message and exit."
+        )
 
     return parser
 

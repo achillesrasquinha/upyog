@@ -318,21 +318,3 @@ def extract_all(source, dest):
         >>> bpy.extract_all("path/to/src", "path/to/dest")
     """
     shutil.unpack_archive(source, dest)
-
-def pretty_print_error(e):
-    summary    = traceback.extract_stack()
-    
-    error_type = type(e)
-    error_name = error_type.__name__
-    error_msg  = e.message
-    newline    = "\n\n"
-
-    # cli_echo(
-    #     "  " + cli_format(error_name, RED)  + newline +
-    #     "  " + cli_format(error_msg,  BOLD) + newline
-    # )
-
-    error_str = traceback.format_exc()
-    # cli_echo(error_str)
-
-    print(error_str)

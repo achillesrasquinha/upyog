@@ -1,6 +1,7 @@
 # imports - compatibility imports
 from __future__ import absolute_import
 import collections
+import sys
 
 # imports - standard imports
 import traceback
@@ -11,6 +12,7 @@ from bpyutils.util.types        import lmap, auto_typecast
 from bpyutils.util.string       import strip
 from bpyutils.util.imports      import import_handler
 from bpyutils.util.system       import touch
+from bpyutils.util.error        import pretty_print_error
 from bpyutils 		      	    import (cli, log)
 from bpyutils._compat		    import iteritems
 from bpyutils.config            import environment
@@ -42,8 +44,7 @@ def command(**ARGUMENTS):
         if not isinstance(e, DependencyNotFoundError):
             cli.echo()
 
-            traceback_str = traceback.format_exc()
-            cli.echo(traceback_str)
+            pretty_print_error(e)
 
             cli.echo(cli_format("""\
 An error occured while performing the above command. This could be an issue with
@@ -109,7 +110,12 @@ def _command(*args, **kwargs):
                     name = job["name"]
                 
                 job_module_runner = import_handler("%s.%s.run" % (module, name))
-                job_module_runner(**args)
+
+                try:
+                    job_module_runner(**args)
+                except Exception as e:
+                    pretty_print_error(e)
+                    sys.exit(1)
 
     if a.run_job:
         logger.info("Running a specific job %s" % a.run_job)

@@ -98,3 +98,12 @@ def check_url(s, raise_err = True):
         raise ValueError("Invalid URL: %s" % s)
 
     return is_url
+
+def nl(s = "", space = 1):
+    space = "\n" * space
+    return "%s%s" % (s, space)
+
+def tb(s = "", point = 2):
+    indent = " " * point
+    return "%s%s" % (indent, s)
+    
