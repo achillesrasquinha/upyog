@@ -161,8 +161,5 @@ class Node(object):
 
         return found
 
-    def get(self, level):
-        pass
-
     def __hash__(self):
         return id(self)
