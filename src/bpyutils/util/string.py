@@ -7,11 +7,11 @@ from bpyutils._compat import urlparse
 _REGEX_ANSI_ESCAPE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 _REGEX_HTML        = re.compile("<.*?>")
 
-def strip(string):
-    string = string.lstrip()
-    string = string.rstrip()
+def strip(string, type_ = " "):
+    string = string.lstrip(type_)
+    string = string.rstrip(type_)
 
-    return string 
+    return string
 
 def strip_ansi(string):
     string = _REGEX_ANSI_ESCAPE.sub("", string)
@@ -103,7 +103,7 @@ def nl(s = "", space = 1):
     space = "\n" * space
     return "%s%s" % (s, space)
 
-def tb(s = "", point = 2):
-    indent = " " * point
+def tb(s = "", point = 2, type_ = " "):
+    indent = type_ * point
     return "%s%s" % (indent, s)
     

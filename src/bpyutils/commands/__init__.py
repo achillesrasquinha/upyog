@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 import collections
 import sys
+import os.path as osp
 
 # imports - standard imports
 import traceback
@@ -13,6 +14,7 @@ from bpyutils.util.string       import strip
 from bpyutils.util.imports      import import_handler
 from bpyutils.util.system       import touch
 from bpyutils.util.error        import pretty_print_error
+from bpyutils.util.test         import generate_tests
 from bpyutils 		      	    import (cli, log)
 from bpyutils._compat		    import iteritems
 from bpyutils.config            import environment
@@ -33,6 +35,8 @@ ARGUMENTS = dict(
     output						= None,
     ignore_error				= False,
     force						= False,
+    generate_tests              = None,
+    output_dir                  = None,
     verbose		 				= False
 )
 
@@ -140,3 +144,6 @@ def _command(*args, **kwargs):
 
             callable = import_handler("%s.%s" % (a.run_ml, pipeline))
             callable(**args)
+
+    if a.generate_tests:
+        generate_tests(a.generate_tests, check = a.check, target_dir = a.output_dir)

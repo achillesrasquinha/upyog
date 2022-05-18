@@ -89,6 +89,13 @@ def get_parser():
         help    = "Force."
     )
 
+    parser.add_argument("--generate-tests",
+        help    = "generate test cases for a package"
+    )
+    parser.add_argument("--output-dir",
+        help    = "output directory for generator"
+    )
+
     if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
         parser.add_argument("--no-color",
             action  = "store_true",

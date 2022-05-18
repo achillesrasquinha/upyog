@@ -51,6 +51,9 @@ def read(fname, mode = "r"):
 
 def write(fname, data = None, force = False, append = False, mode = None):
     if not osp.exists(fname) or append or force:
+        if force:
+            makepath(fname)
+
         with open(fname, mode = mode or ("a" if append else "w")) as f:
             if data:
                 f.write(data)
