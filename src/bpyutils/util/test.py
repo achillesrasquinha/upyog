@@ -28,11 +28,21 @@ class TestGenerator(ast.NodeVisitor):
         return "".join(self.lines)
         
     def visit_ClassDef(self, node):
+        for child in node.body:
+            if isinstance(child, ast.FunctionDef):
+                child.parent = node
+
         self.generic_visit(node)
 
     def visit_FunctionDef(self, node):
+        fn_name = node.name
+
+        if hasattr(node, "parent"):
+            parent  = node.parent
+            fn_name = "%s_%s" % (parent.name, fn_name)
+
         self.lines.extend([
-            nl("def test_%s():" % node.name),
+            nl("def test_%s():" % fn_name),
             nl(tb("raise NotImplementedError", point = _INDENT, type_ = "\t")),
             nl()
         ])
