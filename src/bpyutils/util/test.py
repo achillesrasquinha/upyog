@@ -8,13 +8,24 @@ from bpyutils.util.system import (
     makepath
 )
 from bpyutils.log import get_logger
-from bpyutils.util.string import nl, tb, strip
+from bpyutils.util.string import nl, tb, strip, lower
 from bpyutils.parallel import no_daemon_pool
 from bpyutils.util.types import lmap
 
 logger  = get_logger()
 
 _INDENT = 1
+
+def _class_name_to_fn(name):
+    fn_name = ""
+
+    for i, letter in enumerate(name):
+        if i and letter.isupper():
+            fn_name += "_"
+
+        fn_name += lower(letter)
+
+    return fn_name
 
 class TestGenerator(ast.NodeVisitor):
     def __init__(self, *args, **kwargs):
@@ -39,7 +50,7 @@ class TestGenerator(ast.NodeVisitor):
 
         if hasattr(node, "parent"):
             parent  = node.parent
-            fn_name = "%s_%s" % (parent.name, fn_name)
+            fn_name = "%s_%s" % (_class_name_to_fn(parent.name), fn_name)
 
         self.lines.extend([
             nl("def test_%s():" % fn_name),
