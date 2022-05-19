@@ -71,6 +71,9 @@ def generate_tests(path, target_dir = None, check = False):
                     dir_prefix = root.replace(package_path, "")
                     dir_prefix = strip(dir_prefix, type_ = "/")
 
+                    if "__init__" in file_:
+                        file_ = "%s%s" % (dir_prefix, file_)
+
                     target_path = osp.join(target_dir, dir_prefix, "test_%s" % file_)
                     logger.info("Generating tests for %s..." % filepath)
                     logger.info("Writing tests to %s..." % target_path)
