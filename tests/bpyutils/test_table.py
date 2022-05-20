@@ -25,3 +25,28 @@ def test_table():
     table.insert(dummy)
     string = table.render()
     assert string.count("\n") == 3
+
+import pytest
+
+from bpyutils.table import (
+  tabulate
+)
+
+def test_tabulate():
+	raise NotImplementedError
+
+def test_table___init__():
+	raise NotImplementedError
+
+def test_table_empty():
+	raise NotImplementedError
+
+def test_table_insert():
+	raise NotImplementedError
+
+def test_table_render():
+	raise NotImplementedError
+
+def test_table___len__():
+	raise NotImplementedError
+

@@ -12,3 +12,50 @@ def test_environment():
         "config"))) #, "pip_executables")))
 
     return details
+
+import pytest
+
+from bpyutils.config import (
+  get_config_path,
+  Configuration
+)
+
+def test_get_config_path():
+	raise NotImplementedError
+
+def test_configuration():
+	raise NotImplementedError
+
+def test_configuration___init__():
+	raise NotImplementedError
+
+def test_configuration___del__():
+	raise NotImplementedError
+
+def test_configuration_read():
+	raise NotImplementedError
+
+def test_configuration_write():
+	raise NotImplementedError
+
+def test_configuration_get():
+	raise NotImplementedError
+
+def test_configuration_set():
+	raise NotImplementedError
+
+def test_settings___init__():
+	raise NotImplementedError
+
+def test_settings__init():
+	raise NotImplementedError
+
+def test_settings_get():
+	raise NotImplementedError
+
+def test_settings_set():
+	raise NotImplementedError
+
+def test_settings_to_dict():
+	raise NotImplementedError
+

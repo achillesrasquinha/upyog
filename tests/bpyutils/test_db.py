@@ -15,3 +15,30 @@ def test_run_db_shell():
 
     with pytest.raises(SystemExit):
         run_db_shell(db.path)
+
+from bpyutils.db import (
+  _get_queries,
+  DB
+)
+
+def test__get_queries():
+	raise NotImplementedError
+
+def test_db():
+	raise NotImplementedError
+
+def test_db___init__():
+	raise NotImplementedError
+
+def test_db_connected():
+	raise NotImplementedError
+
+def test_db_connect():
+	raise NotImplementedError
+
+def test_db_query():
+	raise NotImplementedError
+
+def test_db_from_file():
+	raise NotImplementedError
+

@@ -34,3 +34,21 @@ def test_build_fn():
 
     fn = build_fn(add, a = 1, b = 2)
     assert fn() == 3
+
+import pytest
+
+from bpyutils.util.types import (
+  auto_typecast,
+  _gen_to_seq,
+  fn
+)
+
+def test_auto_typecast():
+	raise NotImplementedError
+
+def test__gen_to_seq():
+	raise NotImplementedError
+
+def test_fn():
+	raise NotImplementedError
+

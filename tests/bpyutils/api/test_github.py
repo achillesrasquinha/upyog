@@ -14,3 +14,19 @@ def test_github():
             github_reponame
         )\
         .pr()
+
+import pytest
+
+
+def test_git_hub():
+	raise NotImplementedError
+
+def test_git_hub___init__():
+	raise NotImplementedError
+
+def test_git_hub_repo():
+	raise NotImplementedError
+
+def test_git_hub_pr():
+	raise NotImplementedError
+

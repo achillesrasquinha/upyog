@@ -74,3 +74,10 @@ def test_itervalues():
     assert isinstance(itervalues(dict_), Iterable)
 
     assert list(itervalues(dict_)) == ["bar"]
+
+import pytest
+
+
+def test_module_not_found_error():
+	raise NotImplementedError
+

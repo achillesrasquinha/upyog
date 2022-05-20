@@ -130,3 +130,69 @@ def test_makepath(tmpdir):
 
     makepath(path)
     assert osp.isfile(path)
+
+from bpyutils.util.system import (
+  pardir,
+  BaseShell,
+  ShellEnvironment,
+  ShellEnvironment,
+  copy
+)
+
+def test_pardir():
+	raise NotImplementedError
+
+def test_remove():
+	raise NotImplementedError
+
+def test_make_temp_dir():
+	raise NotImplementedError
+
+def test_make_temp_file():
+	raise NotImplementedError
+
+def test_base_shell():
+	raise NotImplementedError
+
+def test_base_shell___init__():
+	raise NotImplementedError
+
+def test_base_shell___call__():
+	raise NotImplementedError
+
+def test_ShellEnvironment():
+	raise NotImplementedError
+
+def test_shell_environment():
+	raise NotImplementedError
+
+def test_shell_environment___enter__():
+	raise NotImplementedError
+
+def test_shell_environment___exit__():
+	raise NotImplementedError
+
+def test_get_os():
+	raise NotImplementedError
+
+def test_unzip():
+	raise NotImplementedError
+
+def test_get_files():
+	raise NotImplementedError
+
+def test_get_basename():
+	raise NotImplementedError
+
+def test_make_archive():
+	raise NotImplementedError
+
+def test_move():
+	raise NotImplementedError
+
+def test_copy():
+	raise NotImplementedError
+
+def test_extract_all():
+	raise NotImplementedError
+

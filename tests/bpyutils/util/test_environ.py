@@ -23,3 +23,11 @@ def test_value_to_envval():
         
     with pytest.raises(TypeError):
         value_to_envval([ ])
+
+from bpyutils.util.environ import (
+  setenv
+)
+
+def test_setenv():
+	raise NotImplementedError
+

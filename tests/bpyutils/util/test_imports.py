@@ -15,3 +15,16 @@ def test_import_handler():
     assert import_handler("bpyutils") == __import__("bpyutils")
     
     assert import_handler("bpyutils.util.imports.import_handler") == import_handler
+
+import pytest
+
+from bpyutils.util.imports import (
+  import_or_raise
+)
+
+def test_handler_registry___missing__():
+	raise NotImplementedError
+
+def test_import_or_raise():
+	raise NotImplementedError
+

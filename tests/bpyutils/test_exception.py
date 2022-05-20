@@ -26,3 +26,15 @@ def test_popen_error():
         (BPyUtilsError, sp.CalledProcessError)
     )
     assert isinstance(BPyUtilsError(), Exception)
+
+
+from bpyutils.exception import (
+  DependencyNotFoundError
+)
+
+def test_bpy_utils_error():
+	raise NotImplementedError
+
+def test_dependency_not_found_error():
+	raise NotImplementedError
+

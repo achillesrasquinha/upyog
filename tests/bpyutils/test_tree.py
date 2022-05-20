@@ -92,3 +92,63 @@ foo
     assert tree8.parent == tree7
     tree8.parent = tree7
     assert tree8.parent == tree7
+
+from bpyutils.tree import (
+  _render_tree,
+  _check_node,
+  to_key
+)
+
+def test__render_tree():
+	raise NotImplementedError
+
+def test__check_node():
+	raise NotImplementedError
+
+def test_node___init__():
+	raise NotImplementedError
+
+def test_node_parent():
+	raise NotImplementedError
+
+def test_node_parent():
+	raise NotImplementedError
+
+def test_node_children():
+	raise NotImplementedError
+
+def test_node_children():
+	raise NotImplementedError
+
+def test_node___eq__():
+	raise NotImplementedError
+
+def test_node_empty():
+	raise NotImplementedError
+
+def test_node_add_child():
+	raise NotImplementedError
+
+def test_node_add_children():
+	raise NotImplementedError
+
+def test_node___repr__():
+	raise NotImplementedError
+
+def test_node_render():
+	raise NotImplementedError
+
+def test_node_to_dict():
+	raise NotImplementedError
+
+def test_to_key():
+	raise NotImplementedError
+
+def test_node_to_json():
+	raise NotImplementedError
+
+def test_node_find():
+	raise NotImplementedError
+
+def test_node___hash__():
+	raise NotImplementedError

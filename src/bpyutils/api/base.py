@@ -4,6 +4,7 @@ import collections
 import re
 
 import requests as req
+from bpyutils.model.base           import BaseObject
 from bpyutils._compat              import (
     urlencode, iteritems
 )
@@ -28,7 +29,9 @@ def _path_to_method_name(path):
 
     return method_name
 
-class BaseAPI(object):
+class BaseAPI(BaseObject):
+    _REPR_ATTRS = ("url",)
+
     """
     :param url: A base URL to use.
     :param proxies: A dictionary/list of proxies to use. If a list is passed,
@@ -59,11 +62,9 @@ class BaseAPI(object):
         if test:
             self.ping()
 
-    def __repr__(self):
-        klass   = self.__class__.__name__
-        repr_   = "<%s url='%s'>" % (klass, self._url)
-
-        return repr_
+    @property
+    def url(self):
+        return getattr(self, "_url", None)
 
     def _create_api_function(self, api):
         METHOD_CALLERS = {
@@ -218,7 +219,7 @@ class BaseAPI(object):
 
     def delete(self, url, *args, **kwargs):
         """
-        Dispatch a PUT request to the server.
+        Dispatch a DELETE request to the server.
         """
         response = self.request("DELETE", url, *args, **kwargs)
         return response

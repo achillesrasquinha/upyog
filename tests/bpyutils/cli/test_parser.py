@@ -22,3 +22,16 @@ def test_args():
     args = ["--verbose"]
     args = get_args(args, known = False)
     _assert_args(args)
+
+import pytest
+
+from bpyutils.cli.parser import (
+  get_parser
+)
+
+def test_get_parser():
+	raise NotImplementedError
+
+def test_get_args():
+	raise NotImplementedError
+

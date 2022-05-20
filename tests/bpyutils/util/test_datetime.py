@@ -14,3 +14,8 @@ def test_get_timestamp_str():
 
     with pytest.raises(ValueError):
         assert check_datetime_format(get_timestamp_str(), format_, raise_err = True)
+
+
+def test_check_datetime_format():
+	raise NotImplementedError
+

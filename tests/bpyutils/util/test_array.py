@@ -39,3 +39,26 @@ def test_sequencify():
     assert sequencify([1,2,3],  type_ = tuple) != (3,2,1)
     assert sequencify([],       type_ = tuple) == tuple()
     assert sequencify(None,     type_ = tuple) == (None,)
+
+from bpyutils.util.array import (
+  chunkify,
+  group_by,
+  find,
+  clip
+)
+
+def test_compact():
+	raise NotImplementedError
+
+def test_chunkify():
+	raise NotImplementedError
+
+def test_group_by():
+	raise NotImplementedError
+
+def test_find():
+	raise NotImplementedError
+
+def test_clip():
+	raise NotImplementedError
+
