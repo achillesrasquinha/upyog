@@ -39,12 +39,15 @@ class TestGenerator(ast.NodeVisitor):
         self._module_name    = kwargs.get("module_name")
         self._module_relpath = kwargs.get("module_relpath")
         self._filter         = kwargs.get("filter_", [])
-        
-        self._head_lines  = [
-            nl(space = 2),
-            nl("import pytest"),
-            nl()
-        ]
+
+        self._head_lines     = []
+
+        if "pytest" not in self._filter["imports"]:
+            self._head_lines = [
+                nl("import pytest"),
+                nl()
+            ]
+
         self._body_lines  = []
         self._import_defs = []
 
@@ -82,7 +85,7 @@ class TestGenerator(ast.NodeVisitor):
 
     def _add_test_fn(self, name, node_name, import_ = True):
         if name not in self._filter["functions"]:
-            if import_ and not node_name in self._filter["imports"]:
+            if import_ and not node_name in self._filter["imports_from"]:
                 self._import_defs.append(node_name)
 
             self._body_lines.extend([
@@ -119,8 +122,9 @@ class TestGenerator(ast.NodeVisitor):
 
 class NodeFetcher(ast.NodeVisitor):
     def __init__(self, *args, **kwargs):
-        self._functions = []
-        self._imports   = []
+        self._functions     = []
+        self._imports       = []
+        self._imports_from  = []
 
     @property
     def functions(self):
@@ -129,14 +133,22 @@ class NodeFetcher(ast.NodeVisitor):
     @property
     def imports(self):
         return getattr(self, "_imports", [])
+
+    @property
+    def imports_from(self):
+        return getattr(self, "_imports_from", [])
     
     def visit_FunctionDef(self, node):
         self._functions.append(node.name)
         self.generic_visit(node)
 
-    def visit_ImportFrom(self, node):
+    def visit_Import(self, node):
         for alias in node.names:
             self._imports.append(alias.name)
+
+    def visit_ImportFrom(self, node):
+        for alias in node.names:
+            self._imports_from.append(alias.name)
 
 def generate_tests(path, target_dir = None, check = False):
     path = osp.abspath(path)
@@ -169,7 +181,8 @@ def generate_tests(path, target_dir = None, check = False):
                         target_path = osp.join(target_dir, dir_prefix, "test_%s" % file_)
 
                         filter_fns  = []
-                        filter_imp  = []
+                        filter_imps = []
+                        filter_imp_from = []
                         
                         if osp.exists(target_path):
                             target_content  = _read_and_sanitize_file(target_path)
@@ -178,13 +191,15 @@ def generate_tests(path, target_dir = None, check = False):
                                 fetcher = NodeFetcher()
                                 fetcher.visit(target_ast_tree)
 
-                                filter_fns = fetcher.functions
-                                filter_imp = fetcher.imports
+                                filter_fns  = fetcher.functions
+                                filter_imps = fetcher.imports
+                                filter_imp_from = fetcher.imports_from
 
                         ast_tree = ast.parse(content)
                         test_generator = TestGenerator(module_name = package_name,
                             module_relpath = osp.join(dir_prefix, filename),
-                            filter_ = { "functions": filter_fns, "imports": filter_imp })
+                            filter_ = { "functions": filter_fns, 
+                                "imports": filter_imps, "imports_from": filter_imp_from })
                         test_generator.visit(ast_tree)
 
                         test_code = ""
@@ -202,6 +217,7 @@ def generate_tests(path, target_dir = None, check = False):
 
                         if osp.exists(target_path):
                             append = True
+                            test_code = nl(space = 2) + test_code
 
                         if not check:
                             write(target_path, test_code, force = True, append = append)
