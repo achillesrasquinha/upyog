@@ -41,6 +41,7 @@ class TestGenerator(ast.NodeVisitor):
         self._filter         = kwargs.get("filter_", [])
         
         self._head_lines  = [
+            nl(space = 2),
             nl("import pytest"),
             nl()
         ]
@@ -79,9 +80,10 @@ class TestGenerator(ast.NodeVisitor):
     def code(self):
         return "\n".join([self.head, self.body])
 
-    def _add_test_fn(self, name, node_name):
-        if name not in self._filter:
-            self._import_defs.append(node_name)
+    def _add_test_fn(self, name, node_name, import_ = True):
+        if name not in self._filter["functions"]:
+            if import_ and not node_name in self._filter["imports"]:
+                self._import_defs.append(node_name)
 
             self._body_lines.extend([
                 nl("def %s():" % name),
@@ -102,28 +104,39 @@ class TestGenerator(ast.NodeVisitor):
 
     def visit_FunctionDef(self, node):
         fn_name = node.name
+        is_class_fn = False
 
         if hasattr(node, "parent"):
             parent  = node.parent
             fn_name = "%s_%s" % (_class_name_to_fn(parent.name), fn_name)
+            is_class_fn = True
 
         fn_name = "test_%s" % fn_name
-
-        self._add_test_fn(fn_name, node.name)
+        
+        self._add_test_fn(fn_name, node.name, import_ = not is_class_fn)
 
         self.generic_visit(node)
 
 class NodeFetcher(ast.NodeVisitor):
     def __init__(self, *args, **kwargs):
         self._functions = []
+        self._imports   = []
 
     @property
     def functions(self):
         return getattr(self, "_functions", [])
+
+    @property
+    def imports(self):
+        return getattr(self, "_imports", [])
     
     def visit_FunctionDef(self, node):
         self._functions.append(node.name)
         self.generic_visit(node)
+
+    def visit_ImportFrom(self, node):
+        for alias in node.names:
+            self._imports.append(alias.name)
 
 def generate_tests(path, target_dir = None, check = False):
     path = osp.abspath(path)
@@ -156,6 +169,7 @@ def generate_tests(path, target_dir = None, check = False):
                         target_path = osp.join(target_dir, dir_prefix, "test_%s" % file_)
 
                         filter_fns  = []
+                        filter_imp  = []
                         
                         if osp.exists(target_path):
                             target_content  = _read_and_sanitize_file(target_path)
@@ -165,11 +179,12 @@ def generate_tests(path, target_dir = None, check = False):
                                 fetcher.visit(target_ast_tree)
 
                                 filter_fns = fetcher.functions
+                                filter_imp = fetcher.imports
 
                         ast_tree = ast.parse(content)
                         test_generator = TestGenerator(module_name = package_name,
-                            module_relpath = dir_prefix if dir_prefix else filename,
-                            filter_ = filter_fns)
+                            module_relpath = osp.join(dir_prefix, filename),
+                            filter_ = { "functions": filter_fns, "imports": filter_imp })
                         test_generator.visit(ast_tree)
 
                         test_code = ""
