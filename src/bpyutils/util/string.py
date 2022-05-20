@@ -3,11 +3,12 @@ import re
 import uuid
 
 from bpyutils._compat import urlparse
+from bpyutils.util.array import sequencify
 
 _REGEX_ANSI_ESCAPE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 _REGEX_HTML        = re.compile("<.*?>")
 
-def strip(string, type_ = " "):
+def strip(string, type_ = " \n"):
     string = string.lstrip(type_)
     string = string.rstrip(type_)
 

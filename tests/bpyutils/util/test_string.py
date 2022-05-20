@@ -1,4 +1,3 @@
-
 import pytest
 
 # imports - module imports
@@ -115,6 +114,3 @@ def test_tb():
     assert tb() == '  '
     assert tb(point = 4) == '    '
     assert tb('foobar') == '  foobar'
-
-
-
