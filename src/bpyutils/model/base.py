@@ -1,4 +1,10 @@
+from bpyutils._compat import iteritems
+
 class BaseObject(object):
+    def __init__(self, *args, **kwargs):
+        for kwarg, value in iteritems(kwargs):
+            setattr(self, kwarg, value)
+
     def __repr__(self):
         klass  = self.__class__.__name__
 

@@ -152,3 +152,4 @@ def test_node_find():
 
 def test_node___hash__():
 	raise NotImplementedError
+

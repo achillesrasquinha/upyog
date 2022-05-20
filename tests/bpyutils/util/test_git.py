@@ -7,3 +7,5 @@ from bpyutils.util.git import (
 def test_resolve_git_url():
 	raise NotImplementedError
 
+
+

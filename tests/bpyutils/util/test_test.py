@@ -65,3 +65,5 @@ def test_node_fetcher_visit_ImportFrom():
 def test_generate_tests():
 	raise NotImplementedError
 
+
+

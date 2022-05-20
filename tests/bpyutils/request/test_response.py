@@ -22,3 +22,5 @@ def test_response___repr__():
 def test_response_raise_for_status():
 	raise NotImplementedError
 
+
+

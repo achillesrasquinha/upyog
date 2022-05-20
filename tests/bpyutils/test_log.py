@@ -18,3 +18,5 @@ def test_log_formatter_format():
 def test_get_logger():
 	raise NotImplementedError
 
+
+

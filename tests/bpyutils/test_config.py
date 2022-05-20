@@ -59,3 +59,5 @@ def test_settings_set():
 def test_settings_to_dict():
 	raise NotImplementedError
 
+
+

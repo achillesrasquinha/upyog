@@ -40,3 +40,5 @@ def test_jsonlogger_save():
 def test_jsonlogger___repr__():
 	raise NotImplementedError
 
+
+
