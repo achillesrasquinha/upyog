@@ -95,17 +95,13 @@ foo
 
 from bpyutils.tree import (
   _render_tree,
-  _check_node,
-  to_key
+  _check_node
 )
 
 def test__render_tree():
 	raise NotImplementedError
 
 def test__check_node():
-	raise NotImplementedError
-
-def test_node___init__():
 	raise NotImplementedError
 
 def test_node_parent():
@@ -141,9 +137,6 @@ def test_node_render():
 def test_node_to_dict():
 	raise NotImplementedError
 
-def test_to_key():
-	raise NotImplementedError
-
 def test_node_to_json():
 	raise NotImplementedError
 
@@ -152,4 +145,3 @@ def test_node_find():
 
 def test_node___hash__():
 	raise NotImplementedError
-

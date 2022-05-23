@@ -1,5 +1,3 @@
-
-
 # imports - standard imports
 import subprocess as sp
 
@@ -7,7 +5,8 @@ import subprocess as sp
 from bpyutils.util.system import popen
 from bpyutils.exception   import (
     BPyUtilsError,
-    PopenError
+    PopenError,
+    DependencyNotFoundError
 )
 
 # imports - test imports
@@ -27,16 +26,5 @@ def test_popen_error():
     )
     assert isinstance(BPyUtilsError(), Exception)
 
-
-from bpyutils.exception import (
-  DependencyNotFoundError
-)
-
-def test_bpy_utils_error():
-	raise NotImplementedError
-
 def test_dependency_not_found_error():
-	raise NotImplementedError
-
-
-
+    assert isinstance(DependencyNotFoundError(), ImportError)
