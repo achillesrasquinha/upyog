@@ -6,6 +6,3 @@ from bpyutils.__init__ import (
 
 def test_get_version_str():
 	raise NotImplementedError
-
-
-
