@@ -39,8 +39,7 @@ import pytest
 
 from bpyutils.util.types import (
   auto_typecast,
-  _gen_to_seq,
-  fn
+  _gen_to_seq
 )
 
 def test_auto_typecast():
@@ -48,9 +47,3 @@ def test_auto_typecast():
 
 def test__gen_to_seq():
 	raise NotImplementedError
-
-def test_fn():
-	raise NotImplementedError
-
-
-

@@ -23,8 +23,6 @@ def test_doc_generator_visit_FunctionDef():
 def test_generate_docs():
 	raise NotImplementedError
 
-
-
 from bpyutils.util.doc import (
   _class_name_to_fn,
   _read_and_sanitize_file,
@@ -73,4 +71,3 @@ def test_node_fetcher_visit_ImportFrom():
 
 def test_generate_tests():
 	raise NotImplementedError
-

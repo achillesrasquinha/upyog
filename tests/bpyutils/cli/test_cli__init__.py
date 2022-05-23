@@ -24,12 +24,3 @@ def test_command():
     
     _assert_command(dict(yes = False))
     _assert_command(dict(force = True), dict(force = True), dict(force = False))
-
-import pytest
-
-from bpyutils.cli import (
-  wrapper
-)
-
-def test_wrapper():
-	raise NotImplementedError

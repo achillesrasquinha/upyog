@@ -6,6 +6,3 @@ from bpyutils.i18n.util import (
 
 def test_get_locale():
 	raise NotImplementedError
-
-
-
