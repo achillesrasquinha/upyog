@@ -1,6 +1,6 @@
 import pytest
 
-from bpyutils.i18n.__init__ import (
+from bpyutils.i18n import (
   _,
   register
 )
@@ -10,6 +10,3 @@ def test__():
 
 def test_register():
 	raise NotImplementedError
-
-
-
