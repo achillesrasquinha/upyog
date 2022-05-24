@@ -5,12 +5,32 @@ from bpyutils.api.base import (
   BaseAPI
 )
 
+URL_HTTPBIN = "https://httpbin.org"
+
+class HttpBin(BaseAPI):
+	url = URL_HTTPBIN
+	api = {
+		"paths": [{
+			"path": "status/:codes",
+			"fn_name": "status",
+			"doc": "This is the status api",
+			"params": {
+				"codes": {
+					"type": "path",
+					"required": True
+				}
+			}
+		}, {
+			"path": "json"
+		}]
+	}
+
 def _assert_response_ok(response):
 	assert response.ok
 
 @pytest.fixture
 def httpbin():
-	api = BaseAPI(url = "https://httpbin.org")
+	api = HttpBin(url = URL_HTTPBIN)
 	return api
 
 def test__path_to_method_name():
@@ -21,19 +41,23 @@ def test__path_to_method_name():
 	# assert _path_to_method_name("api/user/:id") 	== "api_user" # TODO: implement
 
 def test_base_api():
-	raise NotImplementedError
+	with pytest.raises(TypeError):
+		BaseAPI(proxies = 1)
 
-def test_base_api___init__():
-	raise NotImplementedError
+def test_base_api__create_api_function(httpbin):
+	_assert_response_ok(httpbin.json())
+	_assert_response_ok(httpbin.status(codes = 200))
 
-def test_base_api__create_api_function():
-	raise NotImplementedError
+	assert httpbin.status.__doc__ == "This is the status api"
 
-def test_base_api__build_api():
-	raise NotImplementedError
+# TODO: Doesn't affect coverage but needs implementation.
+# def test_base_api__build_api():
+# 	raise NotImplementedError
 
-def test_base_api__build_url():
-	raise NotImplementedError
+def test_base_api__build_url(httpbin):
+	assert httpbin._build_url("api/user") == "%s/api/user" % URL_HTTPBIN
+	assert httpbin._build_url("api/user", params = { "id": 2 }) == "%s/api/user?id=2" % URL_HTTPBIN
+	assert httpbin._build_url("api/user", prefix = False) == "api/user"
 
 # TODO: check status codes?
 def test_base_api_request(httpbin):

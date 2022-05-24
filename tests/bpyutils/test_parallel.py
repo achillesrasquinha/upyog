@@ -27,7 +27,7 @@ from bpyutils.parallel import (
   PoolMixin,
   BasePool,
   NoDaemonPool,
-  NonDaemonProcess,
+#   NonDaemonProcess,
   NoDaemonPool,
   no_daemon_pool
 )
@@ -85,6 +85,3 @@ def test_no_daemon_pool_Process():
 
 def test_no_daemon_pool():
 	raise NotImplementedError
-
-
-

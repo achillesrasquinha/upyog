@@ -1,7 +1,7 @@
 # imports - standard imports
 from bpyutils.cli.parser import get_args
 
-def test_args():
+def test_get_args():
     def _get_arg(args, arg):
         if hasattr(args, arg):
             return getattr(args, arg)
@@ -23,17 +23,6 @@ def test_args():
     args = get_args(args, known = False)
     _assert_args(args)
 
-import pytest
-
-from bpyutils.cli.parser import (
-  get_parser
-)
-
-def test_get_parser():
-	raise NotImplementedError
-
-def test_get_args():
-	raise NotImplementedError
-
-
-
+    args = ["--help"]
+    args = get_args(args)
+    _assert_args(args)

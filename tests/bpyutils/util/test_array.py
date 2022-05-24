@@ -48,19 +48,17 @@ from bpyutils.util.array import (
 )
 
 def test_compact():
-	raise NotImplementedError
+    raise NotImplementedError
 
 def test_chunkify():
-	raise NotImplementedError
+    raise NotImplementedError
 
 def test_group_by():
-	raise NotImplementedError
+    raise NotImplementedError
 
 def test_find():
-	raise NotImplementedError
+    raise NotImplementedError
 
 def test_clip():
-	raise NotImplementedError
-
-
-
+    assert clip([1, 2, 3, 4, 5], low = 2, high = 4) == [2, 2, 3, 4, 4]
+    assert clip([1, 2, 3, 4, 5], low = 2) == [2, 2, 3, 4, 5]

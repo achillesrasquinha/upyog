@@ -10,6 +10,3 @@ def test_confirm():
 
 def test_format():
 	raise NotImplementedError
-
-
-

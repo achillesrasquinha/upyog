@@ -99,7 +99,7 @@ class BaseAPI(BaseObject):
 
                         if type_ == "path":
                             value = kwargs.get(argument)
-                            query = query.replace(":%s" % param, value)
+                            query = query.replace(":%s" % param, str(value))
                         else:
                             kwargs[param] = kwargs.get(argument, default)
                             parameters.append(param)

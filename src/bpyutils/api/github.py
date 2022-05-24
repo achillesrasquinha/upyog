@@ -10,7 +10,7 @@ class GitHub(BaseAPI):
 
         self._token = token
 
-        self._repo_reponame = None
+        self._repo_username = None
         self._repo_reponame = None
 
     def repo(self, username, reponame):
