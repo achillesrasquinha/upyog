@@ -1,7 +1,4 @@
-# imports - standard imports
-import collections
-
-from bpyutils._compat import iteritems
+from bpyutils._compat import iteritems, Mapping
 
 def merge_deep(source, dest):
     # https://stackoverflow.com/a/20666342
@@ -76,7 +73,7 @@ def autodict(*args, **kwargs):
     update    = dict(*args, **kwargs)
 
     for key, value in iteritems(update):
-        if isinstance(value, collections.Mapping):
+        if isinstance(value, Mapping):
             value = autodict(value)
         
         _autodict.update({

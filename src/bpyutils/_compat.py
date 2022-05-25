@@ -90,6 +90,8 @@ if PY2: # pragma: no cover
     range        = xrange
 
     from Queue import Queue
+
+    from collections import Mapping
 else:
     # moves
     from urllib.request import urlopen, Request
@@ -115,6 +117,8 @@ else:
     string_types = str
 
     from queue import Queue
+
+    from collections.abc import Mapping
 
 if platform.system() in ['Linux', 'Darwin']:
     EX_OK      = os.EX_OK

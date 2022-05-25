@@ -1,11 +1,7 @@
 # imports - compatibility imports
 from __future__ import absolute_import
-import collections
 import sys
 import os.path as osp
-
-# imports - standard imports
-import traceback
 
 from bpyutils.commands.util 	import cli_format
 from bpyutils.util._dict        import merge_dict
@@ -18,7 +14,7 @@ from bpyutils.util.test         import generate_tests
 from bpyutils.util.doc          import generate_docs
 from bpyutils.db                import run_db_shell
 from bpyutils 		      	    import (cli, log)
-from bpyutils._compat		    import iteritems
+from bpyutils._compat		    import iteritems, Mapping
 from bpyutils.config            import environment, get_config_path
 from bpyutils.__attr__      	import __name__ as NAME
 from bpyutils.exception         import DependencyNotFoundError
@@ -117,7 +113,7 @@ def _command(*args, **kwargs):
             for job in jobs:
                 name = job
 
-                if isinstance(job, collections.Mapping):
+                if isinstance(job, Mapping):
                     name = job["name"]
                 
                 job_module_runner = import_handler("%s.%s.run" % (module, name))

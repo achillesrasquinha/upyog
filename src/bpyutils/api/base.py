@@ -1,12 +1,12 @@
 # imports - standard imports
 import random
-import collections
 import re
 
 import requests as req
 from bpyutils.model.base           import BaseObject
 from bpyutils._compat              import (
-    urlencode, iteritems
+    urlencode, iteritems,
+    Mapping
 )
 from bpyutils.util.array           import (
     sequencify,
@@ -45,13 +45,13 @@ class BaseAPI(BaseObject):
         self._session = req.Session()
 
         if proxies and \
-            not isinstance(proxies, (collections.Mapping, list, tuple)):
+            not isinstance(proxies, (Mapping, list, tuple)):
             raise TypeError((
                 "proxies %s are not of valid type. You must "
                 "either a dictionary of a list of dictionaries of the "
                 "following format { protocol: ip }."))
 
-        if isinstance(proxies, collections.Mapping):
+        if isinstance(proxies, Mapping):
             proxies = [proxies]
 
         self._proxies = proxies
@@ -87,7 +87,7 @@ class BaseAPI(BaseObject):
             if params:
                 parameters = []
 
-                if isinstance(params, collections.Mapping):
+                if isinstance(params, Mapping):
                     for param, info in iteritems(params):
                         type_ = info.get("type", "param")
                         required = info.get("required")
