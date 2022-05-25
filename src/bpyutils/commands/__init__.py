@@ -15,10 +15,12 @@ from bpyutils.util.imports      import import_handler
 from bpyutils.util.system       import touch
 from bpyutils.util.error        import pretty_print_error
 from bpyutils.util.test         import generate_tests
+from bpyutils.util.doc          import generate_docs
+from bpyutils.db                import run_db_shell
 from bpyutils 		      	    import (cli, log)
 from bpyutils._compat		    import iteritems
-from bpyutils.config            import environment
-from bpyutils.__attr__      	import __name__
+from bpyutils.config            import environment, get_config_path
+from bpyutils.__attr__      	import __name__ as NAME
 from bpyutils.exception         import DependencyNotFoundError
 
 logger    = log.get_logger(level = log.DEBUG)
@@ -100,6 +102,11 @@ def _command(*args, **kwargs):
     
     logger.info("Using %s jobs..." % a.jobs)
 
+    if a.dbshell:
+        path_config = get_config_path(name = a.dbshell or NAME)
+        path_db = osp.join(path_config, "db.db")
+        run_db_shell(path_db)
+
     if a.run_jobs:
         logger.info("Running module %s" % a.run_jobs)
 
@@ -147,3 +154,6 @@ def _command(*args, **kwargs):
 
     if a.generate_tests:
         generate_tests(a.generate_tests, check = a.check, target_dir = a.output_dir)
+        
+    if a.generate_docs:
+        generate_docs(a.generate_docs, check = a.check, target_dir = a.output_dir)

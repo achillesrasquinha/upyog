@@ -88,9 +88,16 @@ def get_parser():
         default = getenv("FORCE", False),
         help    = "Force."
     )
+    parser.add_argument("--dbshell",
+        default = getenv("DATABASE_SHELL"),
+        help    = "Activate database shell."
+    )
 
     parser.add_argument("--generate-tests",
         help    = "generate test cases for a package"
+    )
+    parser.add_argument("--generate-docs",
+        help    = "generate doc strings for a package"
     )
     parser.add_argument("--output-dir",
         help    = "output directory for generator"

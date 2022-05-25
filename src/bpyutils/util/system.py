@@ -12,7 +12,8 @@ import shutil
 import tempfile
 import contextlib
 from   glob import glob
-import traceback
+import fnmatch
+import re
 
 # imports - module imports
 from bpyutils.util._dict      import merge_dict
@@ -22,6 +23,8 @@ from bpyutils.util.string     import (
     safe_decode,
     get_random_str
 )
+from bpyutils.util.types      import lmap, lfilter
+from bpyutils.util.array      import sequencify
 from bpyutils.util.environ    import SECRETS
 from bpyutils._compat         import iteritems, PY2
 from bpyutils.log             import get_logger
@@ -30,7 +33,7 @@ logger = get_logger()
 
 __STDOUT__ = None
 
-def read(fname, mode = "r"):
+def read(fname, mode = "r", sanitize = False):
     """Read content from a given file.
 
     Args:
@@ -47,6 +50,10 @@ def read(fname, mode = "r"):
     """
     with open(fname, mode = mode or "r") as f:
         data = f.read()
+
+        if data:
+            data = strip(data)
+
     return data
 
 def write(fname, data = None, force = False, append = False, mode = None):
@@ -321,3 +328,21 @@ def extract_all(source, dest):
         >>> bpy.extract_all("path/to/src", "path/to/dest")
     """
     shutil.unpack_archive(source, dest)
+
+def walk(*args, **kwargs):
+    include = sequencify(kwargs.pop("include", []))
+    if include:
+        include = 'r|'.join(lmap(fnmatch.translate, include))
+
+    for root, dirs, files in os.walk(*args, **kwargs):
+        if include:
+            files = lmap(lambda f: osp.join(root, f), files)
+            files = lfilter(lambda f: re.match(include, f), files)
+
+        yield root, dirs, files
+
+def check_path(path, raise_err = True):
+    path = osp.abspath(path)
+
+    if not osp.exists(path) and raise_err:
+        raise FileNotFoundError("Path %s not found." % path)

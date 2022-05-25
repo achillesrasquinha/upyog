@@ -65,7 +65,7 @@ else:
 if PY2: # pragma: no cover
     # moves
     from urllib2  import urlopen, Request
-    from urlparse import urlparse
+    from urlparse import urlparse, urljoin
     
     try:
         from requests.exceptions import HTTPError
@@ -93,7 +93,7 @@ if PY2: # pragma: no cover
 else:
     # moves
     from urllib.request import urlopen, Request
-    from urllib.parse   import urlencode, urlparse
+    from urllib.parse   import urlencode, urlparse, urljoin
 
     try:
         from requests.exceptions import HTTPError

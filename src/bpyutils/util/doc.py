@@ -8,9 +8,11 @@ from bpyutils.util.system import (
     makepath
 )
 from bpyutils.log import get_logger
+from bpyutils.util.system import walk, check_path
 from bpyutils.util.string import nl, tb, strip, lower
 from bpyutils.parallel import no_daemon_pool
 from bpyutils.util.types import lmap
+from bpyutils.model.base import BaseObject
 
 logger  = get_logger()
 
@@ -150,74 +152,85 @@ class NodeFetcher(ast.NodeVisitor):
         for alias in node.names:
             self._imports_from.append(alias.name)
 
-def generate_tests(path, target_dir = None, check = False):
-    path = osp.abspath(path)
-    package_name = get_basename(path)
-    package_path = osp.join(path, "src", package_name)
+class PythonFileParser(BaseObject):
+    def __init__(self, path):
+        path = check_path(path)
 
-    if not osp.exists(package_path):
-        raise FileNotFoundError("Path %s not found." % package_path)
+class PythonProject(BaseObject):
+    def __init__(self, path):
+        self._path = check_path(path)
+        self._package_name = get_basename(self._path)
+
+    @property
+    def package_dir(self):
+        return osp.join(self._path, "src", self._package_name)
+
+    @property
+    def test_dir(self):
+        return osp.join(self._path, "tests", self._package_name)
+
+def generate_docs(path, target_dir = None, check = False):
+    project = PythonProject(path)
 
     if target_dir:
         target_dir = osp.abspath(target_dir)
     else:
-        target_dir = osp.join(path, "tests", package_name)
-        logger.info("Using target directory %s" % target_dir)
+        target_dir = project.docs_dir
 
-    for root, dirs, files in os.walk(package_path):
-        for file_ in files:
-            filepath = osp.join(root, file_)
+    logger.info("Using target directory %s" % target_dir)
 
-            if osp.exists(filepath):
-                filename, extension = osp.splitext(file_)
+    for root, dirs, files in walk(project.package_dir, include = "*.py"):
+        for filepath in files:
+            parser = PythonFileParser(filepath)
+            parser.parse()
             
-                if extension == ".py":
-                    content = _read_and_sanitize_file(filepath)
-                    
-                    if content:
-                        dir_prefix = root.replace(package_path, "")
-                        dir_prefix = strip(dir_prefix, type_ = "/")
 
-                        target_path = osp.join(target_dir, dir_prefix, "test_%s" % file_)
 
-                        filter_fns  = []
-                        filter_imps = []
-                        filter_imp_from = []
+            # if osp.exists(filepath):
+                    # if content:
+                    #     dir_prefix = root.replace(package_path, "")
+                    #     dir_prefix = strip(dir_prefix, type_ = "/")
+
+                    #     target_path = osp.join(target_dir, dir_prefix, "test_%s" % file_)
+
+                    #     filter_fns  = []
+                    #     filter_imps = []
+                    #     filter_imp_from = []
                         
-                        if osp.exists(target_path):
-                            target_content  = _read_and_sanitize_file(target_path)
-                            if target_content:
-                                target_ast_tree = ast.parse(target_content)
-                                fetcher = NodeFetcher()
-                                fetcher.visit(target_ast_tree)
+                    #     if osp.exists(target_path):
+                    #         target_content  = _read_and_sanitize_file(target_path)
+                    #         if target_content:
+                    #             target_ast_tree = ast.parse(target_content)
+                    #             fetcher = NodeFetcher()
+                    #             fetcher.visit(target_ast_tree)
 
-                                filter_fns  = fetcher.functions
-                                filter_imps = fetcher.imports
-                                filter_imp_from = fetcher.imports_from
+                    #             filter_fns  = fetcher.functions
+                    #             filter_imps = fetcher.imports
+                    #             filter_imp_from = fetcher.imports_from
 
-                        ast_tree = ast.parse(content)
-                        test_generator = DocGenerator(module_name = package_name,
-                            module_relpath = osp.join(dir_prefix, filename),
-                            filter_ = { "functions": filter_fns, 
-                                "imports": filter_imps, "imports_from": filter_imp_from })
-                        test_generator.visit(ast_tree)
+                    #     ast_tree = ast.parse(content)
+                    #     doc_generator = DocGenerator(module_name = package_name,
+                    #         module_relpath = osp.join(dir_prefix, filename),
+                    #         filter_ = { "functions": filter_fns, 
+                    #             "imports": filter_imps, "imports_from": filter_imp_from })
+                    #     doc_generator.visit(ast_tree)
 
-                        test_code = ""
+                    #     test_code = ""
 
-                        if test_generator.body:
-                            test_code = test_generator.code
+                    #     if doc_generator.body:
+                    #         test_code = doc_generator.code
 
-                        if "__init__" in file_:
-                            file_ = "%s%s" % (dir_prefix, file_)
+                    #     if "__init__" in file_:
+                    #         file_ = "%s%s" % (dir_prefix, file_)
 
-                        logger.info("Generating tests for %s..." % filepath)
-                        logger.info("Writing tests to %s..." % target_path)
+                    #     logger.info("Generating tests for %s..." % filepath)
+                    #     logger.info("Writing tests to %s..." % target_path)
 
-                        append = False
+                    #     append = False
 
-                        if osp.exists(target_path):
-                            append = True
-                            test_code = nl(space = 2) + test_code
+                    #     if osp.exists(target_path):
+                    #         append = True
+                    #         test_code = nl(space = 2) + test_code
 
-                        if not check:
-                            write(target_path, test_code, force = True, append = append)
+                    #     if not check:
+                    #         write(target_path, test_code, force = True, append = append)
