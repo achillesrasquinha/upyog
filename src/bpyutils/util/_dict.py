@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from bpyutils._compat import iteritems, Mapping
 
 def merge_deep(source, dest):
@@ -56,7 +58,7 @@ def dict_from_list(keys, values):
     """
     return dict(zip(keys, values))
 
-class AutoDict(collections.defaultdict):
+class AutoDict(defaultdict):
     __repr__ = dict.__repr__
 
 def autodict(*args, **kwargs):
