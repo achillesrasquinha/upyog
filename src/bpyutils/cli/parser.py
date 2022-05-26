@@ -16,6 +16,7 @@ from bpyutils.util.environ    import getenv
 from bpyutils.cli             import util as _cli
 from bpyutils.cli.formatter   import ArgumentParserFormatter
 from bpyutils.cli.util        import _CAN_ANSI_FORMAT
+from bpyutils.util.git        import resolve_git_url
 
 _DESCRIPTION_JUMBOTRON = \
 """
@@ -35,6 +36,25 @@ def get_parser():
         add_help        = False,
         formatter_class = ArgumentParserFormatter
     )
+
+    # boilpy
+    parser.add_argument("--update-boilpy-project",
+        type    = resolve_git_url,
+        help    = "Update project"
+    )
+    parser.add_argument("--project-branch",
+        help    = "Project branch to checkout from"
+    )
+    parser.add_argument("--overwrite-project",
+        action  = "store_true",
+        help    = "Overwrite changes within project"
+    )
+    parser.add_argument("--boilpy-path",
+        type    = resolve_git_url,
+        help    = "Path to BoilPy repostitory",
+        default = "https://github.com/achillesrasquinha/boilpy"
+    )
+
     parser.add_argument("--run-job",
         action  = "append",
         help    = "Run a specific job"
