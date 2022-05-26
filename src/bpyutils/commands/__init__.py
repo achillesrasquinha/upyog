@@ -13,7 +13,7 @@ from bpyutils.util.error        import pretty_print_error
 from bpyutils.util.test         import generate_tests
 from bpyutils.util.doc          import generate_docs
 from bpyutils.db                import run_db_shell
-from bpyutils 		      	    import (cli, log)
+from bpyutils 		      	    import (cli, log, parallel)
 from bpyutils._compat		    import iteritems, Mapping
 from bpyutils.config            import environment, get_config_path
 from bpyutils.__attr__      	import __name__ as NAME
@@ -123,9 +123,19 @@ def _command(*args, **kwargs):
                 except Exception as e:
                     pretty_print_error(e)
                     sys.exit(1)
+    else:
+        if a.run_job:
+            for job in a.run_job:
+                logger.info("Running a specific job %s" % job)
 
-    if a.run_job:
-        logger.info("Running a specific job %s" % a.run_job)
+                job_module_runner = import_handler("%s.run" % job)
+                args = format_params(a.param)
+                
+                try:
+                    job_module_runner(**args)
+                except Exception as e:
+                    pretty_print_error(e)
+                    sys.exit(1)
 
     if a.method:
         for method in a.method:
@@ -141,12 +151,20 @@ def _command(*args, **kwargs):
             "data.preprocess_data",
             "pipelines.train"
         ]
+        
+        args = format_params(a.param)
+        callables = []
 
         for pipeline in pipelines:
-            args = format_params(a.param)
-
             callable = import_handler("%s.%s" % (a.run_ml, pipeline))
-            callable(**args)
+            callables.append(callable)
+
+        if a.online:
+            with parallel.pool(processes = a.jobs) as pool:
+                pool.map(callable)
+        else:
+            for callable in callables:
+                callable(**args)
 
     if a.generate_tests:
         generate_tests(a.generate_tests, check = a.check, target_dir = a.output_dir)

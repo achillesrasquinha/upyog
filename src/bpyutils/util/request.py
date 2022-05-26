@@ -77,7 +77,12 @@ def download_file(url, path = None, chunk_size = None, req_kwargs = { }):
 
     size_total  = int(headers.get('content-length', 0))
 
-    tqdm         = import_handler("tqdm.tqdm")
+    tqdm = None
+    try:
+        tqdm = import_handler("tqdm.tqdm")
+    except ImportError:
+        pass
+    
     progress_bar = None
 
     if tqdm:

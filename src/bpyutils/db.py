@@ -130,6 +130,7 @@ class Table(BaseObject):
 class DB(BaseObject):
     def __init__(self, path, timeout = 10):
         self.path        = path
+        self.location    = osp.dirname(self.path)
         self._connection = None
         self.timeout     = timeout
 
@@ -193,7 +194,7 @@ _CONNECTION = None
 def get_connection(location = PATH["CACHE"], bootstrap = True, log = False):
     global _CONNECTION
 
-    if not _CONNECTION:
+    if not _CONNECTION or _CONNECTION.location != location:
         if log:
             logger.info("Establishing a DataBase connection...")
 
