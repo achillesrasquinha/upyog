@@ -13,6 +13,8 @@ from bpyutils.util.error        import pretty_print_error
 from bpyutils.util.test         import generate_tests
 from bpyutils.util.doc          import generate_docs
 from bpyutils.util.git          import resolve_git_url
+from bpyutils.util.datetime     import get_timestamp_str
+from bpyutils.api.github        import GitHub
 from bpyutils.db                import run_db_shell
 from bpyutils 		      	    import (cli, log, parallel)
 from bpyutils._compat		    import iteritems, Mapping
@@ -214,3 +216,19 @@ def _command(*args, **kwargs):
                     shell("git fetch template")
                     # shell("git merge")
                     shell("git merge --allow-unrelated-histories template/master", raise_err = False)
+
+                    shell("git add .")
+                    shell("git commit -m '[skip ci]: Update template'")
+
+                    target_branch = "boilpy-%s" % get_timestamp_str('%Y%m%d%H%M%S')
+
+                    shell("git checkout -B %s" % target_branch)
+                    shell("git push origin %s" % target_branch)
+
+                    github = GitHub(token = a.github_access_token)
+                    github\
+                        .repo(
+                            a.github_username,
+                            a.github_reponame
+                        )\
+                        .pr()

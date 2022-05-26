@@ -15,7 +15,7 @@ from bpyutils.__attr__     import (
 from bpyutils.util.environ    import getenv
 from bpyutils.cli             import util as _cli
 from bpyutils.cli.formatter   import ArgumentParserFormatter
-from bpyutils.cli.util        import _CAN_ANSI_FORMAT
+from bpyutils.cli.util        import _CAN_ANSI_FORMAT, add_github_args
 from bpyutils.util.git        import resolve_git_url
 
 _DESCRIPTION_JUMBOTRON = \
@@ -54,6 +54,8 @@ def get_parser():
         help    = "Path to BoilPy repostitory",
         default = "https://github.com/achillesrasquinha/boilpy"
     )
+
+    parser = add_github_args(parser, env_prefix = __name__.replace("-", "_").upper())
 
     parser.add_argument("--run-job",
         action  = "append",

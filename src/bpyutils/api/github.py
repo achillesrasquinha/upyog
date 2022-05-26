@@ -23,5 +23,5 @@ class GitHub(BaseAPI):
             raise ValueError("Repo username or reponame not found.")
 
         url = "repos/%s/%s/pulls" % (self._repo_username, self._repo_reponame)
-        response = self.get(url)
+        response = self.post(url)
         return response
