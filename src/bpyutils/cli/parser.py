@@ -72,6 +72,10 @@ def get_parser():
     parser.add_argument("--run-ml",
         help    = "Run ML pipeline"
     )
+    parser.add_argument("--online",
+        action  = "store_true",
+        help    = "Run ML pipeline in online mode"
+    )
     parser.add_argument("-p", "--param",
         action  = "append",
         help    = "Parameters"

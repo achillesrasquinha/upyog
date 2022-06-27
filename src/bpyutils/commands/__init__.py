@@ -34,6 +34,7 @@ ARGUMENTS = dict(
     no_cache		            = False,
     no_color 	 				= True,
     output						= None,
+    online                      = False,
     ignore_error				= False,
     force						= False,
     generate_tests              = None,
