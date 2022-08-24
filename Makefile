@@ -213,7 +213,7 @@ docker-pull: ## Pull Latest Docker Images
 
 	@docker pull $(DOCKER_IMAGE):latest || true
 
-docker-build: clean docker-pull ## Build the Docker Image.
+docker-build: clean docker-pull requirements ## Build the Docker Image.
 	$(call log,INFO,Building Docker Image)
 
 	if [[ -d "${BASEDIR}/docker/files" ]]; then \

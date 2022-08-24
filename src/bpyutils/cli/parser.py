@@ -10,7 +10,9 @@ from bpyutils.__attr__     import (
     __name__,
     __version__,
     __description__,
-    __command__
+    __command__,
+    __author__,
+    __email__
 )
 from bpyutils.util.environ    import getenv
 from bpyutils.cli             import util as _cli
@@ -127,6 +129,14 @@ def get_parser():
     )
     parser.add_argument("--output-dir",
         help    = "output directory for generator"
+    )
+    parser.add_argument("--git-username",
+        help    = "Git Username",
+        default = getenv("GIT_USERNAME", __author__)
+    )
+    parser.add_argument("--git-email",
+        help    = "Git Email",
+        default = getenv("GIT_EMAIL", __email__)
     )
 
     if _CAN_ANSI_FORMAT or "pytest" in sys.modules:

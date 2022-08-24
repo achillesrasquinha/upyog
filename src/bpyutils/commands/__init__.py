@@ -14,7 +14,6 @@ from bpyutils.util.test         import generate_tests
 from bpyutils.util.doc          import generate_docs
 from bpyutils.util.git          import resolve_git_url
 from bpyutils.util.datetime     import get_timestamp_str
-from bpyutils.api.github        import GitHub
 from bpyutils.db                import run_db_shell
 from bpyutils 		      	    import (cli, log, parallel)
 from bpyutils._compat		    import iteritems, Mapping
@@ -209,6 +208,9 @@ def _command(*args, **kwargs):
                 template_repo_dir = osp.join(template_dir, os.listdir(template_dir)[0])
 
                 with ShellEnvironment(cwd = repo_dir) as shell:
+                    shell("git config --global user.name  %s" % a.git_username)
+                    shell("git config --global user.email %s" % a.git_email)
+                    
                     try:
                         shell("git remote add template %s" % template_repo_dir)
                     except:
@@ -225,6 +227,8 @@ def _command(*args, **kwargs):
 
                     shell("git checkout -B %s" % target_branch)
                     shell("git push origin %s" % target_branch)
+
+                    GitHub = import_handler("bpyutils.api.github.GitHub")
 
                     github = GitHub(token = a.github_access_token)
                     github\
