@@ -18,7 +18,8 @@ def resolve_git_url(repo, raise_err = True):
 
     return repo
 
-def update_git_repo(repo, clone = False, url = None, username = None, password = None, raise_err = True):
+def update_git_repo(repo, clone = False, url = None, username = None, password = None,
+    branch = "master", raise_err = True):
     repo = osp.abspath(repo)
 
     if not osp.exists(repo):
@@ -37,7 +38,7 @@ def update_git_repo(repo, clone = False, url = None, username = None, password =
                 raise FileNotFoundError("Repository %s not found." % repo)
     else:
         try:
-            popen("git pull origin master", cwd = repo)
+            popen("git pull origin %s" % branch, cwd = repo)
         except PopenError:
             if raise_err:
                 raise
