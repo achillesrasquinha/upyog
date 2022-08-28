@@ -4,13 +4,19 @@ from bpyutils.util._dict import dict_from_list
 from bpyutils.util.types import lmap, auto_typecast
 
 def read(path, *args, **kwargs):
-    data = []
+    data  = []
+    type_ = kwargs.pop("type", "dict")
     
     with open(path) as f:
         reader = csv.reader(f, *args, **kwargs)
         header = next(reader, None)
 
-        data = lmap(lambda x: dict_from_list(header, lmap(auto_typecast, x)), reader)
+        if type_ == "dict":
+            data = lmap(lambda x: dict_from_list(header, lmap(auto_typecast, x)), reader)
+        else:
+            data  = []
+            data.append(header)
+            data += lmap(lambda x: lmap(auto_typecast, x), reader)
 
     return data
 
