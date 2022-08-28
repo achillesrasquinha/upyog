@@ -1,11 +1,3 @@
-sphinx
-recommonmark
-ipykernel
-nbsphinx
-renku-sphinx-theme
-sphinx-autobuild
-pylint
-autopep8
 pytest
 pytest-cov
 pytest-xdist
@@ -15,6 +7,12 @@ tox
 coveralls
 pluggy<1,>=0.12.0
 docstr-coverage
+sphinx
+recommonmark
+ipykernel
+nbsphinx
+renku-sphinx-theme
+sphinx-autobuild
 pipenv
 jedi<0.18
 ipython
@@ -26,3 +24,5 @@ twine
 jupyter
 Flask
 cookiecutter
+pylint
+autopep8
