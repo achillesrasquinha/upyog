@@ -12,6 +12,7 @@ from bpyutils.util.system       import touch, make_temp_dir, popen, ShellEnviron
 from bpyutils.util.error        import pretty_print_error
 from bpyutils.util.test         import generate_tests
 from bpyutils.util.doc          import generate_docs
+from bpyutils.i18n.util         import generate_translations
 from bpyutils.util.git          import resolve_git_url
 from bpyutils.util.datetime     import get_timestamp_str
 from bpyutils.db                import run_db_shell
@@ -174,6 +175,9 @@ def _command(*args, **kwargs):
         
     if a.generate_docs:
         generate_docs(a.generate_docs, check = a.check, target_dir = a.output_dir)
+
+    if a.generate_translations:
+        generate_translations(a.generate_translations, check = a.check, target_dir = a.output_dir)
 
     if a.update_boilpy_project:
         a.update = resolve_git_url(a.update_boilpy_project)

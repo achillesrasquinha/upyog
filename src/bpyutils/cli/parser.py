@@ -14,6 +14,7 @@ from bpyutils.__attr__     import (
     __author__,
     __email__
 )
+from bpyutils.i18n import _
 from bpyutils.util.environ    import getenv
 from bpyutils.cli             import util as _cli
 from bpyutils.cli.formatter   import ArgumentParserFormatter
@@ -42,7 +43,7 @@ def get_parser():
     # boilpy
     parser.add_argument("--update-boilpy-project",
         type    = resolve_git_url,
-        help    = "Update project"
+        help    = _("Update project")
     )
     parser.add_argument("--project-branch",
         help    = "Project branch to checkout from"
@@ -126,6 +127,9 @@ def get_parser():
     )
     parser.add_argument("--generate-docs",
         help    = "generate doc strings for a package"
+    )
+    parser.add_argument("--generate-translations",
+        help    = "generate translations for a package"
     )
     parser.add_argument("--output-dir",
         help    = "output directory for generator"
