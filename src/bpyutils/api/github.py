@@ -4,18 +4,28 @@ from bpyutils import request as req
 class GitHub(BaseAPI):
     url = "https://api.github.com"
 
-    def __init__(self, token = None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self._super = super(GitHub, self)
         self._super.__init__(*args, **kwargs)
-
-        self._token = token
 
         self._repo_username = None
         self._repo_reponame = None
 
-    def repo(self, username, reponame):
+    def repo(self, username, reponame, create = False,
+        description = None, homepage = None, private = False):
         self._repo_username = username
         self._repo_reponame = reponame
+
+        if create:
+            url = "user/repos"
+            response = self.post(url, json = {
+                "name": self._repo_reponame,
+                "description": description,
+                "homepage": homepage,
+                "private": private
+            })
+            response.raise_for_status()
+
         return self
 
     def pr(self):

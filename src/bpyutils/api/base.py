@@ -39,7 +39,7 @@ class BaseAPI(BaseObject):
         ``{ protocol: ip }``.
     :param test: Attempt to test the connection to the base url.
     """
-    def __init__(self, url = None, proxies = [ ], test = True, verbose = False, rate = None):
+    def __init__(self, url = None, proxies = [ ], test = True, token = None, verbose = False, rate = None):
         self._url     = url or getattr(self, "url")
         
         self._session = req.Session()
@@ -53,6 +53,8 @@ class BaseAPI(BaseObject):
 
         if isinstance(proxies, Mapping):
             proxies = [proxies]
+
+        self._token   = token
 
         self._proxies = proxies
         self._rate    = rate
@@ -157,16 +159,18 @@ class BaseAPI(BaseObject):
 
     def request(self, method, url, *args, **kwargs):
         raise_error = kwargs.pop("raise_error", True)
-        token       = kwargs.pop("token",       None)
+        token       = kwargs.pop("token",       self._token)
         headers     = kwargs.pop("headers",     { })
         proxies     = kwargs.pop("proxies",     self._proxies)
         data        = kwargs.get("params",      kwargs.get("data"))
         prefix      = kwargs.get("prefix",      True)
         async_      = kwargs.pop("async_",      False)
 
-        # headers.update({
-        #     "User-Agent": user_agent
-        # })
+        if token:
+
+            headers.update({
+                "Authorization": "Bearer %s" % token,
+            })
 
         if proxies:
             proxies = random.choice(proxies)

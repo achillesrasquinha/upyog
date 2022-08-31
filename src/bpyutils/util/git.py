@@ -9,24 +9,25 @@ from bpyutils import log
 
 logger = log.get_logger(NAME)
 
-def setup_git_repo(path, remote = None, commit = False, git_username = None, git_email = None):
+def setup_git_repo(path, remote = None, push = False, git_username = None, git_email = None, **kwargs):
+    commit_ = kwargs.get("commit", False)
+
     with ShellEnvironment(cwd = path) as shell:
         shell("git init", output = False)
 
         if remote:
             shell("git remote add origin", remote,  output = False)
 
-        if commit:
-            shell("git add .")
-            
-            shell("git config --global user.name  %s" % git_username)
-            shell("git config --global user.email %s" % git_email)
-
-            shell("git commit -m 'Initial Commit'", output = False)
+        if commit_:
+            commit(path, message = 'Initial Commit', allow_empty = None, add = ".", push = True,
+                remote = "origin", branch = "master"
+            )
 
             shell("git checkout -B develop --track master", output = False)
             shell("git checkout -B hotfix  --track master", output = False)
-            shell("git checkout master", output = False)
+
+            if push:
+                shell("git push --all origin")
 
 def resolve_git_url(repo, raise_err = True):
     if not check_url(repo, raise_err = False):
