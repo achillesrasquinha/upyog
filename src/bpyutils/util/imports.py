@@ -27,7 +27,7 @@ def import_handler(name):
     handler = _HANDLER_REGISTRY[name]
     return handler
 
-def import_or_raise(package, name = None):
+def import_or_raise(package, name = None, dep = "bpyutils"):
     name = name or package
 
     try:
@@ -35,6 +35,6 @@ def import_or_raise(package, name = None):
     except ImportError:
         raise DependencyNotFoundError((
             "Unable to import {package} for resolving dependencies. "
-            "bpyutils requires {package} to be installed. "
+            "{dep} requires {package} to be installed. "
             "Please install {package} by executing 'pip install {name}'."
-        ).format(package = package, name = name))
+        ).format(package = package, name = name, dep = dep))
