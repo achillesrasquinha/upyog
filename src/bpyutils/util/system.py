@@ -307,6 +307,8 @@ def copy(*files, **kwargs):
     """
     dest = kwargs["dest"]
     raise_err = kwargs.get("raise_err", False)
+    recursive = kwargs.get("recursive", False)
+    exist_ok  = kwargs.get("exist_ok",  True)
     
     for f in files:
         abspath = osp.abspath(f)
@@ -314,7 +316,10 @@ def copy(*files, **kwargs):
         if not osp.exists(abspath) and raise_err:
             raise FileNotFoundError("No file %s found." % abspath)
         else:
-            shutil.copy2(abspath, dest)
+            if recursive:
+                shutil.copytree(abspath, dest, dirs_exist_ok = exist_ok)
+            else:
+                shutil.copy2(abspath, dest)
 
 def extract_all(source, dest):
     """Unpack an archive to a desired destination.
@@ -346,3 +351,6 @@ def check_path(path, raise_err = True):
 
     if not osp.exists(path) and raise_err:
         raise FileNotFoundError("Path %s not found." % path)
+
+def list_tree(*args, **kwargs):
+    return list(walk(*args, **kwargs))

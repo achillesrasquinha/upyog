@@ -91,7 +91,10 @@ if PY2: # pragma: no cover
 
     from Queue import Queue
 
-    from collections import Mapping
+    from collections import (
+        Mapping,
+        Sequence
+    )
 else:
     # moves
     from urllib.request import urlopen, Request
@@ -118,8 +121,11 @@ else:
 
     from queue import Queue
 
-    from collections.abc import Mapping
-
+    from collections.abc import (
+        Mapping,
+        Sequence
+    )
+    
 if platform.system() in ['Linux', 'Darwin']:
     EX_OK      = os.EX_OK
     EX_NOINPUT = os.EX_NOINPUT

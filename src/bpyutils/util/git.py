@@ -1,5 +1,6 @@
 import os.path as osp
 
+from bpyutils.util.array  import sequencify
 from bpyutils.util.string import check_url
 from bpyutils.util.system import ShellEnvironment, popen, makedirs
 from bpyutils.exception   import PopenError
@@ -43,3 +44,22 @@ def update_git_repo(repo, clone = False, url = None, username = None, password =
                 raise
             else:
                 logger.warning("Unable to pull latest branch")
+
+def commit(repo, message = None, allow_empty = None, add = None, push = None,
+    remote = "origin", branch = "master"):
+    with ShellEnvironment(cwd = repo) as shell:
+        if add:
+            add = sequencify(add)
+
+            shell("git add %s" % " ".join(add))
+
+        if not message:
+            allow_empty = True
+            
+        shell("git commit %s %s" % (
+            "--allow-empty" if allow_empty else "",
+            "-m '%s'" % message if message else ""
+        ))
+
+        if push:
+            shell("git push %s %s" % (remote, branch))
