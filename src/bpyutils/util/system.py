@@ -352,5 +352,7 @@ def check_path(path, raise_err = True):
     if not osp.exists(path) and raise_err:
         raise FileNotFoundError("Path %s not found." % path)
 
+    return path
+
 def list_tree(*args, **kwargs):
     return list(walk(*args, **kwargs))

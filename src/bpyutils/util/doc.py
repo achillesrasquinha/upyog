@@ -8,11 +8,12 @@ from bpyutils.util.system import (
     makepath
 )
 from bpyutils.log import get_logger
-from bpyutils.util.system import walk, check_path
-from bpyutils.util.string import nl, tb, strip, lower
-from bpyutils.parallel import no_daemon_pool
-from bpyutils.util.types import lmap
-from bpyutils.model.base import BaseObject
+from bpyutils.util.system   import walk, check_path
+from bpyutils.util.string   import nl, tb, strip, lower
+from bpyutils.parallel      import no_daemon_pool
+from bpyutils.util.types    import lmap
+from bpyutils.model.base    import BaseObject
+from bpyutils.model.package import Package
 
 logger  = get_logger()
 
@@ -156,35 +157,20 @@ class PythonFileParser(BaseObject):
     def __init__(self, path):
         path = check_path(path)
 
-class PythonProject(BaseObject):
-    def __init__(self, path):
-        self._path = check_path(path)
-        self._package_name = get_basename(self._path)
-
-    @property
-    def package_dir(self):
-        return osp.join(self._path, "src", self._package_name)
-
-    @property
-    def test_dir(self):
-        return osp.join(self._path, "tests", self._package_name)
-
 def generate_docs(path, target_dir = None, check = False):
-    project = PythonProject(path)
+    package = Package.from_path(path)
 
     if target_dir:
         target_dir = osp.abspath(target_dir)
     else:
-        target_dir = project.docs_dir
+        target_dir = package.docs_dir
 
     logger.info("Using target directory %s" % target_dir)
 
-    for root, dirs, files in walk(project.package_dir, include = "*.py"):
-        for filepath in files:
-            parser = PythonFileParser(filepath)
-            parser.parse()
-            
-
+    # for root, dirs, files in walk(package.package_dir, include = "*.py"):
+    #     for filepath in files:
+    #         parser = PythonFileParser(filepath)
+    #         parser.parse()
 
             # if osp.exists(filepath):
                     # if content:

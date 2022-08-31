@@ -11,6 +11,7 @@ from bpyutils.log import get_logger
 from bpyutils.util.string import nl, tb, strip, lower
 from bpyutils.parallel import no_daemon_pool
 from bpyutils.util.types import lmap
+from bpyutils.model.package import Package
 
 logger  = get_logger()
 
@@ -151,20 +152,22 @@ class NodeFetcher(ast.NodeVisitor):
             self._imports_from.append(alias.name)
 
 def generate_tests(path, target_dir = None, check = False):
-    path = osp.abspath(path)
-    package_name = get_basename(path)
-    package_path = osp.join(path, "src", package_name)
+    package = Package.from_path(path)
 
-    if not osp.exists(package_path):
-        raise FileNotFoundError("Path %s not found." % package_path)
+    # path = osp.abspath(path)
+    # package_name = get_basename(path)
+    # package_path = osp.join(path, "src", package_name)
+
+    if not osp.exists(package.package_dir):
+        raise FileNotFoundError("Path %s not found." % package.package_dir)
 
     if target_dir:
         target_dir = osp.abspath(target_dir)
     else:
-        target_dir = osp.join(path, "tests", package_name)
+        target_dir = package.test_dir
         logger.info("Using target directory %s" % target_dir)
 
-    for root, dirs, files in os.walk(package_path):
+    for root, dirs, files in os.walk(package.package_dir):
         for file_ in files:
             filepath = osp.join(root, file_)
 
@@ -175,7 +178,7 @@ def generate_tests(path, target_dir = None, check = False):
                     content = _read_and_sanitize_file(filepath)
                     
                     if content:
-                        dir_prefix = root.replace(package_path, "")
+                        dir_prefix = root.replace(package.package_dir, "")
                         dir_prefix = strip(dir_prefix, type_ = "/")
 
                         target_path = osp.join(target_dir, dir_prefix, "test_%s" % file_)
@@ -196,7 +199,7 @@ def generate_tests(path, target_dir = None, check = False):
                                 filter_imp_from = fetcher.imports_from
 
                         ast_tree = ast.parse(content)
-                        test_generator = TestGenerator(module_name = package_name,
+                        test_generator = TestGenerator(module_name = package.name,
                             module_relpath = osp.join(dir_prefix, filename),
                             filter_ = { "functions": filter_fns, 
                                 "imports": filter_imps, "imports_from": filter_imp_from })
