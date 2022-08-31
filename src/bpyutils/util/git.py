@@ -1,5 +1,4 @@
 import os.path as osp
-from tkinter import E
 
 from bpyutils.util.string import check_url
 from bpyutils.util.system import ShellEnvironment, popen, makedirs
