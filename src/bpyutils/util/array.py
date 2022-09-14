@@ -146,3 +146,12 @@ def clip(arr, low = None, high = None):
         clipped.append(value)
 
     return clipped
+
+def group_by(array, group):
+    results = AutoDict(list)
+
+    for d in array:
+        key = d.pop(group)
+        results[key].append(d)
+
+    return results
