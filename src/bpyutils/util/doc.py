@@ -167,10 +167,10 @@ def generate_docs(path, target_dir = None, check = False):
 
     logger.info("Using target directory %s" % target_dir)
 
-    # for root, dirs, files in walk(package.package_dir, include = "*.py"):
-    #     for filepath in files:
-    #         parser = PythonFileParser(filepath)
-    #         parser.parse()
+    for root, dirs, files in walk(package.package_dir, include = "*.py"):
+        for filepath in files:
+            parser = PythonFileParser(filepath)
+            # parser.parse()
 
             # if osp.exists(filepath):
                     # if content:

@@ -34,7 +34,7 @@ def _extract_and_format_snippet(path_file, from_ = 0, offset = 3, indent = 4):
                 line_indent = 2
                 line_num_color = _cli.BOLD
 
-            line_num_format += _cli.format(line_num, line_num_color) + _cli.format("|", _COLOR_LINE_NUMBER)
+            line_num_format += _cli.format(str(line_num), line_num_color) + _cli.format("|", _COLOR_LINE_NUMBER)
 
             formatted_line = nl(tb(line_num_format, line_indent) + tb(line, indent))
 
