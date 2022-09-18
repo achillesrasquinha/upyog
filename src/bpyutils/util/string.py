@@ -79,10 +79,14 @@ def ellipsis(string, threshold = 50, pattern = "..."):
 
     return string
 
-def get_random_str():
+def get_random_str(length = None):
     uuid_   = uuid.uuid4()
     string  = str(uuid_)
+
     string  = string.replace("-", "")
+
+    if length:
+        string = string[:length]
 
     return string
 

@@ -42,7 +42,7 @@ def merge_dict(*args, **kwargs):
 
     return merged
 
-def dict_from_list(keys, values):
+def dict_from_list(keys, values = None):
     """
     Generate a dictionary from a list of keys and values.
 
@@ -56,6 +56,9 @@ def dict_from_list(keys, values):
         >>> bpy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
         {'a': 1, 'b': 2, 'c': 3}
     """
+    if not values:
+        values = [None] * len(keys)
+
     return dict(zip(keys, values))
 
 class AutoDict(defaultdict):
