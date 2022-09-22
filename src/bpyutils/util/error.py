@@ -73,16 +73,16 @@ def pretty_print_error(e):
     _cli.echo(formatted)
 
     error_lines = traceback.format_exception(*sys.exc_info())
-    error_line  = error_lines[-2]
 
-    path_file, line_num, method = _get_error_line_info(error_line)
+    for error_line in error_lines[3:-2]:
+        path_file, line_num, method = _get_error_line_info(error_line)
 
-    formatted   = \
-        nl(tb("at " + _cli.format(path_file, _cli.GREEN)    \
-        + _cli.format(":%s in " % line_num, _cli.BOLD)      \
-        + _cli.format(method, _cli.CYAN), indent))
+        formatted = \
+            nl(tb("at " + _cli.format(path_file, _cli.GREEN)    \
+            + _cli.format(":%s in " % line_num, _cli.BOLD)      \
+            + _cli.format(method, _cli.CYAN), indent))
 
-    formatted  += _extract_and_format_snippet(path_file, from_ = line_num,
-        indent = 4)
-    
-    _cli.echo(formatted)
+        formatted  += _extract_and_format_snippet(path_file, from_ = line_num,
+            indent = 4)
+        
+        _cli.echo(formatted)
