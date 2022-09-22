@@ -39,6 +39,7 @@ ARGUMENTS = dict(
     force						= False,
     generate_tests              = None,
     output_dir                  = None,
+    no_pretty_error             = False,
     verbose		 				= False
 )
 

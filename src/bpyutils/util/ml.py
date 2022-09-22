@@ -14,7 +14,7 @@ def get_data_dir(name, data_dir = None):
 
     makedirs(data_dir, exist_ok = True)
 
-    return data_dir
+    return osp.abspath(data_dir)
 
 def get_dataset_tag(name):
     prefix = name.upper()

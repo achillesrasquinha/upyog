@@ -142,6 +142,11 @@ def get_parser():
         help    = "Git Email",
         default = getenv("GIT_EMAIL", __email__)
     )
+    parser.add_argument("--no-pretty-error", 
+        action  = "store_true",
+        default = getenv("NO_PRETTY_ERROR", False),
+        help    = "Disable Pretty Error"
+    )
 
     if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
         parser.add_argument("--no-color",
