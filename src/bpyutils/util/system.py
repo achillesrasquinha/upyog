@@ -198,10 +198,12 @@ def make_temp_dir(root_dir = None):
         shutil.rmtree(dir_path)
 
 @contextlib.contextmanager
-def make_temp_file():
+def make_temp_file(fname = None):
     with make_temp_dir() as tmp_dir:
-        hash_    = get_random_str()
-        tmp_file = osp.join(tmp_dir, hash_)
+        if not fname:
+            fname = get_random_str()
+
+        tmp_file = osp.join(tmp_dir, fname)
 
         touch(tmp_file)
         
