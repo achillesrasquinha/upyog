@@ -73,8 +73,9 @@ def pretty_print_error(e):
     _cli.echo(formatted)
 
     error_lines = traceback.format_exception(*sys.exc_info())
+    error_lines = error_lines[1:-1]
 
-    for error_line in error_lines[3:-2]:
+    for error_line in error_lines:
         path_file, line_num, method = _get_error_line_info(error_line)
 
         formatted = \
