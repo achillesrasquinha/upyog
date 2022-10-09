@@ -86,3 +86,33 @@ def autodict(*args, **kwargs):
         })
     
     return _autodict
+
+def lkeys(d):
+    """
+    Get the keys of a dictionary as a list.
+
+    :param d: A dictionary.
+
+    :returns: list
+
+    Example::
+
+        >>> bpy.lkeys({ 'foo': 'bar', 'baz': 'boo' })
+        ['foo', 'baz']
+    """
+    return list(d.keys())
+
+def lvalues(d):
+    """
+    Get the values of a dictionary as a list.
+
+    :param d: A dictionary.
+
+    :returns: list
+
+    Example::
+
+        >>> bpy.lvalues({ 'foo': 'bar', 'baz': 'boo' })
+        ['bar', 'boo']
+    """
+    return list(d.values())

@@ -117,3 +117,25 @@ def build_fn(fn, **kwargs):
         3
     """
     return partial(fn, **kwargs)
+
+def check_array(o, raise_err = True):
+    """
+    Check if an object is an array.
+
+    :param o: The object to be checked.
+    :param raise_err: If True, raises an error if the object is not an array.
+
+    Example::
+
+        >>> bpy.check_array([1, 2, 3])
+        True
+        >>> bpy.check_array(1)
+        False
+    """
+    if isinstance(o, (list, tuple, set)):
+        return True
+    else:
+        if raise_err:
+            raise TypeError("Object is not an array.")
+        else:
+            return False
