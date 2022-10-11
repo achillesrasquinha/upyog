@@ -147,7 +147,12 @@ def _command(*args, **kwargs):
             args = format_params(a.param)
 
             callable = import_handler(method)
-            callable(**args)
+            
+            try:
+                callable(**args)
+            except Exception as e:
+                pretty_print_error(e)
+                sys.exit(1)
 
     if a.run_ml:
         args = format_params(a.param)
