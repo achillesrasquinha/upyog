@@ -33,6 +33,10 @@ logger = get_logger()
 
 __STDOUT__ = None
 
+VIDEO_EXTENSIONS = (
+    ".avi", ".mp4", ".mkv", ".mov", ".flv", ".wmv", ".webm", ".mpg", ".mpeg"
+)
+
 def read(fname, mode = "r", sanitize = False):
     """Read content from a given file.
 
@@ -356,5 +360,30 @@ def check_path(path, raise_err = True):
 
     return path
 
+def check_dir(path, raise_err = True):
+    path = check_path(path, raise_err = raise_err)
+
+    if not osp.isdir(path) and raise_err:
+        raise NotADirectoryError("Path %s is not a directory." % path)
+
+    return path
+
 def list_tree(*args, **kwargs):
     return list(walk(*args, **kwargs))
+
+def abslistdir(path, filter_ = None):
+    path = check_path(path)
+    l = lmap(lambda f: osp.join(path, f), os.listdir(path))
+    
+    if filter_:
+        l = lfilter(filter_, l)
+
+    return l
+
+def is_video(path):
+    return osp.splitext(path)[1] in VIDEO_EXTENSIONS
+
+def split_path(path):
+    head, tail = osp.split(path)
+    tail, extension = osp.splitext(tail)
+    return head, tail, extension

@@ -5,6 +5,25 @@ import json
 from bpyutils.util._dict  import AutoDict, autodict, merge_dict
 from bpyutils.util.system import write, read
 from bpyutils.util.string import strip
+from bpyutils import log
+
+logger = log.get_logger(__name__)
+
+class JSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        try:
+            import numpy as np
+
+            if isinstance(obj, np.integer):
+                return int(obj)
+            elif isinstance(obj, np.floating):
+                return float(obj)
+            elif isinstance(obj, np.ndarray):
+                return obj.tolist()
+        except ImportError:
+            pass
+
+        return json.JSONEncoder.default(self, obj)
 
 class JSONLogger(AutoDict):
     locks = {
@@ -73,11 +92,13 @@ class JSONLogger(AutoDict):
         with self.locks["io"]:
             if osp.exists(path):
                 content = self._get_content()
-                store   = merge_dict(content, store)
+                store   = merge_dict(content, store, deep = True)
 
-            data = json.dumps(store, indent = indent)
+            data = json.dumps(store, indent = indent, cls = JSONEncoder)
                 
             write(path, data, force = True)
+
+            logger.success("Saved JSONLogger to %s" % path)
 
     def __repr__(self):
         return str(self.store)

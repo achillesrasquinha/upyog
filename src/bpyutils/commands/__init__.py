@@ -149,8 +149,10 @@ def _command(*args, **kwargs):
             callable = import_handler(method)
             
             try:
+                logger.info("Running method %s" % method)
                 callable(**args)
             except Exception as e:
+                logger.error("Error occured while running method %s: %s" % (method, e))
                 pretty_print_error(e)
                 sys.exit(1)
 

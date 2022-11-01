@@ -155,3 +155,12 @@ def group_by(array, group):
         results[key].append(d)
 
     return results
+
+def normalize(arr, max_ = None):
+    min_ = min(arr)
+    max_ = max_ or max(arr)
+
+    for i, value in enumerate(arr):
+        arr[i] = (value - min_) / (max_ - min_)
+
+    return arr

@@ -96,6 +96,16 @@ def _gen_to_seq(gen, type_ = list):
         return type_(gen(*args, **kwargs))
     return fn
 
+def filter2(fn, arr):
+    if not callable(fn):
+        if check_array(fn, raise_err = False):
+            l  = fn
+            fn = lambda x: x not in l
+        else:
+            fn = lambda x: x != fn
+
+    return filter(fn, arr)
+
 lfilter = _gen_to_seq(filter)
 lmap    = _gen_to_seq(map)
 
