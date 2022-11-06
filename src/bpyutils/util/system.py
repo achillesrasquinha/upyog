@@ -387,3 +387,11 @@ def split_path(path):
     head, tail = osp.split(path)
     tail, extension = osp.splitext(tail)
     return head, tail, extension
+
+def wc(path):
+    from pathlib import Path
+    
+    p = Path(path)
+    stat = p.stat()
+
+    return stat.st_size
