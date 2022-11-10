@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import sys
 import argparse
 import multiprocessing as mp
+import json
 
 # imports - module imports
 from bpyutils.__attr__     import (
@@ -20,6 +21,7 @@ from bpyutils.cli             import util as _cli
 from bpyutils.cli.formatter   import ArgumentParserFormatter
 from bpyutils.cli.util        import _CAN_ANSI_FORMAT, add_github_args
 from bpyutils.util.git        import resolve_git_url
+from bpyutils.util.system     import check_file
 
 _DESCRIPTION_JUMBOTRON = \
 """
@@ -32,13 +34,90 @@ _DESCRIPTION_JUMBOTRON = \
     _cli.format(__description__, _cli.BOLD)
 )
 
-def get_parser():
+class JSONConfigFileAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string = None):
+        with open(values, "r") as f:
+            config = json.load(f)
+            setattr(namespace, self.dest, config)
+
+def get_base_parser(prog, description, help_ = True):
     parser = argparse.ArgumentParser(
-        prog            = __command__,
-        description     = _DESCRIPTION_JUMBOTRON,
+        prog            = prog,
+        description     = description,
         add_help        = False,
         formatter_class = ArgumentParserFormatter
     )
+    parser.add_argument("-y", "--yes",
+        action  = "store_true",
+        default = getenv("ACCEPT_ALL_DIALOGS", False),
+        help    = "Confirm for all dialogs."
+    )
+    parser.add_argument("-c", "--check",
+        action  = "store_true",
+        default = getenv("DRY_RUN", False),
+        help    = "Perform a dry-run."
+    )
+    parser.add_argument("-i", "--interactive",
+        action  = "store_true",
+        default = getenv("INTERACTIVE", False),
+        help    = "Interactive Mode."
+    )
+    parser.add_argument("-j", "--jobs",
+        type    = int,
+        help    = "Number of Jobs to be used.",
+        default = getenv("JOBS", max(mp.cpu_count(), 4))
+    )
+    parser.add_argument("-o", "--output",
+        default = getenv("OUTPUT_FILE"),
+        help    = "Print Output to File."
+    )
+    parser.add_argument("--config",
+        default = getenv("CONFIG_FILE"),
+        help    = "Configuration File.",
+        type    = check_file,
+        action  = JSONConfigFileAction
+    )
+    parser.add_argument("--ignore-error",
+        action  = "store_true",
+        default = getenv("IGNORE_ERROR", False),
+        help    = "Ignore Error in case of failure."
+    )
+    parser.add_argument("--force",
+        action  = "store_true",
+        default = getenv("FORCE", False),
+        help    = "Force."
+    )
+
+    if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
+        parser.add_argument("--no-color",
+            action  = "store_true",
+            default = getenv("NO_COLOR", False),
+            help    = "Avoid colored output."
+        )
+
+    parser.add_argument("-V", "--verbose",
+        action  = "store_true",
+        help    = "Display verbose output.",
+        default = getenv("VERBOSE", False)
+    )
+    parser.add_argument("-v", "--version",
+        action  = "version",
+        version = __version__,
+        help    = "Show %s's version number and exit." % __name__
+    )
+
+    if help_:
+        parser.add_argument("-h", "--help",
+            action  = "help",
+            default = argparse.SUPPRESS,
+            help    = "Show this help message and exit."
+        )
+
+    return parser
+
+def get_parser():
+    parser = get_base_parser(__command__, _DESCRIPTION_JUMBOTRON,
+        help_ = False)
 
     # boilpy
     parser.add_argument("--update-boilpy-project",
@@ -83,40 +162,6 @@ def get_parser():
         action  = "append",
         help    = "Parameters"
     )
-    parser.add_argument("-y", "--yes",
-        action  = "store_true",
-        default = getenv("ACCEPT_ALL_DIALOGS", False),
-        help    = "Confirm for all dialogs."
-    )
-    parser.add_argument("-c", "--check",
-        action  = "store_true",
-        default = getenv("DRY_RUN", False),
-        help    = "Perform a dry-run."
-    )
-    parser.add_argument("-i", "--interactive",
-        action  = "store_true",
-        default = getenv("INTERACTIVE", False),
-        help    = "Interactive Mode."
-    )
-    parser.add_argument("-j", "--jobs",
-        type    = int,
-        help    = "Number of Jobs to be used.",
-        default = getenv("JOBS", max(mp.cpu_count(), 4))
-    )
-    parser.add_argument("-o", "--output",
-        default = getenv("OUTPUT_FILE"),
-        help    = "Print Output to File."
-    )
-    parser.add_argument("--ignore-error",
-        action  = "store_true",
-        default = getenv("IGNORE_ERROR", False),
-        help    = "Ignore Error in case of failure."
-    )
-    parser.add_argument("--force",
-        action  = "store_true",
-        default = getenv("FORCE", False),
-        help    = "Force."
-    )
     parser.add_argument("--dbshell",
         default = getenv("DATABASE_SHELL"),
         help    = "Activate database shell."
@@ -146,24 +191,6 @@ def get_parser():
         action  = "store_true",
         default = getenv("NO_PRETTY_ERROR", False),
         help    = "Disable Pretty Error"
-    )
-
-    if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
-        parser.add_argument("--no-color",
-            action  = "store_true",
-            default = getenv("NO_COLOR", False),
-            help    = "Avoid colored output."
-        )
-
-    parser.add_argument("-V", "--verbose",
-        action  = "store_true",
-        help    = "Display verbose output.",
-        default = getenv("VERBOSE", False)
-    )
-    parser.add_argument("-v", "--version",
-        action  = "version",
-        version = __version__,
-        help    = "Show %s's version number and exit." % __name__
     )
 
     if any("bpyutils" in arg for arg in sys.argv):

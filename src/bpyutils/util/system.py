@@ -14,6 +14,7 @@ import contextlib
 from   glob import glob
 import fnmatch
 import re
+import time
 
 # imports - module imports
 from bpyutils.util._dict      import merge_dict
@@ -370,6 +371,14 @@ def check_dir(path, raise_err = True):
 
     return path
 
+def check_file(path, raise_err = True):
+    path = check_path(path, raise_err = raise_err)
+
+    if not osp.isfile(path) and raise_err:
+        raise FileNotFoundError("Path %s is not a file." % path)
+
+    return path
+
 def list_tree(*args, **kwargs):
     return list(walk(*args, **kwargs))
 
@@ -397,3 +406,15 @@ def wc(path):
     stat = p.stat()
 
     return stat.st_size
+
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        start   = time.time()
+        result  = func(*args, **kwargs)
+        end     = time.time()
+
+        duration = end - start
+        
+        return duration, result
+
+    return wrapper

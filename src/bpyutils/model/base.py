@@ -1,4 +1,7 @@
 from bpyutils._compat import iteritems
+from bpyutils import log
+
+logger = log.get_logger()
 
 class BaseObject(object):
     def __init__(self, *args, **kwargs):
@@ -17,3 +20,7 @@ class BaseObject(object):
 
         repr_ = "<%s%s>" % (klass, prefix)
         return repr_
+
+    def log(self, type_, message, *args, **kwargs):
+        message = "[%s] %s" % (self.__class__.__name__, message)
+        getattr(logger, type_)(message, *args, **kwargs)
