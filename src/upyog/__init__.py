@@ -60,6 +60,9 @@ from upyog.util.system import (
     split_path,
     extract_all
 )
+from upyog.util.request import (
+    download_file
+)
 from upyog.i18n import _
 from upyog.model import BaseObject
 from upyog.log import get_logger
