@@ -4,30 +4,30 @@ Utilities
 Dict
 ----
 
-.. automodule:: bpyutils.util._dict
+.. automodule:: upyog.util._dict
    :members:
    :exclude-members: AutoDict
 
 Array
 -----
 
-.. automodule:: bpyutils.util.array
+.. automodule:: upyog.util.array
    :members:
 
 Datetime
 --------
 
-.. automodule:: bpyutils.util.datetime
+.. automodule:: upyog.util.datetime
    :members:
 
 Types
 -----
 
-.. automodule:: bpyutils.util.types
+.. automodule:: upyog.util.types
    :members:
 
 Request
 -------
 
-.. automodule:: bpyutils.util.request
+.. automodule:: upyog.util.request
    :members:

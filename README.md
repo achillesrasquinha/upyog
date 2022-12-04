@@ -1,26 +1,26 @@
 <div align="center">
   <img src="https://raw.githubusercontent.com/boilpy/boilpy/develop/.github/assets/logo.png" height="128">
   <h1>
-      bpyutils
+      upyog
   </h1>
   <h4>A collection of various common Python utilities.</h4>
 </div>
 
 <p align="center">
-  <a href='https://github.com/achillesrasquinha/bpyutils/actions?query=workflow:"Continuous Integration"'>
-    <img src="https://img.shields.io/github/workflow/status/achillesrasquinha/bpyutils/Continuous Integration?style=flat-square">
+  <a href='https://github.com/achillesrasquinha/upyog/actions?query=workflow:"Continuous Integration"'>
+    <img src="https://img.shields.io/github/workflow/status/achillesrasquinha/upyog/Continuous Integration?style=flat-square">
   </a>
-  <a href="https://coveralls.io/github/achillesrasquinha/bpyutils">
-    <img src="https://img.shields.io/coveralls/github/achillesrasquinha/bpyutils.svg?style=flat-square">
+  <a href="https://coveralls.io/github/achillesrasquinha/upyog">
+    <img src="https://img.shields.io/coveralls/github/achillesrasquinha/upyog.svg?style=flat-square">
   </a>
-  <a href="https://pypi.org/project/bpyutils/">
-    <img src="https://img.shields.io/pypi/v/bpyutils.svg?style=flat-square">
+  <a href="https://pypi.org/project/upyog/">
+    <img src="https://img.shields.io/pypi/v/upyog.svg?style=flat-square">
   </a>
-  <a href="https://pypi.org/project/bpyutils/">
-    <img src="https://img.shields.io/pypi/l/bpyutils.svg?style=flat-square">
+  <a href="https://pypi.org/project/upyog/">
+    <img src="https://img.shields.io/pypi/l/upyog.svg?style=flat-square">
   </a>
-  <a href="https://pypi.org/project/bpyutils/">
-    <img src="https://img.shields.io/pypi/pyversions/bpyutils.svg?style=flat-square">
+  <a href="https://pypi.org/project/upyog/">
+    <img src="https://img.shields.io/pypi/pyversions/upyog.svg?style=flat-square">
   </a>
   <a href="https://git.io/boilpy">
     <img src="https://img.shields.io/badge/made%20with-boilpy-red.svg?style=flat-square">
@@ -39,7 +39,7 @@
 ### Quick Start
 
 ```shell
-$ pip install bpyutils
+$ pip install upyog
 ```
 
 Check out [installation](docs/source/installation.md) for more details.
@@ -49,14 +49,14 @@ Check out [installation](docs/source/installation.md) for more details.
 #### Application Interface
 
 ```python
->>> import bpyutils
+>>> import upyog
 ```
 
 #### Command-Line Interface
 
 ```console
-$ bpyutils
-Usage: bpyutils [OPTIONS] COMMAND [ARGS]...
+$ upyog
+Usage: upyog [OPTIONS] COMMAND [ARGS]...
 
   A collection of various common Python utilities.
 

@@ -4,19 +4,19 @@ ARG DEVELOPMENT=false
 
 LABEL maintainer=achillesrasquinha@gmail.com
 
-ENV BPYUTILS_PATH=/usr/local/src/bpyutils
+ENV upyog_PATH=/usr/local/src/upyog
 
 RUN apk add --no-cache \
         bash \
         git \
-    && mkdir -p $BPYUTILS_PATH
+    && mkdir -p $upyog_PATH
 
-COPY . $BPYUTILS_PATH
+COPY . $upyog_PATH
 COPY ./docker/entrypoint.sh /entrypoint
 RUN sed -i 's/\r//' /entrypoint \
 	&& chmod +x /entrypoint
 
-WORKDIR $BPYUTILS_PATH
+WORKDIR $upyog_PATH
 
 RUN if [[ "${DEVELOPMENT}" ]]; then \
         apk add --no-cache \
@@ -35,4 +35,4 @@ RUN if [[ "${DEVELOPMENT}" ]]; then \
 
 ENTRYPOINT ["/entrypoint"]
 
-CMD ["bpyutils"]
+CMD ["upyog"]

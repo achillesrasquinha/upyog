@@ -5,9 +5,9 @@ BASEDIR					= $(shell pwd)
 
 ENVIRONMENT			   ?= development
 
-PROJECT					= bpyutils
+PROJECT					= upyog
 
-PROJDIR					= ${BASEDIR}/src/bpyutils
+PROJDIR					= ${BASEDIR}/src/upyog
 TESTDIR					= ${BASEDIR}/tests
 DOCSDIR					= ${BASEDIR}/docs
 
@@ -201,6 +201,10 @@ endif
 ifeq (${launch},true)
 	$(call browse,file:///${DOCSDIR}/build/index.html)
 endif
+
+docs-serve:
+	$(call log,INFO,Serving Documentation)
+	$(SPHINXAUTOBUILD) $(DOCSDIR)/source $(DOCSDIR)/build
 
 docker-pull: ## Pull Latest Docker Images
 	$(call log,INFO,Pulling latest Docker Image)

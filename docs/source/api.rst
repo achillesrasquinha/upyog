@@ -1,10 +1,10 @@
 Developer Interface
 ===================
 
-This part of the documentation covers all the interfaces of bpyutils.
+This part of the documentation covers all the interfaces of upyog.
 
 Utilities
 ---------
 
-.. automodule:: bpyutils.util._dict
+.. automodule:: upyog.util._dict
    :members:

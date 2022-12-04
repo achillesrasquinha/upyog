@@ -1,1 +1,1 @@
-docker run --rm -it achillesrasquinha/bpyutils "$@"
+docker run --rm -it achillesrasquinha/upyog "$@"

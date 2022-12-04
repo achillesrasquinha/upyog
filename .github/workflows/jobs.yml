@@ -12,8 +12,8 @@ env:
   VERBOSE: true
   TERM: xterm
 
-  BPYUTILS_JOBS_GITHUB_USERNAME: achillesrasquinha
-  BPYUTILS_JOBS_GITHUB_OAUTH_TOKEN: ${{ secrets.BPYUTILS_JOBS_GITHUB_OAUTH_TOKEN }}
+  upyog_JOBS_GITHUB_USERNAME: achillesrasquinha
+  upyog_JOBS_GITHUB_OAUTH_TOKEN: ${{ secrets.upyog_JOBS_GITHUB_OAUTH_TOKEN }}
 
 jobs:
   jobs:
@@ -38,4 +38,4 @@ jobs:
           python setup.py develop
       - name: Run Jobs
         run: |
-          bpyutils --run-jobs bpyutils.jobs
+          upyog --run-jobs upyog.jobs

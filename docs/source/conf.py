@@ -14,14 +14,14 @@ NOW     = dt.datetime.now()
 
 sys.path.insert(0, SRCDIR)
 
-import bpyutils
+import upyog
 
-project   = bpyutils.__name__
-author    = bpyutils.__author__
-copyright = "%s %s" % (NOW.year, bpyutils.__author__)
+project   = upyog.__name__
+author    = upyog.__author__
+copyright = "%s %s" % (NOW.year, upyog.__author__)
 
-version   = bpyutils.__version__
-release   = bpyutils.__version__
+version   = upyog.__version__
+release   = upyog.__version__
 
 source_suffix       = [".rst"]
 

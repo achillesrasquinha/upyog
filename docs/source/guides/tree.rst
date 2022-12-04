@@ -1,5 +1,5 @@
 Tree
 ====
 
-.. autoclass:: bpyutils.tree.Node
+.. autoclass:: upyog.tree.Node
    :members:
