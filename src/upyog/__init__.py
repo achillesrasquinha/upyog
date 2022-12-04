@@ -57,7 +57,8 @@ from upyog.util.system import (
     make_temp_dir,
     unzip,
     makedirs,
-    split_path
+    split_path,
+    extract_all
 )
 from upyog.i18n import _
 from upyog.model import BaseObject
