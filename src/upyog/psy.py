@@ -4,6 +4,7 @@ import random
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from upyog.config import PATH, environment
@@ -110,6 +111,9 @@ class BasePsy(BaseObject):
             self._s_element.send_keys(text)
 
         return self
+    
+    def tab(self):
+        self.type(Keys.TAB)
 
     def click(self):
         global INCOGNITO
@@ -118,6 +122,7 @@ class BasePsy(BaseObject):
             self.humane_delay()
 
         self._s_element.click()
+        self._refresh()
 
         return self
 
@@ -126,6 +131,9 @@ class Element(BasePsy):
         self._driver   = driver
         self._selector = selector
 
+        self._refresh()
+
+    def _refresh(self):
         global INCOGNITO, DELAY
 
         if INCOGNITO:

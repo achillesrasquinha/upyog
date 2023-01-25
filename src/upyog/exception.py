@@ -9,3 +9,6 @@ class PopenError(upyogError, sp.CalledProcessError):
 
 class DependencyNotFoundError(ImportError):
     pass
+
+class TemplateNotFoundError(upyogError):
+    pass

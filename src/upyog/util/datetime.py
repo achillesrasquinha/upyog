@@ -58,3 +58,30 @@ def check_datetime_format(datetime, format_, raise_err = False):
             return False
     
     return True
+
+_AUTO_FORMATS = [
+    '%Y-%m-%d %H:%M:%S.%f%z',
+    '%Y-%m-%d %H:%M:%S.%f',
+    '%Y-%m-%d %H:%M:%S',
+    '%Y-%m-%d %H:%M',
+    '%Y-%m-%d',
+    '%Y-%m',
+    '%Y',
+    '%d-%m-%Y %H:%M:%S.%f%z',
+    '%d-%m-%Y %H:%M:%S.%f',
+    '%d-%m-%Y %H:%M:%S',
+    '%d-%m-%Y %H:%M',
+    '%d-%m-%Y',
+]
+
+def auto_datetime(string):
+    """
+        Convert string to datetime object
+    """
+    for format_ in _AUTO_FORMATS:
+        try:
+            return dt.datetime.strptime(string, format_)
+        except ValueError:
+            pass
+
+    raise ValueError("Incorrect datetime format, expected %s" % _AUTO_FORMATS)

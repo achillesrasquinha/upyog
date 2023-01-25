@@ -39,8 +39,9 @@ class BaseAPI(BaseObject):
         ``{ protocol: ip }``.
     :param test: Attempt to test the connection to the base url.
     """
-    def __init__(self, url = None, proxies = [ ], test = True, token = None, verbose = False, rate = None):
-        self._url     = url or getattr(self, "url")
+    def __init__(self, url = None, proxies = [ ], test = True, token = None, verbose = False, rate = None,
+        auth = None):
+        self._url = url or getattr(self, "url")
         
         self._session = req.Session()
 
@@ -55,6 +56,7 @@ class BaseAPI(BaseObject):
             proxies = [proxies]
 
         self._token   = token
+        self._auth    = auth
 
         self._proxies = proxies
         self._rate    = rate
@@ -70,9 +72,9 @@ class BaseAPI(BaseObject):
 
     def _create_api_function(self, api):
         METHOD_CALLERS = {
-            "GET": self.get,
-            "POST": self.post,
-            "PUT": self.put,
+               "GET": self.get,
+              "POST": self.post,
+               "PUT": self.put,
             "DELETE": self.delete,
         }
 
@@ -82,19 +84,20 @@ class BaseAPI(BaseObject):
             data = {}
 
             query = api["path"]
+
             params = api.get("params")
             method = api.get("method", "GET")
-            # auth_required = api.get("auth", False)
+            auth_required = api.get("auth", False)
 
             if params:
                 parameters = []
 
                 if isinstance(params, Mapping):
                     for param, info in iteritems(params):
-                        type_ = info.get("type", "param")
+                        type_    = info.get("type", "param")
                         required = info.get("required")
                         argument = info.get("argument", param)
-                        default = info.get("default")
+                        default  = info.get("default")
 
                         if (type_ == "path" or required) and argument not in kwargs:
                             raise ValueError("Argument %s is not passed." % argument)
@@ -103,6 +106,9 @@ class BaseAPI(BaseObject):
                             value = kwargs.get(argument)
                             query = query.replace(":%s" % param, str(value))
                         else:
+                            if callable(default):
+                                default = default(*args, **kwargs)
+
                             kwargs[param] = kwargs.get(argument, default)
                             parameters.append(param)
 
@@ -112,11 +118,15 @@ class BaseAPI(BaseObject):
                         value = kwargs.get(parameter)
                         data[parameter] = value
 
-            args = {"params": data}
+            if method == "POST":
+                args = {"data": data}
+            else:
+                args = {"params": data}
 
-            # if auth_required:
-            #     auth = OmicsDIAuth(token=self.token)
-            #     args.update({"auth": auth})
+            if auth_required:
+                Auth = self._auth
+                if Auth:
+                    args.update({"auth": Auth})
 
             method_caller = METHOD_CALLERS.get(method, self.get)
 
@@ -144,7 +154,7 @@ class BaseAPI(BaseObject):
         params  = kwargs.pop("params", None) 
         prefix  = kwargs.get("prefix", True)
         
-        parts   = [ ]
+        parts   = []
 
         if prefix:
             parts.append(self.url)
@@ -167,7 +177,6 @@ class BaseAPI(BaseObject):
         async_      = kwargs.pop("async_",      False)
 
         if token:
-
             headers.update({
                 "Authorization": "Bearer %s" % token,
             })

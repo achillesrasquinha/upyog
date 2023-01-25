@@ -19,11 +19,12 @@ from upyog._compat      import iteritems, configparser as cp
 def get_config_path(name):
     return osp.join(osp.expanduser("~"), ".config", name)
 
-PATH            = autodict()
-PATH["BASE"]    = pardir(__file__)
-PATH["DATA"]    = osp.join(PATH["BASE"], "data")
-PATH["CACHE"]   = get_config_path(NAME)
-PATH["JOBS"]    = osp.join(PATH["BASE"], "jobs")
+PATH                = autodict()
+PATH["BASE"]        = pardir(__file__)
+PATH["DATA"]        = osp.join(PATH["BASE"], "data")
+PATH["CACHE"]       = get_config_path(NAME)
+PATH["JOBS"]        = osp.join(PATH["BASE"], "jobs")
+PATH["TEMPLATES"]   = osp.join(PATH["DATA"], "templates")
 
 class Configuration(object):
     # BUGFIX: # 63 Always complains about invalid config.ini - https://github.com/achillesrasquinha/pipupgrade/issues/63

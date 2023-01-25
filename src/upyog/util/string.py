@@ -26,9 +26,9 @@ def pluralize(string, count = 1):
     
     return string
 
-def kebab_case(string, delimiter = " "):
+def kebab_case(string, delimiter = " ", to_lower = True):
     words = string.replace(delimiter, " ").split()
-    kebab = "-".join([word.lower() for word in words])
+    kebab = "-".join([word.lower() if to_lower else word for word in words])
     
     return kebab
 
@@ -79,11 +79,12 @@ def ellipsis(string, threshold = 50, pattern = "..."):
 
     return string
 
-def get_random_str(length = None):
+def get_random_str(length = None, remove_hyphen = True):
     uuid_   = uuid.uuid4()
     string  = str(uuid_)
 
-    string  = string.replace("-", "")
+    if remove_hyphen:
+        string  = string.replace("-", "")
 
     if length:
         string = string[:length]
