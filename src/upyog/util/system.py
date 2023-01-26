@@ -4,6 +4,7 @@ from __future__ import absolute_import
 from upyog._compat import iteritems
 
 # imports - standard imports
+import hashlib
 import sys, os, os.path as osp
 import errno
 import zipfile
@@ -476,3 +477,10 @@ def make_exec(path):
     mode |= (mode & 0o444) >> 2
 
     os.chmod(path, mode)
+
+def sha256sum(fpath):
+    data   = read(fpath)
+    digest = hashlib.sha256(data)
+    hash_  = digest.hexdigest()
+
+    return hash_

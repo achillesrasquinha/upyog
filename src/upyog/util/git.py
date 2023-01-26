@@ -16,15 +16,18 @@ def setup_git_repo(path, remote = None, push = False, git_username = None, git_e
         shell("git init", output = False)
 
         if remote:
-            shell("git remote add origin", remote,  output = False)
+            shell("git remote add origin", remote, output = False)
 
         if commit_:
-            commit(path, message = 'Initial Commit', allow_empty = None, add = ".", push = True,
-                remote = "origin", branch = "master"
+            _, branch, _ = shell("git branch --show-current", output = True)
+            branch = strip(branch)
+
+            commit(path, message = 'Initial Commit', allow_empty = None, add = ".", push = push,
+                remote = "origin", branch = branch
             )
 
-            shell("git checkout -B develop --track master", output = False)
-            shell("git checkout -B hotfix  --track master", output = False)
+            shell("git checkout -B develop --track %s" % branch, output = False)
+            shell("git checkout -B hotfix  --track %s" % branch, output = False)
 
             if push:
                 shell("git push --all origin")

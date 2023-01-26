@@ -12,8 +12,8 @@ env:
   VERBOSE: true
   TERM: xterm
 
-  upyog_JOBS_GITHUB_USERNAME: achillesrasquinha
-  upyog_JOBS_GITHUB_OAUTH_TOKEN: ${{ secrets.upyog_JOBS_GITHUB_OAUTH_TOKEN }}
+  UPYOG_JOBS_GITHUB_USERNAME: achillesrasquinha
+  UPYOG_JOBS_GITHUB_OAUTH_TOKEN: ${{ secrets.UPYOG_JOBS_GITHUB_OAUTH_TOKEN }}
 
 jobs:
   jobs:

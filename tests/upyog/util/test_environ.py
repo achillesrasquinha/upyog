@@ -5,7 +5,7 @@ import pytest
 from upyog.util.environ import getenvvar, getenv, value_to_envval
 
 def test_getenvvar():
-    assert getenvvar("FOOBAR")                  == "upyog_FOOBAR"
+    assert getenvvar("FOOBAR")                  == "UPYOG_FOOBAR"
     assert getenvvar("FOOBAR", prefix = False)  == "FOOBAR"
 
 def test_getenv():

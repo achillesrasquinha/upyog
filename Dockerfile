@@ -4,19 +4,19 @@ ARG DEVELOPMENT=false
 
 LABEL maintainer=achillesrasquinha@gmail.com
 
-ENV upyog_PATH=/usr/local/src/upyog
+ENV UPYOG_PATH=/usr/local/src/upyog
 
 RUN apk add --no-cache \
         bash \
         git \
-    && mkdir -p $upyog_PATH
+    && mkdir -p $UPYOG_PATH
 
-COPY . $upyog_PATH
+COPY . $UPYOG_PATH
 COPY ./docker/entrypoint.sh /entrypoint
 RUN sed -i 's/\r//' /entrypoint \
 	&& chmod +x /entrypoint
 
-WORKDIR $upyog_PATH
+WORKDIR $UPYOG_PATH
 
 RUN if [[ "${DEVELOPMENT}" ]]; then \
         apk add --no-cache \
