@@ -3,7 +3,7 @@ from functools import partial
 
 # imports - compatibility imports
 from upyog             import _compat
-from upyog._compat     import zip
+from upyog._compat     import iteritems
 from upyog.util._dict  import dict_from_list
 
 # imports - standard imports
@@ -149,3 +149,18 @@ def check_array(o, raise_err = True):
             raise TypeError("Object is not an array.")
         else:
             return False
+        
+def classname(obj):
+    """
+    Get the name of a class.
+
+    :param obj: The object to get the name of.
+
+    Example::
+
+        >>> upy.classname("Hello World")
+        'str'
+        >>> upy.classname(1)
+        'int'
+    """
+    return obj.__class__.__name__

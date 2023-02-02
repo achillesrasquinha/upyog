@@ -24,7 +24,8 @@ from upyog.exception       import PopenError
 from upyog.util.string     import (
     strip,
     safe_decode,
-    get_random_str
+    get_random_str,
+    safe_encode
 )
 from upyog.util.types      import lmap, lfilter
 from upyog.util.array      import sequencify
@@ -40,7 +41,7 @@ VIDEO_EXTENSIONS = (
     ".avi", ".mp4", ".mkv", ".mov", ".flv", ".wmv", ".webm", ".mpg", ".mpeg"
 )
 
-def read(fname, mode = "r", sanitize = False):
+def read(fname, mode = "r", sanitize = False, encoding = "utf-8"):
     """Read content from a given file.
 
     Args:
@@ -55,7 +56,7 @@ def read(fname, mode = "r", sanitize = False):
         >>> bpy.read("path/to/file")
         'Hello, World!'
     """
-    with open(fname, mode = mode or "r") as f:
+    with open(fname, mode = mode or "r", encoding = encoding) as f:
         data = f.read()
 
         if data:
@@ -479,8 +480,12 @@ def make_exec(path):
     os.chmod(path, mode)
 
 def sha256sum(fpath):
-    data   = read(fpath)
+    data   = safe_encode(read(fpath, encoding = "utf-8"))
     digest = hashlib.sha256(data)
     hash_  = digest.hexdigest()
 
     return hash_
+
+def get_user():
+    username = os.environ.get("USER")
+    return username

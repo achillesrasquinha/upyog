@@ -3,6 +3,7 @@ import time
 import random
 
 from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -17,7 +18,7 @@ from upyog.util.request import download_file
 
 _DRIVER = None
 
-_CHROME_DRIVER_BASE_URL = "https://chromedriver.storage.googleapis.com/107.0.5304.62/"
+_CHROME_DRIVER_BASE_URL = "https://chromedriver.storage.googleapis.com/109.0.5414.74/"
 
 INCOGNITO = True
 DELAY     = 5
@@ -93,6 +94,9 @@ def visit(url):
         _DRIVER = get_driver(detach = not EXIT)
         _DRIVER.get(url)
 
+def wait(timeout = 5):
+    time.sleep(timeout)
+
 class BasePsy(BaseObject):
     def humane_delay(self, min_ = 0.1, max_ = 0.3):
         delay = random.uniform(min_, max_)
@@ -136,12 +140,15 @@ class Element(BasePsy):
     def _refresh(self):
         global INCOGNITO, DELAY
 
-        if INCOGNITO:
-            self._s_element = WebDriverWait(self._driver, DELAY).until(
-                EC.visibility_of_element_located((By.CSS_SELECTOR, self._selector))
-            )
-        else:
-            self._s_element = self._driver.find_element(By.CSS_SELECTOR, self._selector)
+        try:
+            if INCOGNITO:
+                self._s_element = WebDriverWait(self._driver, DELAY).until(
+                    EC.visibility_of_element_located((By.CSS_SELECTOR, self._selector))
+                )
+            else:
+                self._s_element = self._driver.find_element(By.CSS_SELECTOR, self._selector)
+        except TimeoutException:
+            pass
 
 def get(selector):
     global _DRIVER
@@ -151,3 +158,18 @@ def get(selector):
 
     element = Element(_DRIVER, selector)
     return element
+
+def exists(selector):
+    try:
+        return get(selector)
+    except:
+        pass
+
+    return False
+
+def contains(selector, content):
+    element = get(selector)
+    if content in element._s_element.text:
+        return element
+    else:
+        raise ValueError("Element %s does not contain %s" % (selector, content))

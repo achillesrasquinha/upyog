@@ -2,8 +2,13 @@ from __future__ import absolute_import
 
 # imports - standard imports
 from   contextlib      import contextmanager
+
 import multiprocessing as mp
-from   multiprocessing.pool import Pool
+
+try:
+    from pathos.multiprocessing import ProcessingPool as Pool
+except ImportError:
+    from multiprocessing.pool import Pool
 
 from upyog._compat import PYTHON_VERSION
 

@@ -98,8 +98,6 @@ class JSONLogger(AutoDict):
                 
             write(path, data, force = True)
 
-            logger.success("Saved JSONLogger to %s" % path)
-
     def __repr__(self):
         return str(self.store)
 

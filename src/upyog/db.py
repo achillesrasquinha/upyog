@@ -52,6 +52,17 @@ class Table(BaseObject):
     @property
     def name(self):
         return getattr(self, "_name", None)
+    
+    @property
+    def columns(self):
+        result  = self.db.query("""
+            pragma table_info('%s')
+        """ % self.name)
+        result  = sequencify(result)
+
+        columns = [ { "name": o["name"] } for o in result ]
+
+        return columns
 
     @property
     def exists(self):
@@ -70,20 +81,61 @@ class Table(BaseObject):
             )
         """ % self.name)
 
-    def add_columns(self, *columns):
-        for column in columns:
-            self.db.query("""
-                alter table '%s'
-                add column %s %s
-            """ % (self.name, column["name"], column["type"]))
+    def add_columns(self, *columns, config = None):
+        config = config or {}
+        column_map = { column["name"]: column for column in self.columns }
 
-    def insert(self, data, homogeneous = True):
+        for column in columns:
+            column_name = column["name"]
+            if column_name not in column_map:
+                column_config = config.get(column_name, {})
+
+                self.db.query("""
+                    alter table '%s'
+                    add column %s %s
+                """ % (
+                    self.name,
+                    column_name,
+                    column["type"]
+                ))
+
+                if column_config.get("unique", False):
+                    self.db.query("""
+                        create unique index
+                            %s_%s_unique
+                        on
+                            %s (%s)
+                    """ % (
+                        self.name,
+                        column_name,
+                        self.name,
+                        column_name
+                    ))
+
+    def insert(self, data, homogeneous = True, config = None):
+        """
+            Insert data into table.
+
+            Parameters
+            ----------
+            data : list
+                List of dictionaries.
+
+            homogeneous : bool, optional
+                Whether data is homogeneous or not.
+
+            Returns
+            -------
+            None
+        """
+
         logger.info("Inserting into table %s..." % self.name)
 
         if not self.exists:
             self.create()
 
-        data = sequencify(data)
+        data   = sequencify(data)
+        config = config or {}
 
         if data:
             sample  = data[0]
@@ -106,7 +158,7 @@ class Table(BaseObject):
                     keys = list(iterkeys(item))
                     columns.add(keys)
 
-            self.add_columns(*columns)
+            self.add_columns(*columns, config = config)
 
             if homogeneous:
                 records = [list(itervalues(d)) for d in data]
@@ -122,6 +174,13 @@ class Table(BaseObject):
                 """ % (self.name, columns_placeholder, values_placeholder)
 
                 self.db.query(query, records, many = True)
+
+    def find_one(self, **kwargs):
+        if self.exists:
+            where = " and ".join([ "%s = '%s'" % (k, v) for k, v in iteritems(kwargs) ])
+            query = "select * from %s where %s" % (self.name, where)
+            result = self.db.query(query)
+            return result[0] if result else None
 
     def all(self):
         if self.exists:
@@ -191,7 +250,7 @@ class DB(BaseObject):
 
 _CONNECTION = None
 
-def get_connection(location = PATH["CACHE"], bootstrap = True, log = False):
+def get_connection(location = PATH["CACHE"], name = "db", bootstrap = True, log = False):
     global _CONNECTION
 
     if not _CONNECTION or _CONNECTION.location != location:
@@ -200,7 +259,7 @@ def get_connection(location = PATH["CACHE"], bootstrap = True, log = False):
 
         makedirs(location, exist_ok = True)
 
-        abspath  = osp.join(location, "db.db")
+        abspath  = osp.join(location, "%s.db" % name)
 
         _CONNECTION = DB(abspath)
         _CONNECTION.connect(

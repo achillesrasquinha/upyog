@@ -71,9 +71,14 @@ def check_url(url, raise_err = True):
     
     return True
 
-def download_file(url, path = None, chunk_size = None, req_kwargs = { }):
+def download_file(url, target = None, chunk_size = None, req_kwargs = {}):
     chunk_size  = chunk_size or bpy.settings.get("max_chunk_download_bytes")
-    response    = req.get(url, stream = True, **req_kwargs)
+
+    if not isinstance(url, requests.Response):
+        response = req.get(url, stream = True, **req_kwargs)
+    else:
+        response = url
+
     response.raise_for_status()
 
     headers     = response.headers
@@ -91,18 +96,18 @@ def download_file(url, path = None, chunk_size = None, req_kwargs = { }):
     if tqdm:
         progress_bar = tqdm(total = size_total, unit = 'iB', unit_scale = True)
 
-    if not path:
-        header  = headers.get("content-disposition")
+    if not target:
+        header = headers.get("content-disposition")
 
         if header:
             name    = re.findall("filename=(.+)", header)[0]
-            path    = osp.abspath(name)
+            target  = osp.abspath(name)
         else:
-            path    = get_random_str()
+            target  = get_random_str()
 
-    makepath(path)
+    makepath(target)
 
-    with open(path, "wb") as f:
+    with open(target, "wb") as f:
         for content in response.iter_content(chunk_size = chunk_size):
             if progress_bar:
                 progress_bar.update(len(content))
@@ -114,6 +119,6 @@ def download_file(url, path = None, chunk_size = None, req_kwargs = { }):
         progress_bar.close()
 
         if size_total != 0 and progress_bar.n != size_total:
-            raise ValueError("Unable to read downloaded file into path %s." % path)
+            raise ValueError("Unable to read downloaded file into path %s." % target)
 
-    return path
+    return target

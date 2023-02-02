@@ -1,7 +1,7 @@
 import os.path as osp
 
 from upyog.util.array  import sequencify
-from upyog.util.string import check_url
+from upyog.util.string import check_url, strip
 from upyog.util.system import ShellEnvironment, popen, makedirs
 from upyog.exception   import PopenError
 from upyog.__attr__    import __name__ as NAME

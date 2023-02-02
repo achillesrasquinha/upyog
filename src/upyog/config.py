@@ -10,7 +10,7 @@ import json
 
 # imports - module imports
 from upyog              import __name__ as NAME, __version__
-from upyog.util.system  import pardir, makedirs, touch
+from upyog.util.system  import pardir, makedirs, get_user
 from upyog.util.environ import getenv
 from upyog.util.types   import auto_typecast
 from upyog.util._dict   import autodict
@@ -67,16 +67,22 @@ class Configuration(object):
             with open(path, "w") as f:
                 self.config.write(f)
 
-    def get(self, section, key):
+    def get(self, section, key, default = None, raise_err = True, auto_type = True):
         config = self.config
 
         if not config.has_section(section):
             raise KeyError("No section %s found." % section)
+        
+        value = default
 
         if not config.has_option(section, key):
-            raise KeyError("No key %s found." % key)
-        
-        value = auto_typecast(config.get(section, key))
+            if raise_err:
+                raise KeyError("No key %s found." % key)
+        else:
+            value = config.get(section, key)
+
+        if auto_type:
+            value = auto_typecast(value)
 
         return value
 
@@ -108,8 +114,8 @@ class Settings(object):
         for k, v in iteritems(defaults or Settings._DEFAULTS):
             self.set(k, v)
 
-    def get(self, key):
-        return self.config.get("settings", key)
+    def get(self, key, default = None, raise_err = True, auto_type = True):
+        return self.config.get("settings", key, default = default, raise_err = raise_err, auto_type = auto_type)
 
     def set(self, key, value):
         self.config.set("settings", key, value)
@@ -131,6 +137,7 @@ def environment():
     environ["config"]           = dict(
         path = dict(PATH)
     )
+    environ["user"]             = get_user()
 
     from upyog import settings
     environ["settings"]         = settings.to_dict()

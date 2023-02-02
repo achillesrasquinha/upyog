@@ -1,6 +1,7 @@
 # imports - standard imports
 import random
 import re
+import string
 
 import requests as req
 from upyog.model.base           import BaseObject
@@ -39,9 +40,9 @@ class BaseAPI(BaseObject):
         ``{ protocol: ip }``.
     :param test: Attempt to test the connection to the base url.
     """
-    def __init__(self, url = None, proxies = [ ], test = True, token = None, verbose = False, rate = None,
-        auth = None):
-        self._url = url or getattr(self, "url")
+    def __init__(self, url = None, proxies = [ ], test = False, token = None, verbose = False, rate = None,
+        auth = None, **kwargs):
+        self._url = self._format_uri_path(url or getattr(self, "url"), **kwargs)
         
         self._session = req.Session()
 
@@ -56,7 +57,7 @@ class BaseAPI(BaseObject):
             proxies = [proxies]
 
         self._token   = token
-        self._auth    = auth
+        self._auth    = auth or getattr(self, "auth", None)
 
         self._proxies = proxies
         self._rate    = rate
@@ -66,11 +67,44 @@ class BaseAPI(BaseObject):
         if test:
             self.ping()
 
+    def _format_uri_path(self, url, **kwargs):
+        formatter = string.Formatter()
+        str_args  = formatter.parse(url)
+        uri_keys  = [arg[1] for arg in str_args if arg[1]]
+
+        variables = getattr(self, "variables", {})
+        variables.update(kwargs.get("variables", {}))
+
+        to_format = { }
+
+        for key in uri_keys:
+            key_config = variables.get(key, None)
+            if not key_config:
+                if not key in kwargs:
+                    raise ValueError("Missing argument '%s' for URL." % key)
+                else:
+                    to_format[key] = kwargs[key]
+            else:
+                required = key_config.get("required", False)
+                default  = key_config.get("default", None)
+
+                if required and not key in kwargs:
+                        raise ValueError("Missing argument '%s' for URL." % key)
+                else:
+                    to_format[key] = kwargs.get(key, default)
+
+        formatted = url.format(**to_format)
+
+        return formatted
+
     @property
     def url(self):
-        return getattr(self, "_url", None)
+        url = getattr(self, "_url", None)
+        
+        if url:
+            return self._format_uri_path(url)
 
-    def _create_api_function(self, api):
+    def _create_api_function(self, api, base_config = {}):
         METHOD_CALLERS = {
                "GET": self.get,
               "POST": self.post,
@@ -83,11 +117,12 @@ class BaseAPI(BaseObject):
         def fn(*args, **kwargs):
             data = {}
 
-            query = api["path"]
+            query = self._format_uri_path(api["path"], variables = api.get("variables", {}), **kwargs)
 
             params = api.get("params")
             method = api.get("method", "GET")
             auth_required = api.get("auth", False)
+            stream = api.get("stream", False)
 
             if params:
                 parameters = []
@@ -126,11 +161,21 @@ class BaseAPI(BaseObject):
             if auth_required:
                 Auth = self._auth
                 if Auth:
-                    args.update({"auth": Auth})
+                    args.update({"auth": Auth()})
+
+            if stream:
+                args.update({"stream": True})
 
             method_caller = METHOD_CALLERS.get(method, self.get)
 
-            return method_caller(query, **args)
+            response = method_caller(query, **args)
+
+            post_request = api.get("post_request", base_config.get("post_request", None))
+
+            if post_request:
+                response = post_request(response, req_args = args)
+            
+            return response
 
         if doc:
             fn.__doc__ = doc
@@ -142,11 +187,16 @@ class BaseAPI(BaseObject):
         if api_config:
             if "paths" in api_config:
                 for api in api_config["paths"]:
+                    if isinstance(api, str):
+                        api = dict(path = api)
+                    elif isinstance(api, (list, tuple)):
+                        api = dict(path = api[0], method_name = api[1])
+
                     query = api["path"]
 
-                    fn = self._create_api_function(api)
+                    fn = self._create_api_function(api, base_config = api_config)
 
-                    method_name = api.get("fn_name", _path_to_method_name(query))
+                    method_name = api.get("method_name", _path_to_method_name(query))
 
                     setattr(self, method_name, fn)
 
@@ -157,7 +207,7 @@ class BaseAPI(BaseObject):
         parts   = []
 
         if prefix:
-            parts.append(self.url)
+            parts.append(self._url)
 
         url = "/".join(map(str, sequencify(parts) + sequencify(args)))
 
