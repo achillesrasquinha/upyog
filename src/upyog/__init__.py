@@ -77,7 +77,8 @@ from upyog.util.system import (
     abslistdir,
     sha256sum,
     pardir,
-    which
+    which,
+    remove
 )
 from upyog.util.environ import (
     getenv,
@@ -100,6 +101,7 @@ from upyog.config import (
 from upyog.util.progress import (
     progress
 )
+from upyog.exception import PopenError
 from upyog.i18n import _
 from upyog.model import BaseObject
 from upyog.log import get_logger
