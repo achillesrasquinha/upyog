@@ -119,38 +119,50 @@ def lvalues(d):
 
 def check_struct(d, struct, raise_err = True):
     """
-    Check if a dictionary matches a structure.
+    Check if a dictionary has a certain structure.
 
     :param d: A dictionary.
-    :param struct: A dictionary structure.
-    :param raise_err: Raise an error if the dictionary does not match the structure.
+    :param struct: A dictionary with the structure to be checked.
+    :param raise_err: Whether to raise an error if the structure is not found.
 
     :returns: bool
 
-    Example::
+    :raises: ValueError
 
-        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': str })
+    :Example:
+
+        >>> bpy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": str } })
         True
-        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': int })
+        >>> bpy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": int } }, raise_err = False)
         False
-        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': int }, raise_err = False)
-        False
-        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': int }, raise_err = True)
-        Traceback (most recent call last):
-            ...
-        TypeError: 'baz' must be of type <class 'int'>, not <class 'str'>
     """
+    if not isinstance(d, dict):
+        if raise_err:
+            raise ValueError("The first argument must be a dictionary.")
+        else:
+            return False
+
+    if not isinstance(struct, dict):
+        if raise_err:
+            raise ValueError("The second argument must be a dictionary.")
+        else:
+            return False
+
     for key, value in iteritems(struct):
         if key not in d:
             if raise_err:
-                raise KeyError("'%s' is a required key" % key)
+                raise ValueError("The key '%s' is not in the dictionary." % key)
             else:
                 return False
 
-        if not isinstance(d[key], value):
-            if raise_err:
-                raise TypeError("'%s' must be of type %s, not %s" % (key, value, type(d[key])))
-            else:
+        if isinstance(value, dict):
+            if not check_struct(d[key], value, raise_err):
                 return False
+        else:
+            if not isinstance(d[key], value):
+                if raise_err:
+                    raise ValueError("The value of the key '%s' is not of type '%s'." % (key, value))
+                else:
+                    return False
 
     return True
