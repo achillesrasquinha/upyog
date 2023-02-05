@@ -165,4 +165,4 @@ def check_struct(d, struct, raise_err = True):
                 else:
                     return False
 
-    return True
+    return d
