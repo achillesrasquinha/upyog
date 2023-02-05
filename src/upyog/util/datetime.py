@@ -5,7 +5,9 @@ from __future__ import absolute_import
 import time
 import datetime as dt
 
-now = dt.datetime.now
+now    = dt.datetime.now
+utcnow = dt.datetime.utcnow
+timedelta = dt.timedelta
 
 _DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
 
