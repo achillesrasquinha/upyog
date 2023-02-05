@@ -26,7 +26,8 @@ from upyog.util._dict  import (
     dict_from_list,
     autodict,
     lkeys,
-    lvalues
+    lvalues,
+    check_struct as check_dict_struct
 )
 from upyog.util._json import (
     load_json,

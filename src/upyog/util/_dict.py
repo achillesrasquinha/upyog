@@ -116,3 +116,41 @@ def lvalues(d):
         ['bar', 'boo']
     """
     return list(itervalues(d))
+
+def check_struct(d, struct, raise_err = True):
+    """
+    Check if a dictionary matches a structure.
+
+    :param d: A dictionary.
+    :param struct: A dictionary structure.
+    :param raise_err: Raise an error if the dictionary does not match the structure.
+
+    :returns: bool
+
+    Example::
+
+        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': str })
+        True
+        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': int })
+        False
+        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': int }, raise_err = False)
+        False
+        >>> upy.check_dict_struct({ 'foo': 'bar', 'baz': 'boo' }, { 'foo': str, 'baz': int }, raise_err = True)
+        Traceback (most recent call last):
+            ...
+        TypeError: 'baz' must be of type <class 'int'>, not <class 'str'>
+    """
+    for key, value in iteritems(struct):
+        if key not in d:
+            if raise_err:
+                raise KeyError("'%s' is a required key" % key)
+            else:
+                return False
+
+        if not isinstance(d[key], value):
+            if raise_err:
+                raise TypeError("'%s' must be of type %s, not %s" % (key, value, type(d[key])))
+            else:
+                return False
+
+    return True
