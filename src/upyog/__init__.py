@@ -91,7 +91,8 @@ from upyog.db import (
     get_connection as get_db_connection,
 )
 from upyog.util.request import (
-    download_file
+    download_file,
+    TokenAuth
 )
 from upyog.util.mixin import (
     create_obj_registerer

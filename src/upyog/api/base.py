@@ -41,10 +41,10 @@ class BaseAPI(BaseObject):
     :param test: Attempt to test the connection to the base url.
     """
     def __init__(self, url = None, proxies = [ ], test = False, token = None, verbose = False, rate = None,
-        auth = None, **kwargs):
+        auth = None, session = None, **kwargs):
         self._url = self._format_uri_path(url or getattr(self, "url"), **kwargs)
         
-        self._session = req.Session()
+        self._session = session or req.Session()
 
         if proxies and \
             not isinstance(proxies, (Mapping, list, tuple)):
@@ -56,8 +56,10 @@ class BaseAPI(BaseObject):
         if isinstance(proxies, Mapping):
             proxies = [proxies]
 
-        self._token   = token
-        self._auth    = auth or getattr(self, "auth", None)
+        self._token = token
+
+        self._auth  = auth or getattr(self, "auth", None)
+        self._session.auth = self._auth
 
         self._proxies = proxies
         self._rate    = rate
@@ -159,9 +161,8 @@ class BaseAPI(BaseObject):
                 args = {"params": data}
 
             if auth_required:
-                Auth = self._auth
-                if Auth:
-                    args.update({"auth": Auth()})
+                if self._auth:
+                    args.update({"auth": self._auth})
 
             if stream:
                 args.update({"stream": True})

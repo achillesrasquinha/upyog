@@ -2,6 +2,7 @@ import re
 import os.path as osp
 
 import requests
+from requests.auth import AuthBase
 
 # from fake_useragent import UserAgent
 
@@ -122,3 +123,11 @@ def download_file(url, target = None, chunk_size = None, req_kwargs = {}):
             raise ValueError("Unable to read downloaded file into path %s." % target)
 
     return target
+
+class TokenAuth(AuthBase):
+    def __init__(self, token):
+        self._token = token
+
+    def __call__(self, r):
+        r.headers["Authorization"] = "Bearer %s" % self._token
+        return r
