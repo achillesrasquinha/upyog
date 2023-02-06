@@ -51,7 +51,9 @@ from upyog.util.string import (
     lower,
     upper,
     strip,
-    get_random_str
+    get_random_str,
+    pluralize,
+    labelize
 )
 from upyog.util.datetime import (
     check_datetime_format,
