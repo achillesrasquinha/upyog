@@ -42,7 +42,7 @@ class BaseAPI(BaseObject):
     """
     def __init__(self, url = None, proxies = [ ], test = False, token = None, verbose = False, rate = None,
         auth = None, session = None, **kwargs):
-        self._url = self._format_uri_path(url or getattr(self, "url"), **kwargs)
+        self._url     = self._format_uri_path(url or getattr(self, "url"), **kwargs)
         
         self._session = session or req.Session()
 
@@ -58,8 +58,7 @@ class BaseAPI(BaseObject):
 
         self._token = token
 
-        self._auth  = auth or getattr(self, "auth", None)
-        self._session.auth = self._auth
+        self._auth  = auth
 
         self._proxies = proxies
         self._rate    = rate
@@ -98,6 +97,12 @@ class BaseAPI(BaseObject):
         formatted = url.format(**to_format)
 
         return formatted
+
+    @property
+    def auth(self):
+        auth = getattr(self, "_auth", None)
+        self._session.auth = auth
+        return auth
 
     @property
     def url(self):
@@ -161,8 +166,8 @@ class BaseAPI(BaseObject):
                 args = {"params": data}
 
             if auth_required:
-                if self._auth:
-                    args.update({"auth": self._auth})
+                if self.auth:
+                    args.update({"auth": self.auth})
 
             if stream:
                 args.update({"stream": True})
