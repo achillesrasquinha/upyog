@@ -310,3 +310,12 @@ class BaseAPI(BaseObject):
         """
         response = self.request("HEAD", "")
         return "pong"
+
+    @property
+    def session(self):
+        return self._session
+
+    @session.setter
+    def session(self, session):
+        assert isinstance(session, requests.Session), "Session must be an instance of requests.Session"
+        self._session = session

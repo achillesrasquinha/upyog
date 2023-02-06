@@ -128,6 +128,10 @@ class TokenAuth(AuthBase):
     def __init__(self, token):
         self._token = token
 
+    @property
+    def token(self):
+        return self._token
+
     def __call__(self, r):
         r.headers["Authorization"] = "Bearer %s" % self._token
         return r
