@@ -176,10 +176,10 @@ class BaseAPI(BaseObject):
 
             response = method_caller(query, **args)
 
-            post_request = api.get("post_request", base_config.get("post_request", None))
+            after_request = api.get("after_request", base_config.get("after_request", None))
 
-            if post_request:
-                response = post_request(response, req_args = args)
+            if after_request:
+                response = after_request(response, req_args = args)
             
             return response
 
