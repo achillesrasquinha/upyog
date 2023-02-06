@@ -101,8 +101,12 @@ class BaseAPI(BaseObject):
     @property
     def auth(self):
         auth = getattr(self, "_auth", None)
-        self._session.auth = auth
         return auth
+
+    @auth.setter
+    def auth(self, value):
+        self._auth = value
+        self._session.auth = value
 
     @property
     def url(self):
