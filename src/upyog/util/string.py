@@ -27,12 +27,12 @@ def pluralize(string, count = 1):
     return string
 
 def labelize(string):
-    string = ""
+    result = ""
     for i, char in enumerate(string):
         if char.isupper() and i > 0:
-            string += " "
-        string += char
-    return string
+            result += " "
+        result += char
+    return result
 
 def kebab_case(string, delimiter = " ", to_lower = True):
     words = string.replace(delimiter, " ").split()
