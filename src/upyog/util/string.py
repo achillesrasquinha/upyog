@@ -44,7 +44,7 @@ def labelize(string):
 
         result += char
 
-    return capitalize(result)
+    return result.title()
 
 def kebab_case(string, delimiter = " ", to_lower = True):
     words = string.replace(delimiter, " ").split()
