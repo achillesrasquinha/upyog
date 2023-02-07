@@ -27,13 +27,23 @@ def pluralize(string, count = 1):
     return string
 
 def labelize(string):
-    result = ""
+    result   = ""
+    upperize = False
+
     for i, char in enumerate(string):
         if char.isupper() and i > 0:
             result += " "
-        if char == "_":
-            result += " "
+        elif char == "_":
+            result  += " "
+            upperize = True
+            continue
+
+        if upperize:
+            char = char.upper()
+            upperize = False
+
         result += char
+
     return capitalize(result)
 
 def kebab_case(string, delimiter = " ", to_lower = True):
