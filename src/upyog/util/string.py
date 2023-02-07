@@ -31,8 +31,10 @@ def labelize(string):
     for i, char in enumerate(string):
         if char.isupper() and i > 0:
             result += " "
+        if char == "_":
+            result += " "
         result += char
-    return result
+    return capitalize(result)
 
 def kebab_case(string, delimiter = " ", to_lower = True):
     words = string.replace(delimiter, " ").split()
@@ -120,4 +122,3 @@ def nl(s = "", space = 1):
 def tb(s = "", point = 2, type_ = " "):
     indent = type_ * point
     return "%s%s" % (indent, s)
-    
