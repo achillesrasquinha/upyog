@@ -1,3 +1,4 @@
+from upyog.util.types import classname
 from upyog._compat import iteritems
 from upyog import log
 
@@ -9,7 +10,7 @@ class BaseObject(object):
             setattr(self, kwarg, value)
 
     def __repr__(self):
-        klass  = self.__class__.__name__
+        klass  = self.c_name
 
         prefix = ""
 
@@ -22,5 +23,9 @@ class BaseObject(object):
         return repr_
 
     def log(self, type_, message, *args, **kwargs):
-        message = "[%s] %s" % (self.__class__.__name__, message)
+        message = "[%s] %s" % (self.c_name, message)
         getattr(logger, type_)(message, *args, **kwargs)
+
+    @property
+    def c_name(self):
+        return classname(self)
