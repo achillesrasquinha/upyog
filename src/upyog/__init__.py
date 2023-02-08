@@ -112,6 +112,9 @@ from upyog.exception import PopenError
 from upyog.i18n import _
 from upyog.model import BaseObject
 from upyog.log import get_logger
+from upyog.limits import (
+    MAX_UNSIGNED_SHORT
+)
 
 settings = Settings()
 
