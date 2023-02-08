@@ -30,6 +30,9 @@ def labelize(string):
     result   = ""
     upperize = False
 
+    if string.isupper():
+        string = string.lower()
+
     for i, char in enumerate(string):
         if char.isupper() and i > 0:
             result += " "
