@@ -11,6 +11,7 @@ import logging
 from upyog.util.cli import CYAN, GRAY, ORANGE
 from upyog.util import cli as _cli
 from upyog.__attr__   import __name__ as NAME
+from upyog._compat    import iteritems
 
 NOTSET      = logging.NOTSET
 DEBUG       = logging.DEBUG
@@ -67,3 +68,39 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
         _LOGGER[name] = logger
     
     return _LOGGER[name]
+
+def step_log(logger = None, raise_err = True, *args, **kwargs):
+    """
+        with step_log(
+            info    = "Letting the world know that you are here.",
+            success = "You are here."
+            error   = "You are not here."
+        ):
+            # do something
+            pass
+    """
+    if logger is None:
+        logger = get_logger()
+
+    def decorator(func):
+        def wrapper(*i_args, **i_kwargs):
+            try:
+                if "before" in kwargs:
+                    logger.info(kwargs["before"])
+
+                result = func(*i_args, **i_kwargs)
+
+                if "after" in kwargs:
+                    logger.success(kwargs["after"])
+                    
+                return result
+            except Exception as e:
+                err_pref = kwargs.get("error")
+                logger.error("%s: %s" % (err_pref, e) if err_pref else e)
+
+                if raise_err:
+                    raise e
+
+        return wrapper
+
+    return decorator
