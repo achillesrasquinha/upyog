@@ -32,7 +32,6 @@ logging.Logger.success = success
 _FORMAT     = '%(asctime)s | %(levelname)s | %(message)s'
 _LOGGER     = {}
 
-
 class LogFormatter(logging.Formatter):
     COLORS = {
         NOTSET:     _cli.GRAY,

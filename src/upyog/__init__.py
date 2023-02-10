@@ -23,6 +23,7 @@ from upyog.util.jobs   import run_all as run_all_jobs, run_job
 from upyog.api.base    import BaseAPI
 from upyog.util._dict  import (
     merge_dict,
+    merge_deep,
     dict_from_list,
     autodict,
     lkeys,
