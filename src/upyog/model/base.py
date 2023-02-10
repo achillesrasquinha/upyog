@@ -32,7 +32,7 @@ class BaseObject(object):
         getattr(self.logger, type_)(message, *args, **kwargs)
 
     def step_log(self, *args, **kwargs):
-        return log.step_log(logger = self.logger, *args, **kwargs)
+        return log.StepLogger(logger = self.logger, *args, **kwargs)
 
     @property
     def c_name(self):

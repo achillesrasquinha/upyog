@@ -69,38 +69,23 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
     
     return _LOGGER[name]
 
-def step_log(logger = None, raise_err = True, *args, **kwargs):
-    """
-        with step_log(
-            info    = "Letting the world know that you are here.",
-            success = "You are here."
-            error   = "You are not here."
-        ):
-            # do something
-            pass
-    """
-    if logger is None:
-        logger = get_logger()
+class StepLogger:
+    def __init__(self, logger = None, *args, **kwargs):
+        self._logger = logger or get_logger()
 
-    def decorator(func):
-        def wrapper(*i_args, **i_kwargs):
-            try:
-                if "before" in kwargs:
-                    logger.info(kwargs["before"])
+        self._before = kwargs.get("before")
+        self._after  = kwargs.get("after")
+        self._error  = kwargs.get("error")
 
-                result = func(*i_args, **i_kwargs)
+    def __enter__(self):
+        if self._before:
+            self._logger.info(self._before)
+        return self
 
-                if "after" in kwargs:
-                    logger.success(kwargs["after"])
-                    
-                return result
-            except Exception as e:
-                err_pref = kwargs.get("error")
-                logger.error("%s: %s" % (err_pref, e) if err_pref else e)
-
-                if raise_err:
-                    raise e
-
-        return wrapper
-
-    return decorator
+    def __exit__(self, type, value, traceback):
+        if type is None:
+            if self._after:
+                self._logger.success(self._after)
+        else:
+            if self._error:
+                self._logger.error("%s: %s" % (self._error, value))
