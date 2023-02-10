@@ -7,7 +7,7 @@ class BaseObject(object):
         for kwarg, value in iteritems(kwargs):
             setattr(self, kwarg, value)
         
-        verbose = getattr(self, "verbose", False)
+        verbose = getattr(self, "verbose", True)
         self._logger = log.get_logger(self.c_name, level = log.DEBUG if verbose else log.INFO)
 
     @property
