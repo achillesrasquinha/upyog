@@ -2,13 +2,13 @@ from upyog.util.types import classname
 from upyog._compat import iteritems
 from upyog import log
 
-
 class BaseObject(object):
     def __init__(self, *args, **kwargs):
         for kwarg, value in iteritems(kwargs):
             setattr(self, kwarg, value)
         
-        self._logger = log.get_logger(self.c_name)
+        verbose = getattr(self, "verbose", False)
+        self._logger = log.get_logger(self.c_name, level = log.DEBUG if verbose else log.INFO)
 
     @property
     def logger(self):
