@@ -6,8 +6,8 @@ from upyog.cli.parser import get_args
 from upyog.util._dict import merge_dict
 from upyog.util.types import get_function_arguments
 
-def command(fn):
-    args    = get_args()
+def create_command(args_getter, fn):
+    args    = args_getter()
     
     params  = get_function_arguments(fn)
 
@@ -17,3 +17,5 @@ def command(fn):
         return fn(**params)
 
     return wrapper
+
+command = create_command(get_args)
