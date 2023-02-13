@@ -40,7 +40,26 @@ class JSONConfigFileAction(argparse.Action):
             config = json.load(f)
             setattr(namespace, self.dest, config)
 
-def get_base_parser(prog, description, help_ = True):
+ARGUMENTS = dict(
+    jobs						= 1,
+    check		 				= False,
+    interactive  				= False,
+    yes			 				= False,
+    no_cache		            = False,
+    no_color 	 				= True,
+    output						= None,
+    ignore_error				= False,
+    force						= False,
+    verbose		 				= False
+)
+
+def get_base_parser(prog, help_ = True, **kwargs):
+    name    = kwargs.get("name", __name__)
+    version = kwargs.get("version", __version__)
+    desc    = kwargs.get("description", __description__)
+
+    description = _render_jumbotron(name, version, desc)
+    
     parser = argparse.ArgumentParser(
         prog            = prog,
         description     = description,
@@ -116,8 +135,12 @@ def get_base_parser(prog, description, help_ = True):
     return parser
 
 def get_parser():
-    parser = get_base_parser(__command__, _DESCRIPTION_JUMBOTRON,
-        help_ = False)
+    parser = get_base_parser(__command__,
+        name        = __name__,
+        version     = __version__,
+        description = __description__,
+        help_       = False
+    )
 
     # boilpy
     parser.add_argument("--update-boilpy-project",
@@ -224,9 +247,9 @@ def _render_jumbotron(name, version = None, description = None):
 
 %s
 """ % (
-    _cli.format(__name__,        _cli.RED),
-    _cli.format(__version__,     _cli.BOLD),
-    _cli.format(__description__, _cli.BOLD)
+    _cli.format(name,        _cli.RED),
+    _cli.format(version,     _cli.BOLD),
+    _cli.format(description, _cli.BOLD)
 )
 
     return jumbotron

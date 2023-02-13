@@ -20,6 +20,9 @@ from upyog import cli
 from upyog.cli import (
     create_command
 )
+from upyog.cli.parser import (
+    get_base_parser
+)
 from upyog.__main__    import main
 from upyog.config      import Settings
 from upyog.util.jobs   import run_all as run_all_jobs, run_job
