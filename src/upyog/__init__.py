@@ -17,7 +17,7 @@ from upyog.__attr__ import (
     __author__
 )
 from upyog import cli
-from upyog.cli.util import (
+from upyog.cli import (
     create_command
 )
 from upyog.__main__    import main
