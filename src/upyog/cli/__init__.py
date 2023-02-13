@@ -6,16 +6,19 @@ from upyog.cli.parser import get_args
 from upyog.util._dict import merge_dict
 from upyog.util.types import get_function_arguments
 
-def create_command(args_getter, fn):
-    args    = args_getter()
-    
-    params  = get_function_arguments(fn)
+def create_command(args_getter):
 
-    params  = merge_dict(params, args)
-    
-    def wrapper(*args, **kwargs):
-        return fn(**params)
+    def fn(*fn_args, **fn_kwargs):
+        args    = args_getter()
+        
+        params  = get_function_arguments(fn)
 
-    return wrapper
+        params  = merge_dict(params, args)
+        
+        def wrapper(*args, **kwargs):
+            return fn(**params)
+        
+        return wrapper
+    return fn
 
 command = create_command(get_args)
