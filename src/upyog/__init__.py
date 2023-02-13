@@ -17,6 +17,9 @@ from upyog.__attr__ import (
     __author__
 )
 from upyog import cli
+from upyog.cli.util import (
+    create_command
+)
 from upyog.__main__    import main
 from upyog.config      import Settings
 from upyog.util.jobs   import run_all as run_all_jobs, run_job
