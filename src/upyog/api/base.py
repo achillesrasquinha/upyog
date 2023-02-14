@@ -2,6 +2,7 @@
 import random
 import re
 import string
+import json
 
 import requests as req
 from upyog.model.base           import BaseObject
@@ -167,7 +168,10 @@ class BaseAPI(BaseObject):
 
             if method == "POST":
                 if "json" in kwargs:
-                    args = {"json": kwargs["json"]}
+                    args = {
+                        "data": json.dumps(kwargs["json"]),
+                        "headers": {"Content-Type": "application/json"}
+                    }
                 else:
                     args = {"data": data}
             else:
