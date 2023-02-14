@@ -164,8 +164,12 @@ class BaseAPI(BaseObject):
                         value = kwargs.get(parameter)
                         data[parameter] = value
 
+
             if method == "POST":
-                args = {"data": data}
+                if "json" in kwargs:
+                    args = {"json": kwargs["json"]}
+                else:
+                    args = {"data": data}
             else:
                 args = {"params": data}
 
