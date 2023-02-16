@@ -134,6 +134,9 @@ def pardir(fname, level = 1):
         fname = osp.dirname(fname)
     return fname
 
+def dict_to_cmd_args(dictionary, prefix = "--", sep = "=", join = " "):
+    return join.join([prefix + key + sep + value for key, value in iteritems(dictionary)])
+
 def popen(*args, **kwargs):
     output      = kwargs.get("output", False)
     quiet       = kwargs.get("quiet" , False)
@@ -371,7 +374,8 @@ def copy(*files, **kwargs):
             raise FileNotFoundError("No file %s found." % abspath)
         else:
             if recursive:
-                shutil.copytree(abspath, dest, dirs_exist_ok = exist_ok)
+                shutil.copytree(abspath, dest)
+                # shutil.copytree(abspath, dest, dirs_exist_ok = exist_ok)
             else:
                 shutil.copy2(abspath, dest)
 

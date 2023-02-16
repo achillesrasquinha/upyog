@@ -29,10 +29,10 @@ class BaseObject(object):
 
     def log(self, type_, message, *args, **kwargs):
         message = "[%s] %s" % (self.c_name, message)
-        getattr(self.logger, type_)(message, *args, **kwargs)
+        getattr(self._logger, type_)(message, *args, **kwargs)
 
     def step_log(self, *args, **kwargs):
-        return log.StepLogger(logger = self.logger, *args, **kwargs)
+        return log.StepLogger(logger = self._logger, *args, **kwargs)
 
     @property
     def c_name(self):

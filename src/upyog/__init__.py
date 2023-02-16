@@ -85,7 +85,8 @@ from upyog.util.system import (
     remove,
     walk,
     read,
-    write
+    write,
+    dict_to_cmd_args
 )
 from upyog.util.environ import (
     getenv,
