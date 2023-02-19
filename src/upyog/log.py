@@ -1,8 +1,4 @@
-
-
-
 from __future__ import absolute_import
-
 
 # imports - standard imports
 import logging
@@ -19,6 +15,7 @@ INFO        = logging.INFO
 WARNING     = logging.WARNING
 ERROR       = logging.ERROR
 CRITICAL    = logging.CRITICAL
+MAGIC       = logging.DEBUG
 
 SUCCESS     = 10
 logging.addLevelName(SUCCESS, "SUCCESS")
@@ -27,7 +24,12 @@ def success(self, message, *args, **kwargs):
     if self.isEnabledFor(SUCCESS):
         self._log(SUCCESS, message, args, **kwargs)
 
+def magic(self, message, *args, **kwargs):
+    if self.isEnabledFor(SUCCESS):
+        self._log(SUCCESS, message, args, **kwargs)
+
 logging.Logger.success = success
+logging.Logger.magic   = magic
 
 _FORMAT     = '%(asctime)s | %(levelname)s | %(message)s'
 _LOGGER     = {}
@@ -40,7 +42,9 @@ class LogFormatter(logging.Formatter):
         WARNING:    _cli.YELLOW,
         ERROR:      _cli.RED,
         CRITICAL:   _cli.RED,
-        SUCCESS:    _cli.GREEN
+        SUCCESS:    _cli.GREEN,
+
+        MAGIC:      _cli.PURPLE
     }
 
     def format(self, record):
@@ -88,3 +92,12 @@ class StepLogger:
         else:
             if self._error:
                 self._logger.error("%s: %s" % (self._error, value))
+
+def log_fn(fn):
+    logger = get_logger(fn.__module__)
+    
+    def wrapper(*args, **kwargs):
+        logger.magic("%s: (%s, %s)" % (fn.__name__, args, kwargs))
+        return fn(*args, **kwargs)
+
+    return wrapper
