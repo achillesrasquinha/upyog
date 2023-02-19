@@ -77,6 +77,7 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
         handler.setFormatter(formatter)
 
         logger    = logging.getLogger(name)
+        logger.max_log_history = 5
 
         logger.setLevel(level)
 
