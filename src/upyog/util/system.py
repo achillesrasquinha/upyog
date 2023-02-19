@@ -158,7 +158,7 @@ def popen(*args, **kwargs):
         logger.info("Executing command: %s" % command)
 
     if quiet:
-        output  = True
+        output = True
     
     proc        = sp.Popen(command,
         bufsize = -1,
@@ -493,3 +493,6 @@ def sha256sum(fpath):
 def get_user():
     username = os.environ.get("USER")
     return username
+
+def noop(*args, **kwargs):
+    pass

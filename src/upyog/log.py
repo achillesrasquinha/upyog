@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 # imports - standard imports
 import logging
+import time
 
 # imports - module imports
 from upyog.util.cli import CYAN, GRAY, ORANGE
@@ -53,6 +54,19 @@ class LogFormatter(logging.Formatter):
         formatter = logging.Formatter(format_)
         return formatter.format(record)
 
+def _log(self, level, msg, *args, **kwargs):
+    timestamp = time.time()
+
+    logs = getattr(self, "_logs", [])
+    logs.append((time, level, msg, args, kwargs))
+
+    if len(logs) > self.max_log_history:
+        logs.pop(0)
+        self._logs = logs
+
+    super_ = super(logging.Logger, self)
+    super_._log(level, msg, *args, **kwargs)
+
 def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
     global _LOGGER
 
@@ -67,6 +81,7 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
         logger.setLevel(level)
 
         logger.addHandler(handler)
+        logger._log = _log
         
         _LOGGER[name] = logger
     
