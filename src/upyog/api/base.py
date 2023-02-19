@@ -2,6 +2,7 @@
 import random
 import re
 import string
+import json
 
 import requests as req
 from upyog.model.base           import BaseObject
@@ -41,10 +42,10 @@ class BaseAPI(BaseObject):
     :param test: Attempt to test the connection to the base url.
     """
     def __init__(self, url = None, proxies = [ ], test = False, token = None, verbose = False, rate = None,
-        auth = None, **kwargs):
-        self._url = self._format_uri_path(url or getattr(self, "url"), **kwargs)
+        auth = None, session = None, **kwargs):
+        self._url     = self._format_uri_path(url or getattr(self, "url"), **kwargs)
         
-        self._session = req.Session()
+        self._session = session or req.Session()
 
         if proxies and \
             not isinstance(proxies, (Mapping, list, tuple)):
@@ -56,8 +57,9 @@ class BaseAPI(BaseObject):
         if isinstance(proxies, Mapping):
             proxies = [proxies]
 
-        self._token   = token
-        self._auth    = auth or getattr(self, "auth", None)
+        self._token = token
+
+        self._auth  = auth
 
         self._proxies = proxies
         self._rate    = rate
@@ -96,6 +98,16 @@ class BaseAPI(BaseObject):
         formatted = url.format(**to_format)
 
         return formatted
+
+    @property
+    def auth(self):
+        auth = getattr(self, "_auth", None)
+        return auth
+
+    @auth.setter
+    def auth(self, value):
+        self._auth = value
+        self._session.auth = value
 
     @property
     def url(self):
@@ -153,15 +165,21 @@ class BaseAPI(BaseObject):
                         value = kwargs.get(parameter)
                         data[parameter] = value
 
+
             if method == "POST":
-                args = {"data": data}
+                if "json" in kwargs:
+                    args = {
+                        "data": json.dumps(kwargs["json"]),
+                        "headers": {"Content-Type": "application/json"}
+                    }
+                else:
+                    args = {"data": data}
             else:
                 args = {"params": data}
 
             if auth_required:
-                Auth = self._auth
-                if Auth:
-                    args.update({"auth": Auth()})
+                if self.auth:
+                    args.update({"auth": self.auth})
 
             if stream:
                 args.update({"stream": True})
@@ -170,10 +188,10 @@ class BaseAPI(BaseObject):
 
             response = method_caller(query, **args)
 
-            post_request = api.get("post_request", base_config.get("post_request", None))
+            after_request = api.get("after_request", base_config.get("after_request", None))
 
-            if post_request:
-                response = post_request(response, req_args = args)
+            if after_request:
+                response = after_request(response, req_args = args)
             
             return response
 
@@ -300,3 +318,12 @@ class BaseAPI(BaseObject):
         """
         response = self.request("HEAD", "")
         return "pong"
+
+    @property
+    def session(self):
+        return self._session
+
+    @session.setter
+    def session(self, session):
+        assert isinstance(session, requests.Session), "Session must be an instance of requests.Session"
+        self._session = session

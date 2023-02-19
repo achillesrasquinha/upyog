@@ -202,9 +202,7 @@ def get_parser():
 
     return parser
 
-def get_args(args = None, known = True, as_dict = True):
-    parser  = get_parser()
-
+def get_parser_args(parser, args = None, known = True, as_dict = True):
     if known:
         args, _ = parser.parse_known_args(args)
     else:
@@ -214,3 +212,21 @@ def get_args(args = None, known = True, as_dict = True):
         args = args.__dict__
         
     return args
+
+def get_args(args = None, known = True, as_dict = True):
+    parser = get_parser()
+    return get_parser_args(parser, args = args, known = known, as_dict = as_dict)
+
+def _render_jumbotron(name, version = None, description = None):
+    jumbotron = \
+"""
+%s (v %s)
+
+%s
+""" % (
+    _cli.format(__name__,        _cli.RED),
+    _cli.format(__version__,     _cli.BOLD),
+    _cli.format(__description__, _cli.BOLD)
+)
+
+    return jumbotron

@@ -109,7 +109,7 @@ def filter2(fn, arr):
 lfilter = _gen_to_seq(filter)
 lmap    = _gen_to_seq(map)
 
-def build_fn(fn, **kwargs):
+def build_fn(fn, *args, **kwargs):
     """Build a function caller with default arguments.
 
     Args:
@@ -126,7 +126,7 @@ def build_fn(fn, **kwargs):
         >>> fn()
         3
     """
-    return partial(fn, **kwargs)
+    return partial(fn, *args, **kwargs)
 
 def check_array(o, raise_err = True):
     """

@@ -26,6 +26,29 @@ def pluralize(string, count = 1):
     
     return string
 
+def labelize(string):
+    result   = ""
+    upperize = False
+
+    if string.isupper():
+        string = string.lower()
+
+    for i, char in enumerate(string):
+        if char.isupper() and i > 0:
+            result += " "
+        elif char == "_":
+            result  += " "
+            upperize = True
+            continue
+
+        if upperize:
+            char = char.upper()
+            upperize = False
+
+        result += char
+
+    return result.title()
+
 def kebab_case(string, delimiter = " ", to_lower = True):
     words = string.replace(delimiter, " ").split()
     kebab = "-".join([word.lower() if to_lower else word for word in words])
@@ -112,4 +135,3 @@ def nl(s = "", space = 1):
 def tb(s = "", point = 2, type_ = " "):
     indent = type_ * point
     return "%s%s" % (indent, s)
-    

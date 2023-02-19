@@ -29,7 +29,7 @@ from upyog.util.string     import (
 )
 from upyog.util.types      import lmap, lfilter
 from upyog.util.array      import sequencify
-from upyog.util.environ    import SECRETS
+from upyog.util.environ    import SECRETS, value_to_envval
 from upyog._compat         import iteritems, PY2
 from upyog.log             import get_logger
 
@@ -133,6 +133,9 @@ def pardir(fname, level = 1):
     for _ in range(level):
         fname = osp.dirname(fname)
     return fname
+
+def dict_to_cmd_args(dictionary, prefix = "--", sep = "=", join = " "):
+    return join.join([prefix + key + sep + value_to_envval(value) for key, value in iteritems(dictionary)])
 
 def popen(*args, **kwargs):
     output      = kwargs.get("output", False)
@@ -371,7 +374,8 @@ def copy(*files, **kwargs):
             raise FileNotFoundError("No file %s found." % abspath)
         else:
             if recursive:
-                shutil.copytree(abspath, dest, dirs_exist_ok = exist_ok)
+                shutil.copytree(abspath, dest)
+                # shutil.copytree(abspath, dest, dirs_exist_ok = exist_ok)
             else:
                 shutil.copy2(abspath, dest)
 

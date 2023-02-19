@@ -7,6 +7,7 @@ import logging
 from upyog.util.cli import CYAN, GRAY, ORANGE
 from upyog.util import cli as _cli
 from upyog.__attr__   import __name__ as NAME
+from upyog._compat    import iteritems
 
 NOTSET      = logging.NOTSET
 DEBUG       = logging.DEBUG
@@ -70,6 +71,27 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
         _LOGGER[name] = logger
     
     return _LOGGER[name]
+
+class StepLogger:
+    def __init__(self, logger = None, *args, **kwargs):
+        self._logger = logger or get_logger()
+
+        self._before = kwargs.get("before")
+        self._after  = kwargs.get("after")
+        self._error  = kwargs.get("error")
+
+    def __enter__(self):
+        if self._before:
+            self._logger.info(self._before)
+        return self
+
+    def __exit__(self, type, value, traceback):
+        if type is None:
+            if self._after:
+                self._logger.success(self._after)
+        else:
+            if self._error:
+                self._logger.error("%s: %s" % (self._error, value))
 
 def log_fn(fn):
     logger = get_logger(fn.__module__)
