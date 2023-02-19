@@ -34,6 +34,7 @@ GREEN     = _format_ansi("0;92")
 YELLOW    = _format_ansi("0;93")
 CYAN      = _format_ansi("0;96")
 ORANGE    = _format_ansi("0;40")
+PURPLE    = _format_ansi("0;95")
 CLEAR     = _format_ansi("0")
 
 def confirm(query, quit_ = True):

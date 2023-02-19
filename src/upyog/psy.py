@@ -15,6 +15,10 @@ from upyog.util.system  import (
 from upyog.model.base import BaseObject
 from upyog.util.request import joinurl
 from upyog.util.request import download_file
+from upyog.util.string  import check_url
+import upyog.log as log
+
+NAME = __name__
 
 _DRIVER = None
 
@@ -23,6 +27,8 @@ _CHROME_DRIVER_BASE_URL = "https://chromedriver.storage.googleapis.com/109.0.541
 INCOGNITO = True
 DELAY     = 5
 EXIT      = True
+
+logger = log.get_logger(NAME)
 
 def get_driver_basedir(exist_ok = True):
     path = osp.join(PATH["CACHE"], "psy", "drivers")
@@ -87,13 +93,20 @@ def get_driver(type_ = "chrome", **kwargs):
 
     return instance
     
+@log.log_fn
 def visit(url):
     global _DRIVER, EXIT
 
     if not _DRIVER:
         _DRIVER = get_driver(detach = not EXIT)
-        _DRIVER.get(url)
 
+    if not check_url(url, raise_err = False):
+        base_url = _DRIVER.current_url
+        url = joinurl(base_url, url)
+
+    _DRIVER.get(url)
+
+@log.log_fn
 def wait(timeout = 5):
     time.sleep(timeout)
 
@@ -129,6 +142,12 @@ class BasePsy(BaseObject):
         self._refresh()
 
         return self
+    
+def _get_by(selector):
+    by = By.CSS_SELECTOR
+    if selector.startswith("//"):
+        by = By.XPATH
+    return by
 
 class Element(BasePsy):
     def __init__(self, driver, selector):
@@ -140,16 +159,22 @@ class Element(BasePsy):
     def _refresh(self):
         global INCOGNITO, DELAY
 
+        by = _get_by(self._selector)
+
         try:
             if INCOGNITO:
                 self._s_element = WebDriverWait(self._driver, DELAY).until(
-                    EC.visibility_of_element_located((By.CSS_SELECTOR, self._selector))
+                    EC.visibility_of_element_located((by, self._selector))
                 )
             else:
-                self._s_element = self._driver.find_element(By.CSS_SELECTOR, self._selector)
+                self._s_element = self._driver.find_element(by, self._selector)
         except TimeoutException:
-            pass
+            logger.warning("Element %s not found." % self._selector)
 
+    def attr(self, name):
+        return self._s_element.get_attribute(name)
+
+@log.log_fn
 def get(selector):
     global _DRIVER
 
@@ -159,6 +184,7 @@ def get(selector):
     element = Element(_DRIVER, selector)
     return element
 
+@log.log_fn
 def exists(selector):
     try:
         return get(selector)
@@ -167,6 +193,7 @@ def exists(selector):
 
     return False
 
+@log.log_fn
 def contains(selector, content):
     element = get(selector)
     if content in element._s_element.text:

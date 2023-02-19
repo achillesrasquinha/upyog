@@ -77,7 +77,8 @@ from upyog.util.system import (
     abslistdir,
     sha256sum,
     pardir,
-    which
+    which,
+    read
 )
 from upyog.util.environ import (
     getenv,
