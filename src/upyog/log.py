@@ -77,12 +77,12 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
         handler.setFormatter(formatter)
 
         logger    = logging.getLogger(name)
-        logger.max_log_history = 5
+        # logger.max_log_history = 5
 
         logger.setLevel(level)
 
         logger.addHandler(handler)
-        logger._log = _log
+        # logger._log = _log
         
         _LOGGER[name] = logger
     
