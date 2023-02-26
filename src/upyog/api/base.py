@@ -186,7 +186,10 @@ class BaseAPI(BaseObject):
 
             method_caller = METHOD_CALLERS.get(method, self.get)
 
-            response = method_caller(query, **args)
+            if "mock_response" in api:
+                response = api["mock_response"]
+            else:
+                response = method_caller(query, **args)
 
             after_request = api.get("after_request", base_config.get("after_request", None))
 
