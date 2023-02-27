@@ -187,7 +187,7 @@ class BaseAPI(BaseObject):
             method_caller = METHOD_CALLERS.get(method, self.get)
 
             if "mock_response" in api:
-                response = api["mock_response"]
+                response = api["mock_response"](query, **args)
             else:
                 response = method_caller(query, **args)
 
