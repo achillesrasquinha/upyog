@@ -22,6 +22,7 @@ from upyog.cli.formatter   import ArgumentParserFormatter
 from upyog.cli.util        import _CAN_ANSI_FORMAT, add_github_args
 from upyog.util.git        import resolve_git_url
 from upyog.util.system     import check_file
+from upyog.config          import load_config
 
 _DESCRIPTION_JUMBOTRON = \
 """
@@ -34,11 +35,10 @@ _DESCRIPTION_JUMBOTRON = \
     _cli.format(__description__, _cli.BOLD)
 )
 
-class JSONConfigFileAction(argparse.Action):
+class ConfigFileAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string = None):
-        with open(values, "r") as f:
-            config = json.load(f)
-            setattr(namespace, self.dest, config)
+        config = load_config(values)
+        setattr(namespace, self.dest, config)
 
 def get_base_parser(prog, description, help_ = True):
     parser = argparse.ArgumentParser(
@@ -75,7 +75,7 @@ def get_base_parser(prog, description, help_ = True):
         default = getenv("CONFIG_FILE"),
         help    = "Configuration File.",
         type    = check_file,
-        action  = JSONConfigFileAction
+        action  = ConfigFileAction
     )
     parser.add_argument("--ignore-error",
         action  = "store_true",

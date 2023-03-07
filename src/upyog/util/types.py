@@ -164,3 +164,18 @@ def classname(obj):
         'int'
     """
     return obj.__class__.__name__
+
+def is_list_like(obj):
+    """
+    Check if an object is list-like.
+
+    :param obj: The object to be checked.
+
+    Example::
+
+        >>> bpy.is_list_like([1, 2, 3])
+        True
+        >>> bpy.is_list_like(1)
+        False
+    """
+    return isinstance(obj, (list, tuple, set))

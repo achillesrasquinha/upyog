@@ -15,6 +15,9 @@ from upyog.util.environ import getenv
 from upyog.util.types   import auto_typecast
 from upyog.util._dict   import autodict
 from upyog._compat      import iteritems, configparser as cp
+from upyog.log import get_logger
+
+logger = get_logger(__name__)
 
 def get_config_path(name):
     return osp.join(osp.expanduser("~"), ".config", name)
@@ -143,3 +146,19 @@ def environment():
     environ["settings"]         = settings.to_dict()
 
     return environ
+
+def load_config(fpath):
+    data  = None
+
+    fpath = osp.abspath(fpath)
+    f_handler = open(fpath, "r")
+
+    try:
+        import yaml
+        data = yaml.load(f_handler, Loader=yaml.Loader)
+    except (yaml.YAMLError, ImportError):
+        data = json.load(f_handler)
+    finally:
+        f_handler.close()
+
+    return data

@@ -4,10 +4,15 @@ from __future__ import absolute_import
 # imports - standard imports
 import time
 import datetime as dt
+import pytz
+import math
+
+from upyog.util._math import sign
 
 now    = dt.datetime.now
 utcnow = dt.datetime.utcnow
 timedelta = dt.timedelta
+timezone  = pytz.timezone
 
 _DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -74,6 +79,9 @@ _AUTO_FORMATS = [
     '%d-%m-%Y %H:%M:%S',
     '%d-%m-%Y %H:%M',
     '%d-%m-%Y',
+    '%H:%M:%S.%f%z',
+    '%H:%M:%S.%f',
+    '%H:%M:%S',
 ]
 
 def auto_datetime(string):
@@ -87,3 +95,48 @@ def auto_datetime(string):
             pass
 
     raise ValueError("Incorrect datetime format, expected %s" % _AUTO_FORMATS)
+
+def start_of(dt, type_):
+    diff = None
+
+    if "week" in type_:
+        if type_.startswith("iso"):
+            td_args = { "days" : dt.isoweekday() - 1 }
+        else:
+            td_args = { "days" : dt.weekday() }
+        
+        diff = dt - timedelta(**td_args)
+    elif type_ == "year":
+        diff = dt - timedelta(days = dt.timetuple().tm_yday - 1)
+    else:
+        raise ValueError("Invalid type: %s" % type_)
+
+    norm = diff.replace(hour = 0, minute = 0, second = 0, microsecond = 0)
+
+    return norm
+
+def add(dt, value, type_):
+    if type_ == "year":
+        type_ = "days"
+        value = sign(value) * 365 # TODO: Handle leap years
+
+    return dt + timedelta(**{ type_: value })
+
+def subtract(dt, value, type_):
+    return add(dt, -value, type_)
+
+def iso_weekday(dt, diff):
+    return add(dt, diff, "days")
+
+def str2timedelta(string):
+    dt = auto_datetime(string)
+    return timedelta(
+        days    = dt.day - 1,
+        hours   = dt.hour,
+        minutes = dt.minute,
+        seconds = dt.second,
+        microseconds = dt.microsecond
+    )
+
+def format(dt, format_):
+    return dt.strftime(format_)
