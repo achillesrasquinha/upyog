@@ -14,6 +14,7 @@ from upyog.util.string    import get_random_str
 from upyog.util.system    import makepath
 from upyog.util.imports   import import_handler
 from upyog import request as req
+from upyog._compat import urlparse, quote as urlquote
 
 import upyog as bpy
 

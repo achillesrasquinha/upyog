@@ -38,7 +38,9 @@ from upyog.util._json import (
 from upyog._compat import (
     iteritems,
     iterkeys,
-    itervalues
+    itervalues,
+    urlparse,
+    quote as urlquote,
 )
 from upyog.util.array  import (
     compact,
@@ -54,7 +56,8 @@ from upyog.util.string import (
     strip,
     get_random_str,
     pluralize,
-    labelize
+    labelize,
+    safe_encode
 )
 from upyog.util.datetime import (
     check_datetime_format,
@@ -111,6 +114,9 @@ from upyog.util.imports import (
 from upyog.config import (
     get_config_path,
     load_config
+)
+from upyog.const import (
+    CPU_COUNT
 )
 from upyog.util.progress import (
     progress

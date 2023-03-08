@@ -252,6 +252,9 @@ class BaseAPI(BaseObject):
                 "Authorization": "Bearer %s" % token,
             })
 
+        if self._auth:
+            kwargs.update({"auth": self._auth})
+
         if proxies:
             proxies = random.choice(proxies)
             logger.info("Using proxy %s to dispatch request." % proxies)
