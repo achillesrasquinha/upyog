@@ -74,8 +74,10 @@ def autodict(*args, **kwargs):
         >>> d['foo']['bar']['baz'] = 'boo'
         {'foo': {'bar': {'baz': 'boo'}}}
     """
+    dict_type = kwargs.pop("dict_type", dict)
+
     _autodict = AutoDict(autodict)
-    update    = dict(*args, **kwargs)
+    update    = dict_type(*args, **kwargs)
 
     for key, value in iteritems(update):
         if isinstance(value, Mapping):

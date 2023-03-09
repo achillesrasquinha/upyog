@@ -108,6 +108,7 @@ def filter2(fn, arr):
 
 lfilter = _gen_to_seq(filter)
 lmap    = _gen_to_seq(map)
+lset    = _gen_to_seq(set)
 
 def build_fn(fn, *args, **kwargs):
     """Build a function caller with default arguments.

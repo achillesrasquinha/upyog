@@ -58,3 +58,12 @@ def div(a, b):
         return [a / b[i] for i in range(len(b))]
 
     return a / b
+
+def percentile(arr, p):
+    """
+        Returns the pth percentile of the array.
+    """
+    length  = len(arr)
+    sorted_ = sorted(arr)
+
+    return sorted_[int(ceil((length * p) / 100 )) - 1]

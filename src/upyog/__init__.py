@@ -41,6 +41,7 @@ from upyog._compat import (
     itervalues,
     urlparse,
     quote as urlquote,
+    StringIO
 )
 from upyog.util.array  import (
     compact,
@@ -72,7 +73,8 @@ from upyog.util.types    import (
     build_fn,
     classname,
     lmap,
-    lfilter
+    lfilter,
+    lset
 )
 from upyog.util.system import (
     get_files,
