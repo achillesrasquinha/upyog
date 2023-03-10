@@ -136,6 +136,9 @@ from upyog.limits import (
 from upyog.util.template import (
     render_template
 )
+from upyog.util.error import (
+    pretty_print_error
+)
 
 settings = Settings()
 

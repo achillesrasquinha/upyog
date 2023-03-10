@@ -1,4 +1,7 @@
+import json
+
 from collections import defaultdict
+from types import SimpleNamespace
 
 from upyog._compat import iteritems, Mapping, iterkeys, itervalues
 

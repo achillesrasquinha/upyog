@@ -12,13 +12,27 @@ else:
 # imports - module imports
 from upyog.util.system import read
 from upyog.util.array  import sequencify
+from upyog.util.imports import import_or_raise
 from upyog.log         import get_logger
 from upyog.exception   import TemplateNotFoundError
 from upyog.util.string import _REGEX_HTML
-from upyog._compat     import iteritems
+from upyog._compat     import iteritems, StringIO
 from upyog.config      import PATH
 
 logger = get_logger()
+
+def _render_template_jinja(template, context = None):
+    jinja2 = import_or_raise("jinja2", "Jinja2")
+
+    with open(template, "r") as f:
+        content = f.read()
+    
+    with StringIO() as out:
+        jinja2.Template(content) \
+            .stream(context) \
+            .dump(out)
+
+        return out.getvalue()
 
 def render_template(template, context = None, dirs = [ ], **kwargs):
     """
@@ -43,7 +57,11 @@ def render_template(template, context = None, dirs = [ ], **kwargs):
         >>> render_template("foobar.html", dirs = "templates", bar = "baz")
         'foobaz'
     """
-    dirs = sequencify(dirs)
+    jinja = kwargs.get("jinja", False)
+    if jinja:
+        return _render_template_jinja(template, context = context)
+
+    dirs  = sequencify(dirs)
     if PATH["TEMPLATES"] not in dirs:
         dirs.append(PATH["TEMPLATES"])
 

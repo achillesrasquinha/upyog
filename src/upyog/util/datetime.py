@@ -4,15 +4,22 @@ from __future__ import absolute_import
 # imports - standard imports
 import time
 import datetime as dt
-import pytz
 import math
 
 from upyog.util._math import sign
 
-now    = dt.datetime.now
-utcnow = dt.datetime.utcnow
-timedelta = dt.timedelta
-timezone  = pytz.timezone
+now         = dt.datetime.now
+utcnow      = dt.datetime.utcnow
+timedelta   = dt.timedelta
+
+try:
+    import pytz
+    timezone = pytz.timezone
+except ImportError:
+    pass
+
+weekday     = dt.datetime.weekday
+iso_weekday = dt.datetime.isoweekday
 
 _DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
 
