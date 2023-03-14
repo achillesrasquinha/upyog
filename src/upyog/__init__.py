@@ -74,7 +74,8 @@ from upyog.util.types    import (
     classname,
     lmap,
     lfilter,
-    lset
+    lset,
+    is_list_like
 )
 from upyog.util.system import (
     get_files,
@@ -126,6 +127,9 @@ from upyog.util.progress import (
 from upyog.cli.parser import (
     get_base_parser
 )
+from upyog.cli.util import (
+    confirm
+)
 from upyog.exception import PopenError
 from upyog.i18n import _
 from upyog.model import BaseObject
@@ -138,6 +142,9 @@ from upyog.util.template import (
 )
 from upyog.util.error import (
     pretty_print_error
+)
+from upyog.util.misc import (
+    retry
 )
 
 settings = Settings()

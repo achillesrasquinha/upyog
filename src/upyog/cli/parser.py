@@ -120,6 +120,7 @@ def get_parser():
         help_ = False)
 
     # boilpy
+
     parser.add_argument("--update-boilpy-project",
         type    = resolve_git_url,
         help    = _("Update project")

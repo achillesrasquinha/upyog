@@ -3,11 +3,13 @@ import random
 import re
 import string
 import json
+import aiohttp
+from contextlib import asynccontextmanager
 
 import requests as req
 from upyog.model.base           import BaseObject
 from upyog._compat              import (
-    urlencode, iteritems,
+    urlencode, iteritems, urlparse,
     Mapping
 )
 from upyog.util.array           import (
@@ -42,10 +44,17 @@ class BaseAPI(BaseObject):
     :param test: Attempt to test the connection to the base url.
     """
     def __init__(self, url = None, proxies = [ ], test = False, token = None, verbose = False, rate = None,
-        auth = None, session = None, **kwargs):
+        auth = None, session = None, async_ = False, **kwargs):
+        super_ = super(BaseAPI, self)
+        super_.__init__(**kwargs)
+
         self._url     = self._format_uri_path(url or getattr(self, "url"), **kwargs)
         
-        self._session = session or req.Session()
+        if async_:
+            self._async   = True
+            self._session = session or aiohttp.ClientSession()
+        else:
+            self._session = session or req.Session()
 
         if proxies and \
             not isinstance(proxies, (Mapping, list, tuple)):
@@ -57,7 +66,7 @@ class BaseAPI(BaseObject):
         if isinstance(proxies, Mapping):
             proxies = [proxies]
 
-        self._token = token
+        self.token = token
 
         self._auth  = auth
 
@@ -107,7 +116,6 @@ class BaseAPI(BaseObject):
     @auth.setter
     def auth(self, value):
         self._auth = value
-        self._session.auth = value
 
     @property
     def url(self):
@@ -164,7 +172,6 @@ class BaseAPI(BaseObject):
                     if parameter in kwargs:
                         value = kwargs.get(parameter)
                         data[parameter] = value
-
 
             if method == "POST":
                 if "json" in kwargs:
@@ -236,11 +243,15 @@ class BaseAPI(BaseObject):
             encoded  = urlencode(params)
             url     += "?%s" % encoded
 
+        api = kwargs.get("api", {})
+        url = self._format_uri_path(url, variables = api.get("variables", {}), **kwargs)
+
         return url
 
-    def request(self, method, url, *args, **kwargs):
+    @asynccontextmanager
+    async def request(self, method, path, *args, **kwargs):
         raise_error = kwargs.pop("raise_error", True)
-        token       = kwargs.pop("token",       self._token)
+        token       = kwargs.pop("token",       self.token)
         headers     = kwargs.pop("headers",     { })
         proxies     = kwargs.pop("proxies",     self._proxies)
         data        = kwargs.get("params",      kwargs.get("data"))
@@ -259,27 +270,41 @@ class BaseAPI(BaseObject):
             proxies = random.choice(proxies)
             logger.info("Using proxy %s to dispatch request." % proxies)
 
-        url = self._build_url(url, prefix = prefix)
+        url = self._build_url(path, prefix = prefix)
 
-        logger.info("Dispatching a %s request to URL: %s with Arguments - %s" \
-            % (method, url, kwargs))
+        parsed = urlparse(url)
+        logger.info("%s %s %s" % (parsed.netloc, method, parsed.path))
 
-        # if async_:
-        #     response = AsyncRequest(method, url, session = self._session,
-        #         headers = headers, proxies = proxies, *args, **kwargs)
-        # else:
-        response = self._session.request(method, url,
-            headers = headers, proxies = proxies, *args, **kwargs)
+        # logger.info("Dispatching a %s request to URL: %s with Arguments - %s" \
+        #     % (method, url, kwargs))
 
-        if not response.ok and raise_error:
-            if response.text:
-                logger.error("Error recieved from the server: %s" % response.text)
+        if self._async:
+            async with self:
+                async with aiohttp.ClientSession() as session:
+                    async with session.request(method, url, headers = headers, *args, **kwargs) as response:
+                        if not response.ok and raise_error:
+                            if response.text:
+                                logger.error("Error recieved from the server: %s" % response.text)
 
-            response.raise_for_status()
+                            response.raise_for_status()
 
-        return response
+                        yield response
+        else:
+            response = await self._session.request(method, url,
+                headers = headers, *args, **kwargs)
 
-    def post(self, url, *args, **kwargs):
+            yield response # TODO: ?
+
+    @asynccontextmanager
+    async def get(self, url, *args, **kwargs):
+        """
+        Dispatch a PUT request to the server.
+        """
+        async with self.request("GET", url, *args, **kwargs) as response:
+            yield response
+
+    @asynccontextmanager
+    async def post(self, url, *args, **kwargs):
         """
         Dispatch a POST request to the server.
 
@@ -287,8 +312,8 @@ class BaseAPI(BaseObject):
         :param args: Arguments provided to ``api.request``
         :param kwargs: Keyword Arguments provided to ``api.request``
         """
-        response = self.request("POST", url, *args, **kwargs)
-        return response
+        async with self.request("POST", url, *args, **kwargs) as response:
+            yield response
 
     def put(self, url, *args, **kwargs):
         """
@@ -297,12 +322,6 @@ class BaseAPI(BaseObject):
         response = self.request("PUT", url, *args, **kwargs)
         return response
 
-    def get(self, url, *args, **kwargs):
-        """
-        Dispatch a PUT request to the server.
-        """
-        response = self.request("GET", url, *args, **kwargs)
-        return response
 
     def delete(self, url, *args, **kwargs):
         """
@@ -325,11 +344,11 @@ class BaseAPI(BaseObject):
         response = self.request("HEAD", "")
         return "pong"
 
-    @property
-    def session(self):
-        return self._session
+    async def __aenter__(self):
+        return self
 
-    @session.setter
-    def session(self, session):
-        assert isinstance(session, requests.Session), "Session must be an instance of requests.Session"
-        self._session = session
+    async def __aexit__(self, *args, **kwargs):
+        return await self.close()
+
+    async def close(self):
+        return await self._session.close()

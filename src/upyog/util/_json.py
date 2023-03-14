@@ -102,8 +102,9 @@ class JSONLogger(AutoDict):
         return str(self.store)
 
 def load_json(path, *args, **kwargs):
+    object_hook = kwargs.pop("object_hook", None)
     content = read(path, *args, **kwargs)
-    data = json.loads(content)
+    data = json.loads(content, object_hook = object_hook)
 
     return data
 
