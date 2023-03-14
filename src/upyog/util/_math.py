@@ -67,3 +67,9 @@ def percentile(arr, p):
     sorted_ = sorted(arr)
 
     return sorted_[int(ceil((length * p) / 100 )) - 1]
+
+def lt(a, b):
+    return a < b
+
+def gt(a, b):
+    return a > b
