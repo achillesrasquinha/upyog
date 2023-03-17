@@ -38,7 +38,7 @@ class Configuration(object):
     def __init__(self, location = PATH["CACHE"], name = "config"):
         config = getenv("CONFIG")
 
-        if getenv("LAMBDA_FUNCTION_NAME", prefix = "AWS_"):
+        if getenv("LAMBDA_FUNCTION_NAME", prefix = "AWS"):
             location = "/tmp"
 
         if not config:
