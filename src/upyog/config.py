@@ -21,7 +21,12 @@ from upyog.log import get_logger
 logger = get_logger(__name__)
 
 def get_config_path(name):
-    return osp.join(osp.expanduser("~"), ".config", name)
+    if getenv("LAMBDA_FUNCTION_NAME", prefix = "AWS"):
+        basedir = "/tmp"
+    else:
+        basedir = osp.expanduser("~")
+
+    return osp.join(basedir, ".config", name)
 
 PATH                = autodict()
 PATH["BASE"]        = pardir(__file__)
