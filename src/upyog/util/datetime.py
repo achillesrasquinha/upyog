@@ -11,6 +11,7 @@ from upyog.util._math import sign
 now         = dt.datetime.now
 utcnow      = dt.datetime.utcnow
 timedelta   = dt.timedelta
+datetime    = dt.datetime
 
 try:
     import pytz

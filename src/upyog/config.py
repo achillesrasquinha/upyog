@@ -38,6 +38,9 @@ class Configuration(object):
     def __init__(self, location = PATH["CACHE"], name = "config"):
         config = getenv("CONFIG")
 
+        if getenv("LAMBDA_FUNCTION_NAME", prefix = "AWS_"):
+            location = "/tmp"
+
         if not config:
             self.name     = "%s.ini" % name
             self.location = location

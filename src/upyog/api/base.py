@@ -3,7 +3,7 @@ import random
 import re
 import string
 import json
-import aiohttp
+import httpx
 from contextlib import asynccontextmanager
 
 import requests as req
@@ -52,7 +52,8 @@ class BaseAPI(BaseObject):
         
         if async_:
             self._async   = True
-            self._session = session or aiohttp.ClientSession()
+            # self._session = session or aiohttp.ClientSession()
+            self._session = None
         else:
             self._session = session or req.Session()
 
@@ -248,8 +249,7 @@ class BaseAPI(BaseObject):
 
         return url
 
-    @asynccontextmanager
-    async def request(self, method, path, *args, **kwargs):
+    async def request(self, method, path = None, *args, **kwargs):
         raise_error = kwargs.pop("raise_error", True)
         token       = kwargs.pop("token",       self.token)
         headers     = kwargs.pop("headers",     { })
@@ -257,6 +257,7 @@ class BaseAPI(BaseObject):
         data        = kwargs.get("params",      kwargs.get("data"))
         prefix      = kwargs.get("prefix",      True)
         async_      = kwargs.pop("async_",      False)
+
 
         if token:
             headers.update({
@@ -280,31 +281,28 @@ class BaseAPI(BaseObject):
 
         if self._async:
             async with self:
-                async with aiohttp.ClientSession() as session:
-                    async with session.request(method, url, headers = headers, *args, **kwargs) as response:
-                        if not response.ok and raise_error:
-                            if response.text:
-                                logger.error("Error recieved from the server: %s" % response.text)
+                async with httpx.AsyncClient() as session:
+                    response = await session.request(method, url, headers = headers, *args, **kwargs)
+                    # if not response.ok and raise_error:
+                    #     if response.text:
+                    #         logger.error("Error recieved from the server: %s" % response.text)
 
-                            response.raise_for_status()
+                    #     response.raise_for_status()
 
-                        yield response
+                    return response
         else:
-            response = await self._session.request(method, url,
+            response = self._session.request(method, url,
                 headers = headers, *args, **kwargs)
 
-            yield response # TODO: ?
+            return response # TODO: ?
 
-    @asynccontextmanager
     async def get(self, url, *args, **kwargs):
         """
         Dispatch a PUT request to the server.
         """
-        async with self.request("GET", url, *args, **kwargs) as response:
-            yield response
+        return await self.request("GET", url, *args, **kwargs)
 
-    @asynccontextmanager
-    async def post(self, url, *args, **kwargs):
+    async def post(self, url = None, *args, **kwargs):
         """
         Dispatch a POST request to the server.
 
@@ -312,8 +310,7 @@ class BaseAPI(BaseObject):
         :param args: Arguments provided to ``api.request``
         :param kwargs: Keyword Arguments provided to ``api.request``
         """
-        async with self.request("POST", url, *args, **kwargs) as response:
-            yield response
+        return await self.request("POST", url, *args, **kwargs)
 
     def put(self, url, *args, **kwargs):
         """
@@ -351,4 +348,5 @@ class BaseAPI(BaseObject):
         return await self.close()
 
     async def close(self):
-        return await self._session.close()
+        if self._session:
+            return await self._session.close()

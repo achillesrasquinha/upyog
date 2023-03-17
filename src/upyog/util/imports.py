@@ -36,5 +36,5 @@ def import_or_raise(package, name = None, dep = "upyog"):
         raise DependencyNotFoundError((
             "Unable to import {package} for resolving dependencies. "
             "{dep} requires {package} to be installed. "
-            "Please install {package} by executing 'pip install {name}'."
+            "Please install {name} by executing 'pip install {name}'."
         ).format(package = package, name = name, dep = dep))
