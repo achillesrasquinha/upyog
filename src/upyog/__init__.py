@@ -127,7 +127,8 @@ from upyog.util.progress import (
     progress
 )
 from upyog.cli.parser import (
-    get_base_parser
+    get_base_parser,
+    ConfigFileAction
 )
 from upyog.cli.util import (
     confirm

@@ -1,13 +1,13 @@
 # imports - standard imports
-import random
+import os, random
 import re
 import string
 import json
-import httpx
 from contextlib import asynccontextmanager
 
 import requests as req
 from upyog.model.base           import BaseObject
+from upyog.util.imports         import import_or_raise
 from upyog._compat              import (
     urlencode, iteritems, urlparse,
     Mapping
@@ -249,7 +249,7 @@ class BaseAPI(BaseObject):
 
         return url
 
-    async def request(self, method, path = None, *args, **kwargs):
+    def request(self, method, path = None, *args, **kwargs):
         raise_error = kwargs.pop("raise_error", True)
         token       = kwargs.pop("token",       self.token)
         headers     = kwargs.pop("headers",     { })
@@ -279,10 +279,12 @@ class BaseAPI(BaseObject):
         # logger.info("Dispatching a %s request to URL: %s with Arguments - %s" \
         #     % (method, url, kwargs))
 
-        if self._async:
-            async with self:
-                async with httpx.AsyncClient() as session:
-                    response = await session.request(method, url, headers = headers, *args, **kwargs)
+        if getattr(self, "_async", False) or async_:
+            with self:
+                verify = os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")
+                httpx = import_or_raise("httpx")
+                with httpx.AsyncClient(verify = verify) as session:
+                    response = session.request(method, url, headers = headers, *args, **kwargs)
                     # if not response.ok and raise_error:
                     #     if response.text:
                     #         logger.error("Error recieved from the server: %s" % response.text)
@@ -302,7 +304,7 @@ class BaseAPI(BaseObject):
         """
         return await self.request("GET", url, *args, **kwargs)
 
-    async def post(self, url = None, *args, **kwargs):
+    async def apost(self, url = None, *args, **kwargs):
         """
         Dispatch a POST request to the server.
 
@@ -311,6 +313,16 @@ class BaseAPI(BaseObject):
         :param kwargs: Keyword Arguments provided to ``api.request``
         """
         return await self.request("POST", url, *args, **kwargs)
+
+    def post(self, url = None, *args, **kwargs):
+        """
+        Dispatch a POST request to the server.
+
+        :param url: URL part (does not include the base URL).
+        :param args: Arguments provided to ``api.request``
+        :param kwargs: Keyword Arguments provided to ``api.request``
+        """
+        return self.request("POST", url, *args, **kwargs)
 
     def put(self, url, *args, **kwargs):
         """
@@ -327,7 +339,7 @@ class BaseAPI(BaseObject):
         response = self.request("DELETE", url, *args, **kwargs)
         return response
 
-    def ping(self):
+    async def ping(self):
         """
         Check if the URL is alive.
 
@@ -338,7 +350,7 @@ class BaseAPI(BaseObject):
             >>> client.ping()
             'pong'
         """
-        response = self.request("HEAD", "")
+        response = await self.request("HEAD", "")
         return "pong"
 
     async def __aenter__(self):
