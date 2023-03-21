@@ -65,7 +65,8 @@ else:
 if PY2: # pragma: no cover
     # moves
     from urllib2  import urlopen, Request
-    from urlparse import urlparse, urljoin, quote
+    from urlparse import urlparse, urljoin
+    from urllib   import quote
     
     try:
         from requests.exceptions import HTTPError
