@@ -28,7 +28,6 @@ class BaseObject(object):
         return repr_
 
     def log(self, type_, message, *args, **kwargs):
-        message = "[%s] %s" % (self.c_name, message)
         getattr(self._logger, type_)(message, *args, **kwargs)
 
     def step_log(self, *args, **kwargs):

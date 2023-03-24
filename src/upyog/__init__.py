@@ -30,6 +30,9 @@ from upyog.util._dict  import (
     lvalues,
     check_struct as check_dict_struct
 )
+from upyog.util._async import (
+    asyncify
+)
 from upyog.util._json import (
     load_json,
     dump_json,

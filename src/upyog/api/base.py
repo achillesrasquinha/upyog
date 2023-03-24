@@ -48,11 +48,11 @@ class BaseAPI(BaseObject):
         super_ = super(BaseAPI, self)
         super_.__init__(**kwargs)
 
-        self._url     = self._format_uri_path(url or getattr(self, "url"), **kwargs)
-        
+        self._url = self._format_uri_path(url or getattr(self, "url"),
+            **kwargs)
+
         if async_:
             self._async   = True
-            # self._session = session or aiohttp.ClientSession()
             self._session = None
         else:
             self._session = session or req.Session()
@@ -250,6 +250,17 @@ class BaseAPI(BaseObject):
         return url
 
     def request(self, method, path = None, *args, **kwargs):
+        req_args = self._get_req_args(method, path, *args, **kwargs)
+
+        response = self._session.request(method, req_args["url"],
+            headers = req_args["headers"],
+            *req_args["args"],
+            **req_args["kwargs"]
+        )
+
+        return response # TODO: ?
+
+    def _get_req_args(self, method, path = None, *args, **kwargs):
         raise_error = kwargs.pop("raise_error", True)
         token       = kwargs.pop("token",       self.token)
         headers     = kwargs.pop("headers",     { })
@@ -257,7 +268,6 @@ class BaseAPI(BaseObject):
         data        = kwargs.get("params",      kwargs.get("data"))
         prefix      = kwargs.get("prefix",      True)
         async_      = kwargs.pop("async_",      False)
-
 
         if token:
             headers.update({
@@ -276,43 +286,41 @@ class BaseAPI(BaseObject):
         parsed = urlparse(url)
         logger.info("%s %s %s" % (parsed.netloc, method, parsed.path))
 
-        # logger.info("Dispatching a %s request to URL: %s with Arguments - %s" \
-        #     % (method, url, kwargs))
+        return {
+            "url": url,
+            "headers": headers,
+            "proxies": proxies,
+            "data": data,
+            "prefix": prefix,
+            "async_": async_,
+            "raise_error": raise_error,
+            "args": args,
+            "kwargs": kwargs
+        }
 
-        if getattr(self, "_async", False) or async_:
-            with self:
-                verify = os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")
-                httpx = import_or_raise("httpx")
-                with httpx.AsyncClient(verify = verify) as session:
-                    response = session.request(method, url, headers = headers, *args, **kwargs)
-                    # if not response.ok and raise_error:
-                    #     if response.text:
-                    #         logger.error("Error recieved from the server: %s" % response.text)
+    async def arequest(self, method, path = None, *args, **kwargs):
+        req_args = self._get_req_args(method, path, *args, **kwargs)
 
-                    #     response.raise_for_status()
+        async with self:
+            verify = os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")
+            httpx  = import_or_raise("httpx")
+            async with httpx.AsyncClient(verify = verify) as session:
+                response = await session.request(method, req_args["url"],
+                    headers = req_args["headers"],
+                    *req_args["args"], **req_args["kwargs"])
+                return response
 
-                    return response
-        else:
-            response = self._session.request(method, url,
-                headers = headers, *args, **kwargs)
-
-            return response # TODO: ?
-
-    async def get(self, url, *args, **kwargs):
+    def get(self, url, *args, **kwargs):
         """
         Dispatch a PUT request to the server.
         """
-        return await self.request("GET", url, *args, **kwargs)
+        return self.request("GET", url, *args, **kwargs)
 
-    async def apost(self, url = None, *args, **kwargs):
+    async def aget(self, url, *args, **kwargs):
         """
-        Dispatch a POST request to the server.
-
-        :param url: URL part (does not include the base URL).
-        :param args: Arguments provided to ``api.request``
-        :param kwargs: Keyword Arguments provided to ``api.request``
+        Dispatch a PUT request to the server.
         """
-        return await self.request("POST", url, *args, **kwargs)
+        return await self.arequest("GET", url, *args, **kwargs)
 
     def post(self, url = None, *args, **kwargs):
         """
@@ -323,6 +331,16 @@ class BaseAPI(BaseObject):
         :param kwargs: Keyword Arguments provided to ``api.request``
         """
         return self.request("POST", url, *args, **kwargs)
+    
+    async def apost(self, url = None, *args, **kwargs):
+        """
+        Dispatch a POST request to the server.
+
+        :param url: URL part (does not include the base URL).
+        :param args: Arguments provided to ``api.request``
+        :param kwargs: Keyword Arguments provided to ``api.request``
+        """
+        return await self.arequest("POST", url, *args, **kwargs)
 
     def put(self, url, *args, **kwargs):
         """
@@ -331,6 +349,12 @@ class BaseAPI(BaseObject):
         response = self.request("PUT", url, *args, **kwargs)
         return response
 
+    async def aput(self, url, *args, **kwargs):
+        """
+        Dispatch a PUT request to the server.
+        """
+        response = await self.arequest("PUT", url, *args, **kwargs)
+        return response
 
     def delete(self, url, *args, **kwargs):
         """
@@ -339,7 +363,14 @@ class BaseAPI(BaseObject):
         response = self.request("DELETE", url, *args, **kwargs)
         return response
 
-    async def ping(self):
+    async def adelete(self, url, *args, **kwargs):
+        """
+        Dispatch a DELETE request to the server.
+        """
+        response = await self.arequest("DELETE", url, *args, **kwargs)
+        return response
+
+    def ping(self):
         """
         Check if the URL is alive.
 
@@ -350,7 +381,21 @@ class BaseAPI(BaseObject):
             >>> client.ping()
             'pong'
         """
-        response = await self.request("HEAD", "")
+        self.request("HEAD", "")
+        return "pong"
+    
+    async def aping(self):
+        """
+        Check if the URL is alive.
+
+        Example::
+
+            >>> import upyog
+            >>> client = upyog.Client()
+            >>> client.ping()
+            'pong'
+        """
+        await self.arequest("HEAD", "")
         return "pong"
 
     async def __aenter__(self):
