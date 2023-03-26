@@ -163,9 +163,25 @@ def load_config(fpath):
     f_handler = open(fpath, "r")
 
     try:
-        import yaml
-        data = yaml.load(f_handler, Loader=yaml.Loader)
-    except (yaml.YAMLError, ImportError):
+        try:
+            import yaml
+
+            try:
+                from yamlinclude import YamlIncludeConstructor
+
+                basedir = osp.dirname(fpath)
+                
+                YamlIncludeConstructor.add_to_loader_class(
+                    loader_class=yaml.Loader,
+                    base_dir=basedir
+                )
+            except ImportError:
+                pass
+
+            data = yaml.load(f_handler, Loader=yaml.Loader)
+        except ImportError:
+            data = json.load(f_handler)
+    except ImportError:
         data = json.load(f_handler)
     finally:
         f_handler.close()
