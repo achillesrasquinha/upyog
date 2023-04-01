@@ -56,11 +56,14 @@ def read(fname, mode = "r", sanitize = False, encoding = "utf-8"):
         >>> bpy.read("path/to/file")
         'Hello, World!'
     """
-    with open(fname, mode = mode or "r", encoding = encoding) as f:
-        data = f.read()
+    if hasattr(fname, "read"):
+        data = fname.read()
+    else:
+        with open(fname, mode = mode or "r", encoding = encoding) as f:
+            data = f.read()
 
-        if data:
-            data = strip(data)
+            if data:
+                data = strip(data)
 
     return data
 

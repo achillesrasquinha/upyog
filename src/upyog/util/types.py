@@ -5,6 +5,7 @@ from functools import partial
 from upyog             import _compat
 from upyog._compat     import iteritems
 from upyog.util._dict  import dict_from_list
+from upyog.util.datetime import auto_datetime
 
 # imports - standard imports
 import sys
@@ -83,7 +84,7 @@ def auto_typecast(value):
     """
     str_to_bool = lambda x: { "True": True, "False": False, "None": None}[x]
 
-    for type_ in (str_to_bool, int, float):
+    for type_ in (str_to_bool, int, float, auto_datetime):
         try:
             return type_(value)
         except (KeyError, ValueError, TypeError):
@@ -165,18 +166,3 @@ def classname(obj):
         'int'
     """
     return obj.__class__.__name__
-
-def is_list_like(obj):
-    """
-    Check if an object is list-like.
-
-    :param obj: The object to be checked.
-
-    Example::
-
-        >>> bpy.is_list_like([1, 2, 3])
-        True
-        >>> bpy.is_list_like(1)
-        False
-    """
-    return isinstance(obj, (list, tuple, set))

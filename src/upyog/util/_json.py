@@ -4,7 +4,7 @@ import json
 
 from upyog.util._dict  import AutoDict, autodict, merge_dict
 from upyog.util.system import write, read
-from upyog.util.string import strip
+from upyog.util.string import strip, safe_decode
 from upyog import log
 
 logger = log.get_logger(__name__)
@@ -102,12 +102,19 @@ class JSONLogger(AutoDict):
         return str(self.store)
 
 def load_json(path, *args, **kwargs):
+    path = safe_decode(path)
+
+    if osp.isfile(path):
+        content = read(path, *args, **kwargs)
+    elif isinstance(path, str):
+        content = path
+
     object_hook = kwargs.pop("object_hook", None)
-    content = read(path, *args, **kwargs)
     data = json.loads(content, object_hook = object_hook)
 
     return data
 
 def dump_json(data, path, *args, **kwargs):
+    force = kwargs.pop("force", False)
     content = json.dumps(data, *args, **kwargs)
-    write(path, content)
+    write(path, content, force = force)

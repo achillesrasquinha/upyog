@@ -171,3 +171,14 @@ def check_struct(d, struct, raise_err = True):
                     return False
 
     return d
+
+def is_subdict(a, b):
+    sub_dict = True
+
+    for key, value in iteritems(b):
+        if key in a:
+            if a[key] != b[key]:
+                sub_dict = False
+                break
+
+    return sub_dict

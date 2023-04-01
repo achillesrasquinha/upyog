@@ -96,6 +96,9 @@ def auto_datetime(string):
     """
         Convert string to datetime object
     """
+    if isinstance(string, dt.datetime):
+        return string
+
     for format_ in _AUTO_FORMATS:
         try:
             return dt.datetime.strptime(string, format_)
@@ -148,3 +151,6 @@ def str2timedelta(string):
 
 def format(dt, format_):
     return dt.strftime(format_)
+
+def ts(dt):
+    return time.mktime(dt.timetuple())

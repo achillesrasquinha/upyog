@@ -84,7 +84,7 @@ def upper(text):
     text = text.upper()
     return text
 
-def lower(text):
+def lower(text, only = None):
     text = text.lower()
     return text
 

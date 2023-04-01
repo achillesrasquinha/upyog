@@ -43,8 +43,9 @@ class BaseAPI(BaseObject):
         ``{ protocol: ip }``.
     :param test: Attempt to test the connection to the base url.
     """
-    def __init__(self, url = None, proxies = [ ], test = False, token = None, verbose = False, rate = None,
-        auth = None, session = None, async_ = False, **kwargs):
+    def __init__(self, url = None, proxies = [ ], test = False, token = None,
+                 verbose = False, rate = None, auth = None, session = None, async_ = False,
+                 retries = 1, on_error = None, **kwargs):
         super_ = super(BaseAPI, self)
         super_.__init__(**kwargs)
 
@@ -73,6 +74,8 @@ class BaseAPI(BaseObject):
 
         self._proxies = proxies
         self._rate    = rate
+
+        self._retries  = retries
 
         self._build_api()
 
@@ -304,7 +307,10 @@ class BaseAPI(BaseObject):
         async with self:
             verify = os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")
             httpx  = import_or_raise("httpx")
-            async with httpx.AsyncClient(verify = verify) as session:
+
+            transport = httpx.AsyncHTTPTransport(retries = self._retries)
+            self._session = httpx.AsyncClient(transport = transport, verify = verify)
+            async with self._session as session:
                 response = await session.request(method, req_args["url"],
                     headers = req_args["headers"],
                     *req_args["args"], **req_args["kwargs"])
@@ -402,8 +408,8 @@ class BaseAPI(BaseObject):
         return self
 
     async def __aexit__(self, *args, **kwargs):
-        return await self.close()
+        return await self.aclose()
 
-    async def close(self):
+    async def aclose(self):
         if self._session:
-            return await self._session.close()
+            return await self._session.aclose()

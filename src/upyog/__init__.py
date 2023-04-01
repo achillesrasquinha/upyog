@@ -28,7 +28,8 @@ from upyog.util._dict  import (
     autodict,
     lkeys,
     lvalues,
-    check_struct as check_dict_struct
+    check_struct as check_dict_struct,
+    is_subdict
 )
 from upyog.util._async import (
     asyncify
@@ -52,11 +53,13 @@ from upyog.util.array  import (
     flatten,
     sequencify,
     chunkify,
-    normalize
+    normalize,
+    is_list_like
 )
 from upyog.util.string import (
     lower,
     upper,
+    capitalize,
     strip,
     get_random_str,
     pluralize,
@@ -78,8 +81,7 @@ from upyog.util.types    import (
     classname,
     lmap,
     lfilter,
-    lset,
-    is_list_like
+    lset
 )
 from upyog.util.system import (
     get_files,
@@ -99,10 +101,12 @@ from upyog.util.system import (
     walk,
     read,
     write,
-    dict_to_cmd_args
+    dict_to_cmd_args,
+    noop
 )
 from upyog.util.environ import (
     getenv,
+    value_to_envval
 )
 import upyog.util._math as math
 from upyog.db import (

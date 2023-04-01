@@ -170,3 +170,18 @@ def normalize(arr, max_ = None, a = 0, b = 1):
     return arr
 
 l = list
+
+def is_list_like(obj):
+    """
+    Check if an object is list-like.
+
+    :param obj: The object to be checked.
+
+    Example::
+
+        >>> bpy.is_list_like([1, 2, 3])
+        True
+        >>> bpy.is_list_like(1)
+        False
+    """
+    return isinstance(obj, (list, tuple, set))

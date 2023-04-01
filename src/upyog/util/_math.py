@@ -1,6 +1,6 @@
 from math import *
 
-from upyog.util.types import is_list_like
+from upyog.util.array import is_list_like
 
 def sign(x):
     """
