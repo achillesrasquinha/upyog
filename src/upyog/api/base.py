@@ -3,9 +3,7 @@ import os, random
 import re
 import string
 import json
-from contextlib import asynccontextmanager
 
-import requests as req
 from upyog.model.base           import BaseObject
 from upyog.util.imports         import import_or_raise
 from upyog._compat              import (
@@ -56,7 +54,8 @@ class BaseAPI(BaseObject):
             self._async   = True
             self._session = None
         else:
-            self._session = session or req.Session()
+            self._requests = import_or_raise("requests")
+            self._session  = session or self._requests.Session()
 
         if proxies and \
             not isinstance(proxies, (Mapping, list, tuple)):

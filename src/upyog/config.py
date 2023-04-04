@@ -6,7 +6,6 @@ import os.path as osp
 import multiprocessing as mp
 from threading import Lock
 import platform
-import json
 from collections import namedtuple
 
 # imports - module imports
@@ -15,6 +14,7 @@ from upyog.util.system  import pardir, makedirs, get_user
 from upyog.util.environ import getenv
 from upyog.util.types   import auto_typecast
 from upyog.util._dict   import autodict
+from upyog.util._json   import load_json
 from upyog._compat      import (iterkeys, itervalues, iteritems, configparser as cp)
 from upyog.log import get_logger
 
@@ -136,7 +136,7 @@ class Settings(object):
         parser      = self.config.config
         sections    = parser._sections
 
-        sections    = json.loads(json.dumps(sections))
+        sections    = load_json(sections)
 
         return sections 
 
@@ -180,14 +180,10 @@ def load_config(fpath):
 
             data = yaml.load(f_handler, Loader=yaml.Loader)
         except ImportError:
-            data = json.load(f_handler)
+            data = load_json(f_handler)
     except ImportError:
-        data = json.load(f_handler)
+        data = load_json(f_handler)
     finally:
         f_handler.close()
-
-    # TODO: Handle 3p well
-    from addict import Dict as Addict
-    data = Addict(data)
 
     return data

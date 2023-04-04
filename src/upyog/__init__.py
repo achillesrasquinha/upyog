@@ -32,7 +32,8 @@ from upyog.util._dict  import (
     is_subdict
 )
 from upyog.util._async import (
-    asyncify
+    asyncify,
+    aenumerate
 )
 from upyog.util._json import (
     load_json,
@@ -113,8 +114,7 @@ from upyog.db import (
     get_connection as get_db_connection,
 )
 from upyog.util.request import (
-    download_file,
-    TokenAuth
+    download_file
 )
 from upyog.util.mixin import (
     create_obj_registerer

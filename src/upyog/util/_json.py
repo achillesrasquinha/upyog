@@ -104,10 +104,13 @@ class JSONLogger(AutoDict):
 def load_json(path, *args, **kwargs):
     path = safe_decode(path)
 
-    if osp.isfile(path):
+    if isinstance(path, str):
+        if osp.isfile(path):
+            content = read(path, *args, **kwargs)
+        else:
+            content = path
+    else:
         content = read(path, *args, **kwargs)
-    elif isinstance(path, str):
-        content = path
 
     object_hook = kwargs.pop("object_hook", None)
     data = json.loads(content, object_hook = object_hook)

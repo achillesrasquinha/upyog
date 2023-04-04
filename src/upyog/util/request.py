@@ -1,9 +1,6 @@
 import re
 import os.path as osp
 
-import requests
-from requests.auth import AuthBase
-
 # from fake_useragent import UserAgent
 
 from upyog.db import get_connection
@@ -15,10 +12,13 @@ from upyog.util.system    import makepath
 from upyog.util.imports   import import_handler
 from upyog import request as req
 from upyog._compat import urlparse, quote as urlquote
+from upyog.log import get_logger
 
-import upyog as bpy
+import upyog as upy
 
 # user_agent = UserAgent(verify_ssl = False)
+
+LOG = get_logger(__name__)
 
 # https://git.io/JsnSI
 _REGEX_URL = re.compile(
@@ -125,14 +125,20 @@ def download_file(url, target = None, chunk_size = None, req_kwargs = {}):
 
     return target
 
-class TokenAuth(AuthBase):
-    def __init__(self, token):
-        self._token = token
+try:
+    import requests
+    from requests.auth import AuthBase
 
-    @property
-    def token(self):
-        return self._token
+    class TokenAuth(AuthBase):
+        def __init__(self, token):
+            self._token = token
 
-    def __call__(self, r):
-        r.headers["Authorization"] = "Bearer %s" % self._token
-        return r
+        @property
+        def token(self):
+            return self._token
+
+        def __call__(self, r):
+            r.headers["Authorization"] = "Bearer %s" % self._token
+            return r
+except ImportError:
+    LOG.warning("Unable to import requests. Some functions will not work.")

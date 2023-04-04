@@ -9,3 +9,9 @@ def asyncify(func, loop=None, executor=None):
         return await loop.run_in_executor(executor, fn)
 
     return async_func
+
+async def aenumerate(aiterable, start=0):
+    i = start
+    async for x in aiterable:
+        yield i, x
+        i += 1
