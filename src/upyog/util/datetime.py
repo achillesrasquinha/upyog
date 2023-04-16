@@ -90,6 +90,7 @@ _AUTO_FORMATS = [
     '%H:%M:%S.%f%z',
     '%H:%M:%S.%f',
     '%H:%M:%S',
+    '%Y-%m-%dT%H:%M:%S%z'
 ]
 
 def auto_datetime(string):
@@ -154,3 +155,7 @@ def format(dt, format_):
 
 def ts(dt):
     return time.mktime(dt.timetuple())
+
+def human_datetime(dt):
+    dt = auto_datetime(dt)
+    return dt.strftime("%b %d, %Y %I:%M %p")

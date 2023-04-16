@@ -110,7 +110,10 @@ def load_json(path, *args, **kwargs):
         else:
             content = path
     else:
-        content = read(path, *args, **kwargs)
+        if isinstance(path, dict):
+            content = json.dumps(path, *args, **kwargs)
+        else:
+            content = read(path, *args, **kwargs)
 
     object_hook = kwargs.pop("object_hook", None)
     data = json.loads(content, object_hook = object_hook)

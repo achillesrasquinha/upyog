@@ -265,7 +265,10 @@ class BaseAPI(BaseObject):
     def _get_req_args(self, method, path = None, *args, **kwargs):
         raise_error = kwargs.pop("raise_error", True)
         token       = kwargs.pop("token",       self.token)
-        headers     = kwargs.pop("headers",     { })
+
+        headers     = getattr(self, "headers", {})
+        headers.update(kwargs.pop("headers", {}))
+
         proxies     = kwargs.pop("proxies",     self._proxies)
         data        = kwargs.get("params",      kwargs.get("data"))
         prefix      = kwargs.get("prefix",      True)
