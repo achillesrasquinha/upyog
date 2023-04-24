@@ -77,6 +77,10 @@ def get_base_parser(prog, description, help_ = True):
         type    = check_file,
         action  = ConfigFileAction
     )
+    parser.add_argument("--input",
+        default = getenv("INPUT_FILE"),
+        help    = "Input File."
+    )
     parser.add_argument("--ignore-error",
         action  = "store_true",
         default = getenv("IGNORE_ERROR", False),

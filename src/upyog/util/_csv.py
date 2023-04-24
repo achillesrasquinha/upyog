@@ -1,6 +1,6 @@
 import csv
 
-from upyog.util._dict import dict_from_list
+from upyog.util._dict import dict_from_list, lkeys, lvalues
 from upyog.util.types import lmap, auto_typecast
 from upyog.util.string import strip
 
@@ -24,7 +24,14 @@ def read(path, *args, **kwargs):
 
     return data
 
-def write(path, row, mode = "w", *args, **kwargs):
+def write(path, rows, mode = "w", *args, **kwargs):
+    if len(rows) != 0:
+        if isinstance(rows[0], dict):
+            header = lkeys(rows[0])
+            rows   = lmap(lvalues, rows)
+            rows.insert(0, header)
+
     with open(path, mode = mode) as f:
         writer = csv.writer(f, *args, **kwargs)
-        writer.writerow(row)
+        for row in rows:
+            writer.writerow(row)
