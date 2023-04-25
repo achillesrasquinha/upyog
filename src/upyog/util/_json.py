@@ -5,7 +5,7 @@ import json
 from upyog.util._dict  import AutoDict, autodict, merge_dict
 from upyog.util.system import write, read
 from upyog.util.string import strip, safe_decode
-from upyog.util.types  import is_list_like
+from upyog.util.array  import is_list_like
 from upyog import log
 
 logger = log.get_logger(__name__)
