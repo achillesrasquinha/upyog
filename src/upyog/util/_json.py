@@ -5,6 +5,7 @@ import json
 from upyog.util._dict  import AutoDict, autodict, merge_dict
 from upyog.util.system import write, read
 from upyog.util.string import strip, safe_decode
+from upyog.util.types  import is_list_like
 from upyog import log
 
 logger = log.get_logger(__name__)
@@ -102,6 +103,9 @@ class JSONLogger(AutoDict):
         return str(self.store)
 
 def load_json(path, *args, **kwargs):
+    if is_list_like(path) or isinstance(path, dict):
+        return path
+
     path = safe_decode(path)
 
     if isinstance(path, str):
@@ -110,10 +114,7 @@ def load_json(path, *args, **kwargs):
         else:
             content = path
     else:
-        if isinstance(path, dict):
-            content = json.dumps(path, *args, **kwargs)
-        else:
-            content = read(path, *args, **kwargs)
+        content = read(path, *args, **kwargs)
 
     object_hook = kwargs.pop("object_hook", None)
     data = json.loads(content, object_hook = object_hook)
