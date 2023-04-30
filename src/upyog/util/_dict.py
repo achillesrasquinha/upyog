@@ -26,9 +26,9 @@ def merge_dict(*args, **kwargs):
 
     Example::
     
-        >>> bpy.merge_dict({ 'foo': 'bar' }, { 'bar': 'baz' }, { 'baz': 'boo' })
+        >>> upy.merge_dict({ 'foo': 'bar' }, { 'bar': 'baz' }, { 'baz': 'boo' })
         {'foo': 'bar', 'bar': 'baz', 'baz': 'boo'}
-        >>> bpy.merge_dict({ 'foo': 'bar' }, { 'foo': 'baz', 'bar': 'boo' })
+        >>> upy.merge_dict({ 'foo': 'bar' }, { 'foo': 'baz', 'bar': 'boo' })
         {'foo': 'baz', 'bar': 'boo'}
     """
     deep = kwargs.get("deep", False)
@@ -56,7 +56,7 @@ def dict_from_list(keys, values = None):
 
     Example::
 
-        >>> bpy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
+        >>> upy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
         {'a': 1, 'b': 2, 'c': 3}
     """
     if not values:
@@ -73,7 +73,7 @@ def autodict(*args, **kwargs):
 
     Example::
 
-        >>> d = bpy.autodict()
+        >>> d = upy.autodict()
         >>> d['foo']['bar']['baz'] = 'boo'
         {'foo': {'bar': {'baz': 'boo'}}}
     """
@@ -102,7 +102,7 @@ def lkeys(d):
 
     Example::
 
-        >>> bpy.lkeys({ 'foo': 'bar', 'baz': 'boo' })
+        >>> upy.lkeys({ 'foo': 'bar', 'baz': 'boo' })
         ['foo', 'baz']
     """
     return list(iterkeys(d))
@@ -117,7 +117,7 @@ def lvalues(d):
 
     Example::
 
-        >>> bpy.lvalues({ 'foo': 'bar', 'baz': 'boo' })
+        >>> upy.lvalues({ 'foo': 'bar', 'baz': 'boo' })
         ['bar', 'boo']
     """
     return list(itervalues(d))
@@ -136,9 +136,9 @@ def check_struct(d, struct, raise_err = True):
 
     :Example:
 
-        >>> bpy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": str } })
+        >>> upy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": str } })
         True
-        >>> bpy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": int } }, raise_err = False)
+        >>> upy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": int } }, raise_err = False)
         False
     """
     if not isinstance(d, dict):

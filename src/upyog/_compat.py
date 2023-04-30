@@ -80,6 +80,7 @@ if PY2: # pragma: no cover
     from __builtin__ import raw_input as input
 
     from StringIO import StringIO
+    from BytesIO  import BytesIO
 
     from itertools import izip         as zip
     from itertools import izip_longest as zip_longest
@@ -110,7 +111,7 @@ else:
 
     from builtins import input, range
 
-    from io import StringIO
+    from io import StringIO, BytesIO
 
     from itertools import zip_longest
 

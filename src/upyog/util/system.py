@@ -53,7 +53,7 @@ def read(fname, mode = "r", sanitize = False, encoding = "utf-8"):
 
     Example
 
-        >>> bpy.read("path/to/file")
+        >>> upy.read("path/to/file")
         'Hello, World!'
     """
     if hasattr(fname, "read"):
@@ -343,7 +343,7 @@ def move(*files, **kwargs):
 
     Example:
 
-        >>> bpy.move("path/to/file1", "path/to/file2", dest = "path/to/dest")
+        >>> upy.move("path/to/file1", "path/to/file2", dest = "path/to/dest")
     """
     dest = kwargs["dest"]
 
@@ -363,7 +363,7 @@ def copy(*files, **kwargs):
 
     Example:
 
-        >>> bpy.copy("path/to/file1", "path/to/file2", dest = "path/to/dest")
+        >>> upy.copy("path/to/file1", "path/to/file2", dest = "path/to/dest")
     """
     dest = kwargs["dest"]
     raise_err = kwargs.get("raise_err", False)
@@ -391,7 +391,7 @@ def extract_all(source, dest):
 
     Example
 
-        >>> bpy.extract_all("path/to/src", "path/to/dest")
+        >>> upy.extract_all("path/to/src", "path/to/dest")
     """
     source = osp.abspath(source)
     dest   = osp.abspath(dest)

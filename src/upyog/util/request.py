@@ -74,7 +74,7 @@ def check_url(url, raise_err = True):
     return True
 
 def download_file(url, target = None, chunk_size = None, req_kwargs = {}):
-    chunk_size  = chunk_size or bpy.settings.get("max_chunk_download_bytes")
+    chunk_size  = chunk_size or upy.settings.get("max_chunk_download_bytes")
 
     if not isinstance(url, requests.Response):
         response = req.get(url, stream = True, **req_kwargs)
@@ -107,9 +107,14 @@ def download_file(url, target = None, chunk_size = None, req_kwargs = {}):
         else:
             target  = get_random_str()
 
-    makepath(target)
+    is_fhandler = hasattr(target, "write")
 
-    with open(target, "wb") as f:
+    if not is_fhandler:
+        makepath(target)
+
+    target = open(target, "wb") if not is_fhandler else target
+
+    with target as f:
         for content in response.iter_content(chunk_size = chunk_size):
             if progress_bar:
                 progress_bar.update(len(content))

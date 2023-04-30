@@ -14,6 +14,9 @@ from upyog.util.array           import (
     sequencify,
 )
 from upyog.log                  import get_logger
+from upyog.util.request         import (
+    download_file
+)
 
 logger = get_logger()
 
@@ -191,8 +194,13 @@ class BaseAPI(BaseObject):
                 if self.auth:
                     args.update({"auth": self.auth})
 
+            after_request = None
+
             if stream:
                 args.update({"stream": True})
+                target = kwargs.get("target", None)
+                if target:
+                    after_request = lambda response, **kwargs: download_file(response, target)
 
             method_caller = METHOD_CALLERS.get(method, self.get)
 
@@ -201,7 +209,8 @@ class BaseAPI(BaseObject):
             else:
                 response = method_caller(query, **args)
 
-            after_request = api.get("after_request", base_config.get("after_request", None))
+            after_request = api.get("after_request", base_config.get("after_request", None)) \
+                or after_request
 
             if after_request:
                 response = after_request(response, req_args = args)
@@ -269,10 +278,10 @@ class BaseAPI(BaseObject):
         headers     = getattr(self, "headers", {})
         headers.update(kwargs.pop("headers", {}))
 
-        proxies     = kwargs.pop("proxies",     self._proxies)
-        data        = kwargs.get("params",      kwargs.get("data"))
-        prefix      = kwargs.get("prefix",      True)
-        async_      = kwargs.pop("async_",      False)
+        proxies     = kwargs.pop("proxies", self._proxies)
+        data        = kwargs.get("params",  kwargs.get("data"))
+        prefix      = kwargs.get("prefix",    True)
+        async_      = kwargs.pop("async_",  False)
 
         if token:
             headers.update({

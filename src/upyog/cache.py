@@ -6,7 +6,7 @@ from   upyog.util.system import makedirs
 class Cache:
     def __init__(self, location = None, dirname = None):
         self.location = location or osp.join(osp.expanduser("~"), ".config")
-        self.dirname  = dirname  or bpytuils.__name__
+        self.dirname  = dirname  or upytuils.__name__
 
     @property
     def path(self):

@@ -25,7 +25,7 @@ def get_function_arguments(fn):
 
         >>> def add(a = 0, b = 1):
                 return a + b
-        >>> params = bpy.get_function_arguments(add)
+        >>> params = upy.get_function_arguments(add)
         >>> params
         {'a': 0, 'b': 1}
     """
@@ -77,9 +77,9 @@ def auto_typecast(value):
 
     Example::
 
-        >>> bpy.auto_typecast("True")
+        >>> upy.auto_typecast("True")
         True
-        >>> bpy.auto_typecast("1.2345")
+        >>> upy.auto_typecast("1.2345")
         1.2345
     """
     str_to_bool = lambda x: { "True": True, "False": False, "None": None}[x]
@@ -124,7 +124,7 @@ def build_fn(fn, *args, **kwargs):
         
         >>> def add(a, b):
                 return a + b
-        >>> fn = bpy.build_fn(add, a = 1, b = 2)
+        >>> fn = upy.build_fn(add, a = 1, b = 2)
         >>> fn()
         3
     """
@@ -139,9 +139,9 @@ def check_array(o, raise_err = True):
 
     Example::
 
-        >>> bpy.check_array([1, 2, 3])
+        >>> upy.check_array([1, 2, 3])
         True
-        >>> bpy.check_array(1)
+        >>> upy.check_array(1)
         False
     """
     if isinstance(o, (list, tuple, set)):

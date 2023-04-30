@@ -32,9 +32,9 @@ def get_timestamp_str(format_ = _DEFAULT_TIMESTAMP_FORMAT):
 
     Example:
         
-        >>> bpy.get_timestamp_str()
+        >>> upy.get_timestamp_str()
         '2021-09-15 14:24:11'
-        >>> bpy.get_timestamp_str(format_ = '%d/%m/%Y')
+        >>> upy.get_timestamp_str(format_ = '%d/%m/%Y')
         '15/09/2021'
     """
     now       = time.time()
@@ -57,11 +57,11 @@ def check_datetime_format(datetime, format_, raise_err = False):
 
     Example:
 
-        >>> bpy.check_datetime_format('2011-11-11', '%Y-%m-%d')
+        >>> upy.check_datetime_format('2011-11-11', '%Y-%m-%d')
         True
-        >>> bpy.check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d')
+        >>> upy.check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d')
         False
-        >>> bpy.check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d', raise_err = True)
+        >>> upy.check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d', raise_err = True)
         ValueError: Incorrect datetime format, expected %Y-%m-%d
     """
     try:

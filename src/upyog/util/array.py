@@ -19,7 +19,7 @@ def compact(arr, type_ = list):
 
     Example::
 
-        >>> bpy.compact([1, None, 2, False, 3, 4, "", 5])
+        >>> upy.compact([1, None, 2, False, 3, 4, "", 5])
         [1, 2, 3, 4, 5]
     """
     return type_(filter(bool, arr))
@@ -34,9 +34,9 @@ def squash(seq):
 
     Example::
 
-        >>> bpy.squash([1, 2, 3, 4, 5])
+        >>> upy.squash([1, 2, 3, 4, 5])
         [1, 2, 3, 4, 5]
-        >>> bpy.squash([1])
+        >>> upy.squash([1])
         1
     """
     value = seq
@@ -56,7 +56,7 @@ def flatten(arr):
 
     Example::
 
-        >>> bpy.flatten([[1], [2, 3], [4, 5, 6]])
+        >>> upy.flatten([[1], [2, 3], [4, 5, 6]])
         [1, 2, 3, 4, 5]
     """
     if _is_python_version(major = 2, minor = 6): # pragma: no cover
@@ -78,9 +78,9 @@ def sequencify(value, type_ = list):
 
     Example::
 
-        >>> bpy.sequencify([1])
+        >>> upy.sequencify([1])
         [1]
-        >>> bpy.sequencify(3)
+        >>> upy.sequencify(3)
         [3]
     """
     if not isinstance(value, (list, tuple)):
@@ -101,7 +101,7 @@ def chunkify(arr, n):
 
     Example::
 
-        >>> bpy.sequencify([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3)
+        >>> upy.sequencify([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3)
     """
     for i in range(0, len(arr), n):
         yield arr[i:i + n]
@@ -179,9 +179,9 @@ def is_list_like(obj):
 
     Example::
 
-        >>> bpy.is_list_like([1, 2, 3])
+        >>> upy.is_list_like([1, 2, 3])
         True
-        >>> bpy.is_list_like(1)
+        >>> upy.is_list_like(1)
         False
     """
     return isinstance(obj, (list, tuple, set))
