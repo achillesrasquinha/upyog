@@ -367,8 +367,6 @@ def copy(*files, **kwargs):
     """
     dest = kwargs["dest"]
     raise_err = kwargs.get("raise_err", False)
-    recursive = kwargs.get("recursive", False)
-    exist_ok  = kwargs.get("exist_ok",  True)
     
     for f in files:
         abspath = osp.abspath(f)
@@ -376,9 +374,8 @@ def copy(*files, **kwargs):
         if not osp.exists(abspath) and raise_err:
             raise FileNotFoundError("No file %s found." % abspath)
         else:
-            if recursive:
+            if osp.isdir(abspath):
                 shutil.copytree(abspath, dest)
-                # shutil.copytree(abspath, dest, dirs_exist_ok = exist_ok)
             else:
                 shutil.copy2(abspath, dest)
 
