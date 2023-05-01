@@ -89,6 +89,7 @@ from upyog.util.types    import (
 from upyog.util.system import (
     get_files,
     popen,
+    ShellEnvironment,
     make_temp_dir,
     make_temp_file,
     unzip,
