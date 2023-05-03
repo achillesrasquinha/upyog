@@ -365,8 +365,9 @@ def copy(*files, **kwargs):
 
         >>> upy.copy("path/to/file1", "path/to/file2", dest = "path/to/dest")
     """
-    dest = kwargs["dest"]
+    dest  = kwargs["dest"]
     raise_err = kwargs.get("raise_err", False)
+    force = kwargs.get("force", False)
     
     for f in files:
         abspath = osp.abspath(f)
@@ -375,6 +376,12 @@ def copy(*files, **kwargs):
             raise FileNotFoundError("No file %s found." % abspath)
         else:
             if osp.isdir(abspath):
+                if osp.exists(dest):
+                    if force:
+                        shutil.rmtree(dest)
+                    else:
+                        raise FileExistsError("Directory %s already exists." % dest)
+
                 shutil.copytree(abspath, dest)
             else:
                 shutil.copy2(abspath, dest)
