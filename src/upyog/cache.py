@@ -2,11 +2,13 @@ import os, os.path as osp
 
 import upyog
 from   upyog.util.system import makedirs
+from   upyog.util._aws import is_lambda
 
 class Cache:
     def __init__(self, location = None, dirname = None):
+        basedir = osp.expanduser("~") if not is_lambda() else "/tmp"
         self.location = location or osp.join(osp.expanduser("~"), ".config")
-        self.dirname  = dirname  or upytuils.__name__
+        self.dirname  = dirname  or upyog.__name__
 
     @property
     def path(self):
