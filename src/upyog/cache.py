@@ -7,7 +7,7 @@ from   upyog.util._aws import is_lambda
 class Cache:
     def __init__(self, location = None, dirname = None):
         basedir = osp.expanduser("~") if not is_lambda() else "/tmp"
-        self.location = location or osp.join(osp.expanduser("~"), ".config")
+        self.location = location or osp.join(basedir, ".config")
         self.dirname  = dirname  or upyog.__name__
 
     @property
