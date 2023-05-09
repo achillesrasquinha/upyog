@@ -115,7 +115,8 @@ from upyog.util.environ import (
 )
 from upyog.util._csv import (
     read as read_csv,
-    write as write_csv
+    write as write_csv,
+    rows_to_dicts
 )
 import upyog.util._math as math
 from upyog.db import (

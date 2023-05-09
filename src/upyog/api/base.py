@@ -280,8 +280,12 @@ class BaseAPI(BaseObject):
 
         proxies     = kwargs.pop("proxies", self._proxies)
         data        = kwargs.get("params",  kwargs.get("data"))
-        prefix      = kwargs.get("prefix",    True)
+        prefix       = kwargs.get("prefix",    True)
         async_      = kwargs.pop("async_",  False)
+
+        verify      = kwargs.get("verify", 
+            os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")                             
+        )
 
         if token:
             headers.update({
@@ -308,6 +312,7 @@ class BaseAPI(BaseObject):
             "prefix": prefix,
             "async_": async_,
             "raise_error": raise_error,
+            "verify": verify,
             "args": args,
             "kwargs": kwargs
         }
@@ -316,7 +321,7 @@ class BaseAPI(BaseObject):
         req_args = self._get_req_args(method, path, *args, **kwargs)
 
         async with self:
-            verify = os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")
+            verify = req_args.pop("verify", None)
             httpx  = import_or_raise("httpx")
 
             transport = httpx.AsyncHTTPTransport(retries = self._retries)

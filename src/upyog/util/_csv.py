@@ -35,3 +35,11 @@ def write(path, rows, mode = "w", *args, **kwargs):
         writer = csv.writer(f, *args, **kwargs)
         for row in rows:
             writer.writerow(row)
+
+def rows_to_dicts(rows, header = None, auto_cast = True):
+    if header is None:
+        header = rows[0]
+        rows   = rows[1:]
+
+    autotype = auto_typecast if auto_cast else lambda x: x
+    return lmap(lambda x: dict_from_list(header, lmap(autotype, x)), rows)
