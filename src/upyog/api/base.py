@@ -262,6 +262,7 @@ class BaseAPI(BaseObject):
 
     def request(self, method, path = None, *args, **kwargs):
         req_args = self._get_req_args(method, path, *args, **kwargs)
+        self._session.verify = req_args["verify"]
 
         response = self._session.request(method, req_args["url"],
             headers = req_args["headers"],
