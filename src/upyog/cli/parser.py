@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 # imports - standard imports
-import sys
+import os, sys
 import argparse
 import multiprocessing as mp
 import json
@@ -46,6 +46,10 @@ def get_base_parser(prog, description, help_ = True):
         description     = description,
         add_help        = False,
         formatter_class = ArgumentParserFormatter
+    )
+    parser.add_argument("--cwd",
+        default = getenv("CWD", os.getcwd()),
+        help    = "Current Working Directory."
     )
     parser.add_argument("-y", "--yes",
         action  = "store_true",

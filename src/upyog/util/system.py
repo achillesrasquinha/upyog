@@ -132,6 +132,26 @@ def which(executable, raise_err = False):
     
     return exec_
 
+def walk(top, *args, **kwargs):
+    abspath = kwargs.pop("abspath", False)
+
+    if abspath:
+        top = osp.abspath(top)
+
+    include = sequencify(kwargs.pop("include", []))
+    if include:
+        include = 'r|'.join(lmap(fnmatch.translate, include))
+
+    for root, dirs, files in os.walk(top, *args, **kwargs):
+        if abspath:
+            dirs  = lmap(lambda d: osp.join(root, d), dirs)
+            files = lmap(lambda f: osp.join(root, f), files)
+
+        if include:
+            files = lfilter(lambda f: re.match(include, f), files)
+
+        yield root, dirs, files
+
 def pardir(fname, level = 1):
     for _ in range(level):
         fname = osp.dirname(fname)
@@ -384,6 +404,9 @@ def copy(*files, **kwargs):
 
                 shutil.copytree(abspath, dest)
             else:
+                if force:
+                    makepath(dest)
+
                 shutil.copy2(abspath, dest)
 
 def extract_all(source, dest):
@@ -405,18 +428,6 @@ def extract_all(source, dest):
             tar.extractall(dest)
     else:
         shutil.unpack_archive(source, dest)
-
-def walk(*args, **kwargs):
-    include = sequencify(kwargs.pop("include", []))
-    if include:
-        include = 'r|'.join(lmap(fnmatch.translate, include))
-
-    for root, dirs, files in os.walk(*args, **kwargs):
-        if include:
-            files = lmap(lambda f: osp.join(root, f), files)
-            files = lfilter(lambda f: re.match(include, f), files)
-
-        yield root, dirs, files
 
 def check_path(path, raise_err = True):
     path = osp.abspath(path)
@@ -444,6 +455,20 @@ def check_file(path, raise_err = True):
 
 def list_tree(*args, **kwargs):
     return list(walk(*args, **kwargs))
+
+def list_files(*args, **kwargs):
+    include_dirs = kwargs.pop("include_dirs", True)
+    files = []
+
+    for root, dirs, fs in walk(*args, **kwargs):
+        if include_dirs:
+            for dir_ in dirs:
+                files.append(osp.join(root, dir_))
+
+        for f in fs:
+            files.append(osp.join(root, f))
+
+    return files
 
 def abslistdir(path, filter_ = None):
     path = check_path(path)
