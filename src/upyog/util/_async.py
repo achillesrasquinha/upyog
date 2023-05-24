@@ -15,3 +15,16 @@ async def aenumerate(aiterable, start=0):
     async for x in aiterable:
         yield i, x
         i += 1
+
+async def acombine(*aiterables):
+    """
+        Merge multiple async iterables into one.
+    """
+    aiterators = [aiterable.__aiter__() for aiterable in aiterables]
+    while aiterators:
+        for i, aiterator in enumerate(aiterators):
+            try:
+                yield await aiterator.__anext__()
+            except StopAsyncIteration:
+                del aiterators[i]
+                break

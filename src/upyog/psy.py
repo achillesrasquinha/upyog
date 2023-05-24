@@ -22,7 +22,7 @@ NAME = __name__
 
 _DRIVER = None
 
-_CHROME_DRIVER_BASE_URL = "https://chromedriver.storage.googleapis.com/109.0.5414.74/"
+_CHROME_DRIVER_BASE_URL = "https://chromedriver.storage.googleapis.com/113.0.5672.126/"
 
 INCOGNITO = True
 DELAY     = 5
@@ -46,6 +46,8 @@ def download_chrome_driver(target_path):
 
     if "macos" in env["os"].lower() and "arm" in env["os"]:
         suffix = "mac_arm64"
+    elif "linux" in env["os"].lower():
+        suffix = "linux64"
     else:
         raise ValueError("Unsupported OS %s" % env["os"])
 
@@ -94,17 +96,17 @@ def get_driver(type_ = "chrome", **kwargs):
     return instance
     
 @log.log_fn
-def visit(url):
+def visit(url, **kwargs):
     global _DRIVER, EXIT
 
     if not _DRIVER:
-        _DRIVER = get_driver(detach = not EXIT)
+        _DRIVER = get_driver(detach = not EXIT, **kwargs)
 
     if not check_url(url, raise_err = False):
         base_url = _DRIVER.current_url
         url = joinurl(base_url, url)
 
-    _DRIVER.get(url)
+    return _DRIVER.get(url)
 
 @log.log_fn
 def wait(timeout = 5):
