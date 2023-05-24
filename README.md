@@ -39,7 +39,7 @@
 ### Quick Start
 
 ```shell
-$ pip install upyog
+$ pip install PyUpyog
 ```
 
 Check out [installation](docs/source/installation.md) for more details.

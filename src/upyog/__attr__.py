@@ -67,6 +67,7 @@ path["base"]                = pardir(__file__)
 path["version"]             = osp.join(path["base"], "VERSION")
 
 __name__                    = "upyog"
+__alias__                   = "PyUpyog"
 __command__                 = "upyog"
 __version__                 = read(osp.join(pardir(__file__), "VERSION"))
 __build__                   = get_revision(pardir(__file__, 2), short = True, raise_err = False)
