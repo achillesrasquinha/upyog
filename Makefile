@@ -5,7 +5,7 @@ BASEDIR					= $(shell pwd)
 
 ENVIRONMENT			   ?= development
 
-PROJECT					= upyog
+PROJECT					= PyUpyog
 
 PROJDIR					= ${BASEDIR}/src/upyog
 TESTDIR					= ${BASEDIR}/tests
