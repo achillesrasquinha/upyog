@@ -1,0 +1,2 @@
+[console_scripts]
+PyUpyog = upyog.__main__:main
