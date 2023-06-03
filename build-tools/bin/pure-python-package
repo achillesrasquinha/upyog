@@ -1,3 +1,0 @@
-#!/bin/bash
-# Have this script exit 1 if extensions need to be built for this package
-exit 0
