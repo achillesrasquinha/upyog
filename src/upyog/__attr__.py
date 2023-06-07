@@ -66,7 +66,7 @@ path                        = dict()
 path["base"]                = pardir(__file__)
 path["version"]             = osp.join(path["base"], "VERSION")
 
-__name__                    = "PyUpyog"
+__name__                    = "upyog"
 __alias__                   = "PyUpyog"
 __command__                 = "upyog"
 __version__                 = read(osp.join(pardir(__file__), "VERSION"))
