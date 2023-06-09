@@ -13,3 +13,6 @@ __pycache__/
 
 /doc/_autosummary/
 /build
+
+
+*.egg-info
