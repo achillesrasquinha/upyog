@@ -1,3 +1,0 @@
-#!/bin/bash
-# Mark this script executable to filter LDFLAGS. It will receive the ldflags on
-# stdin and must emit the flags it wants to keep on stdout.
