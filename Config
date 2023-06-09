@@ -1,0 +1,32 @@
+# If the current branch does not yet exist in Brazil, you can create and push
+# it simultaneously using the following command:
+# 'git push -u origin BRANCH_NAME_HERE'
+
+package.PyUpyog = {
+    # Please read http://tiny/inaap63w/3PMajorVersionScheme before changing the
+    # suggested major version.
+    interfaces = (0.x);
+
+    third-party-configuration = {
+        # This is important, please do not remove it.
+        thirdPartyName       = "PyUpyog";
+        thirdPartyVersion    = "0.5.14";
+        licenseType          = (MIT);
+        licenseFile          = (LICENSE, );
+        repository           = "pypi";
+    };
+
+    build-system = python-3p-tool;
+
+    build-tools = {
+        0.x = {
+            Python3PBuildTool = 2.0;
+        };
+    };
+
+    targets = {
+        python = {
+            type = python;
+        };
+    };
+};

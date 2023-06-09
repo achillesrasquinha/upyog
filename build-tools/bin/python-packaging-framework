@@ -1,0 +1,3 @@
+#!/bin/bash
+# This script will write out the setup type for the package.
+echo setuptools
