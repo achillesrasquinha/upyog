@@ -1,0 +1,1 @@
+from upyog.model.base import BaseObject
