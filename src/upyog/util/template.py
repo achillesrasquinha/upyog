@@ -91,6 +91,8 @@ def render_template(template, context = None, dirs = [ ], **kwargs):
         context = kwargs
 
     if context:
+        escape = False
+
         for name, item in iteritems(context):
             item = str(item)
             item = module_escape.escape(item)

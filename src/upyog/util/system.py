@@ -167,6 +167,7 @@ def popen(*args, **kwargs):
     environment = kwargs.get("env")
     shell       = kwargs.get("shell", True)
     raise_err   = kwargs.get("raise_err", True)
+    executable  = kwargs.get("executable")
 
     environ     = os.environ.copy()
     if environment:
@@ -190,7 +191,8 @@ def popen(*args, **kwargs):
         stderr  = sp.PIPE if output else None,
         env     = environ,
         cwd     = directory,
-        shell   = shell
+        shell   = shell,
+        executable = executable
     )
 
     code       = proc.wait()

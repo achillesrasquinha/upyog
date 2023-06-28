@@ -36,6 +36,14 @@ def avg(*args):
 
     return sum(args) / len(args)
 
+def _div(a, b, raise_err = False):
+    try:
+        return a / b
+    except ZeroDivisionError:
+        if raise_err:
+            raise
+    return nan
+
 def div(a, b):
     """
     Divide two numbers.
@@ -49,15 +57,15 @@ def div(a, b):
         0.5
     """
     if is_list_like(a) and is_list_like(b):
-        return [a[i] / b[i] for i in range(len(a))]
+        return [_div(a[i], b[i]) for i in range(len(a))]
 
     if is_list_like(a):
-        return [a[i] / b for i in range(len(a))]
+        return [_div(a[i], b) for i in range(len(a))]
     
     if is_list_like(b):
-        return [a / b[i] for i in range(len(b))]
+        return [_div(a, b[i]) for i in range(len(b))]
 
-    return a / b
+    return _div(a, b)
 
 def percentile(arr, p):
     """

@@ -168,6 +168,7 @@ from upyog.util.error import (
 from upyog.util.misc import (
     retry
 )
+from upyog.util.op import Op
 
 settings = Settings()
 
