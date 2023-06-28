@@ -29,7 +29,8 @@ from upyog.util._dict  import (
     lkeys,
     lvalues,
     check_struct as check_dict_struct,
-    is_subdict
+    is_subdict,
+    getattr2, hasattr2, setattr2
 )
 from upyog.util._async import (
     asyncify,
@@ -68,7 +69,8 @@ from upyog.util.string import (
     labelize,
     safe_encode,
     safe_decode,
-    ellipsis
+    ellipsis,
+    encapsulate
 )
 from upyog.util.datetime import (
     check_datetime_format,
@@ -169,6 +171,8 @@ from upyog.util.misc import (
     retry
 )
 from upyog.util.op import Op
+from upyog.util.fn import pop
+from upyog.util.query import where
 
 settings = Settings()
 

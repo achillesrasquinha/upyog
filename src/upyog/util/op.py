@@ -3,8 +3,8 @@ from functools import reduce
 
 O = {
     "EQUALS_STRING": "eq",
-    "EQUALS_OPERATOR_1": "=",
-    "EQUALS_OPERATOR_2": "==",
+    "EQUALS_OPERATOR_1": "==",
+    "EQUALS_OPERATOR_2": "=",
     "NOT_EQUALS_STRING": "ne",
     "NOT_EQUALS_OPERATOR": "!=",
     "LESS_THAN_STRING": "lt",
@@ -22,6 +22,18 @@ O = {
     "NOT_IN_STRING": "notin"
 }
 
+def _check_in(x, y, op):
+    if upy.is_list_like(x):
+        if op == "in":
+            return y in x
+        else:
+            return y not in x
+    else:
+        if op == "in":
+            return x in y
+        else:
+            return x not in y
+
 def op(t):
     if t in (O["EQUALS_STRING"], O["EQUALS_OPERATOR_1"], O["EQUALS_OPERATOR_2"]):
         return lambda x, y: x == y
@@ -38,9 +50,9 @@ def op(t):
     elif t in (O["STARTS_WITH_STRING"], O["ENDS_WITH_STRING"]):
         return lambda x, y: getattr(x, t)(y)
     elif t in (O["CONTAINS_STRING"], O["IN_STRING"]):
-        return lambda x, y: y in x
+        return lambda x, y: _check_in(x, y, "in")
     elif t == O["NOT_IN_STRING"]:
-        return lambda x, y: y not in x
+        return lambda x, y: _check_in(x, y, "notin")
     else:
         raise ValueError(f"Invalid operator: {t}")
 
