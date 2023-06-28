@@ -135,3 +135,8 @@ def nl(s = "", space = 1):
 def tb(s = "", point = 2, type_ = " "):
     indent = type_ * point
     return "%s%s" % (indent, s)
+
+def encapsulate(s, q, r = None):
+    if r is None:
+        r = q
+    return "%s%s%s" % (q, s, r)

@@ -10,7 +10,7 @@ package.PyUpyog = {
     third-party-configuration = {
         # This is important, please do not remove it.
         thirdPartyName       = "PyUpyog";
-        thirdPartyVersion    = "0.5.14";
+        thirdPartyVersion    = "0.5.15";
         licenseType          = (MIT);
         licenseFile          = (LICENSE, );
         repository           = "pypi";

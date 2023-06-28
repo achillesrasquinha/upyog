@@ -182,3 +182,34 @@ def is_subdict(a, b):
                 break
 
     return sub_dict
+
+# TODO: raise exception if key not found
+def getattr2(d, key, default = None):
+    keys  = key.split(".")
+
+    value = d
+
+    for key in keys:
+        if value and key in value:
+            value = value[key]
+        else:
+            value = None
+
+    return value or default
+
+def hasattr2(d, key):
+    return getattr2(d, key, "__missing__") != "__missing__"
+
+def setattr2(d, key, value):
+    copy = d.copy()
+    keys = key.split(".")
+
+    for key in keys[:-1]:
+        if key not in d:
+            copy[key] = {}
+
+        copy = copy[key]
+
+    copy[keys[-1]] = value
+
+    return copy

@@ -103,6 +103,8 @@ class JSONLogger(AutoDict):
         return str(self.store)
 
 def load_json(path, *args, **kwargs):
+    object_hook = kwargs.pop("object_hook", None)
+
     if is_list_like(path) or isinstance(path, dict):
         return path
 
@@ -116,7 +118,6 @@ def load_json(path, *args, **kwargs):
     else:
         content = read(path, *args, **kwargs)
 
-    object_hook = kwargs.pop("object_hook", None)
     data = json.loads(content, object_hook = object_hook)
 
     return data

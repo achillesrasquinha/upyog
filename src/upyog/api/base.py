@@ -46,7 +46,7 @@ class BaseAPI(BaseObject):
     """
     def __init__(self, url = None, proxies = [ ], test = False, token = None,
                  verbose = False, rate = None, auth = None, session = None, async_ = False,
-                 retries = 1, on_error = None, **kwargs):
+                 retries = 1, on_error = None, timeout = None, **kwargs):
         super_ = super(BaseAPI, self)
         super_.__init__(**kwargs)
 
@@ -78,6 +78,7 @@ class BaseAPI(BaseObject):
         self._rate    = rate
 
         self._retries  = retries
+        self._timeout  = timeout
 
         self._build_api()
 

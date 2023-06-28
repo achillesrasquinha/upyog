@@ -109,7 +109,8 @@ class InstallCommand(install):
         remove_cache()
         
 setup(
-    name                 = PKGINFO["__name__"],
+    name                 = PKGINFO["__alias__"]
+        if "__alias__" in PKGINFO else PKGINFO["__name__"],
     version              = PKGINFO["__version__"],
     url                  = PKGINFO["__url__"],
     author               = PKGINFO["__author__"],

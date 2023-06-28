@@ -1,0 +1,2 @@
+[console_scripts]
+upyog = upyog.__main__:main
