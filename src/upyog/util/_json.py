@@ -6,6 +6,7 @@ from upyog.util._dict  import AutoDict, autodict, merge_dict
 from upyog.util.system import write, read
 from upyog.util.string import strip, safe_decode
 from upyog.util.array  import is_list_like
+from upyog.util.types  import ordered
 from upyog import log
 
 logger = log.get_logger(__name__)
@@ -126,3 +127,9 @@ def dump_json(data, path, *args, **kwargs):
     force = kwargs.pop("force", False)
     content = json.dumps(data, *args, **kwargs)
     write(path, content, force = force)
+
+def compare_json(a, b):
+    a = load_json(a)
+    b = load_json(b)
+    
+    return ordered(a) == ordered(b)

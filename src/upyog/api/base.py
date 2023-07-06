@@ -327,8 +327,8 @@ class BaseAPI(BaseObject):
             httpx  = import_or_raise("httpx")
 
             transport = httpx.AsyncHTTPTransport(retries = self._retries)
-            self._session = httpx.AsyncClient(transport = transport, verify = verify)
-            async with self._session as session:
+            session   = httpx.AsyncClient(transport = transport, verify = verify)
+            async with session:
                 response = await session.request(method, req_args["url"],
                     headers = req_args["headers"],
                     *req_args["args"], **req_args["kwargs"])

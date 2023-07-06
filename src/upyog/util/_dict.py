@@ -1,7 +1,6 @@
-import json
+import functools
 
 from collections import defaultdict
-from types import SimpleNamespace
 
 from upyog._compat import iteritems, Mapping, iterkeys, itervalues
 
@@ -59,6 +58,15 @@ def dict_from_list(keys, values = None):
         >>> upy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
         {'a': 1, 'b': 2, 'c': 3}
     """
+    if isinstance(values, str):
+        arr = keys
+        key = values
+
+        return functools.reduce(
+            lambda a, b: a.update({ b[key]: b }) or a,
+            arr, {}
+        )
+
     if not values:
         values = [None] * len(keys)
 
@@ -213,3 +221,49 @@ def setattr2(d, key, value):
     copy[keys[-1]] = value
 
     return copy
+
+def reverse_dict(d):
+    return { value: key for key, value in iteritems(d) }
+
+_TYPE_LIST_LIKE = (list, tuple, set, frozenset)
+
+def common_dict(a, b):
+    a_keys = set(iterkeys(a))
+    b_keys = set(iterkeys(b))
+
+    common = {}
+
+    common_keys = a_keys & b_keys
+    
+    for key in common_keys:
+        i, j = a[key], b[key]
+
+        if isinstance(i, Mapping) and isinstance(j, Mapping):
+            common[key] = common_dict(i, j)
+        elif isinstance(i, _TYPE_LIST_LIKE) and isinstance(j, _TYPE_LIST_LIKE):
+            common[key] = list(set(i) & set(j))
+        else:
+            if i == j:
+                common[key] = i
+
+    return common
+
+def subtract_dict(a, b):
+    a_keys = set(iterkeys(a))
+    b_keys = set(iterkeys(b))
+
+    subtract = {}
+
+    subtract_keys = a_keys - b_keys
+    
+    for key in subtract_keys:
+        i = a[key]
+
+        if isinstance(i, Mapping):
+            subtract[key] = subtract_dict(i, {})
+        elif isinstance(i, _TYPE_LIST_LIKE):
+            subtract[key] = i
+        else:
+            subtract[key] = i
+
+    return subtract

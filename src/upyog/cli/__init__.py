@@ -7,7 +7,10 @@ from upyog.util._dict import merge_dict
 from upyog.util.types import get_function_arguments
 
 def command(fn):
-    args    = get_args()
+    if "pytest" in sys.modules:
+        args = {}
+    else:
+        args = get_args()
     
     params  = get_function_arguments(fn)
 

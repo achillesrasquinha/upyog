@@ -1,6 +1,7 @@
 from upyog.util.types import classname
 from upyog._compat import iteritems
 from upyog import log
+import upyog as upy
 
 class BaseObject(object):
     def __init__(self, *args, **kwargs):
@@ -9,13 +10,14 @@ class BaseObject(object):
         
         verbose = getattr(self, "verbose", True)
         self._logger = log.get_logger(self.c_name, level = log.DEBUG if verbose else log.INFO)
+        self._flag = upy.autodict()
 
     @property
     def logger(self):
         return self._logger
 
     def __repr__(self):
-        klass  = self.c_name
+        klass = self.c_name
 
         prefix = ""
 
