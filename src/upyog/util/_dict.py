@@ -1,7 +1,6 @@
-import json
+import functools
 
 from collections import defaultdict
-from types import SimpleNamespace
 
 from upyog._compat import iteritems, Mapping, iterkeys, itervalues
 
@@ -59,6 +58,13 @@ def dict_from_list(keys, values = None):
         >>> upy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
         {'a': 1, 'b': 2, 'c': 3}
     """
+    if isinstance(values, str):
+        arr = keys
+        return functools.reduce(
+            lambda acc, val: acc.update({ val: values }),
+            arr, {}
+        )
+
     if not values:
         values = [None] * len(keys)
 

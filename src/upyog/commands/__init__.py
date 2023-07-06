@@ -1,6 +1,6 @@
 # imports - compatibility imports
 from __future__ import absolute_import
-import sys
+import sys, ast, re
 import os, os.path as osp
 
 from upyog.commands.util 	import cli_format
@@ -21,6 +21,7 @@ from upyog._compat		    import iteritems, Mapping
 from upyog.config            import environment, get_config_path
 from upyog.__attr__      	import __name__ as NAME
 from upyog.exception         import DependencyNotFoundError
+import upyog as upy
 
 logger    = log.get_logger(level = log.DEBUG)
 
@@ -249,3 +250,32 @@ def _command(*args, **kwargs):
                             a.github_reponame
                         )\
                         .pr()
+    
+    if a.upy_scan:
+        path = osp.abspath(a.upy_scan)
+        logger.info("Running upy scan at %s..." % path)
+
+        handlers = set()
+
+        for root, _, files in upy.walk(path):
+            for file in files:
+                if file.endswith(".py"):
+                    file_path = osp.join(root, file)
+
+                    with open(file_path, "r") as f:
+                        content = f.read()
+
+                    pattern = re.compile(r"upy\.[a-zA-Z0-9_]+")
+                    groups  = pattern.findall(content)
+
+                    for group in groups:
+                        handlers.add(group)
+
+        handlers = sorted(handlers)
+
+        if handlers:
+            logger.success("Found %d handlers: %s" % (len(handlers), ", ".join(handlers)))
+
+            if a.upy_eject:
+                path = osp.abspath(a.upy_eject)
+                logger.info("Ejecting handlers to %s..." % path)

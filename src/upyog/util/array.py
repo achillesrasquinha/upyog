@@ -68,6 +68,7 @@ def flatten(arr):
 
     return flattened
 
+# @upy.ejectable("sequencify")
 def sequencify(value, type_ = list):
     """
     Convert a value into array-like.
@@ -83,7 +84,7 @@ def sequencify(value, type_ = list):
         >>> upy.sequencify(3)
         [3]
     """
-    if not isinstance(value, (list, tuple)):
+    if not isinstance(value, (list, tuple, set, frozenset)):
         value = list([value])
 
     value = type_(value)

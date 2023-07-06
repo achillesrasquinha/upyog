@@ -201,6 +201,12 @@ def get_parser():
         default = getenv("NO_PRETTY_ERROR", False),
         help    = "Disable Pretty Error"
     )
+    parser.add_argument("--upy-scan",
+        help    = "Scan for files containing upyog"
+    )
+    parser.add_argument("--upy-eject",
+        help    = "Eject upyog from the project to files."
+    )
 
     if any("upyog" in arg for arg in sys.argv):
         parser.add_argument("-h", "--help",

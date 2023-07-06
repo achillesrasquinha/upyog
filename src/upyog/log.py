@@ -19,7 +19,7 @@ CRITICAL    = logging.CRITICAL
 
 SUCCESS     = 21
 logging.addLevelName(SUCCESS, "SUCCESS")
-MAGIC       = 22
+MAGIC       = 31
 logging.addLevelName(MAGIC,   "MAGIC")
 
 def success(self, message, *args, **kwargs):
