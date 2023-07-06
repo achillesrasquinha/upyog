@@ -60,15 +60,10 @@ def dict_from_list(keys, values = None):
     """
     if isinstance(values, str):
         arr = keys
-<<<<<<< HEAD
-        return functools.reduce(
-            lambda acc, val: acc.update({ val: values }),
-=======
         key = values
 
         return functools.reduce(
             lambda a, b: a.update({ b[key]: b }) or a,
->>>>>>> pyupyog/develop
             arr, {}
         )
 
@@ -225,9 +220,6 @@ def setattr2(d, key, value):
 
     copy[keys[-1]] = value
 
-<<<<<<< HEAD
-    return copy
-=======
     return copy
 
 def reverse_dict(d):
@@ -275,4 +267,3 @@ def subtract_dict(a, b):
             subtract[key] = i
 
     return subtract
->>>>>>> pyupyog/develop

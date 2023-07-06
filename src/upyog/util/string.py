@@ -139,8 +139,4 @@ def tb(s = "", point = 2, type_ = " "):
 def encapsulate(s, q, r = None):
     if r is None:
         r = q
-<<<<<<< HEAD
     return "%s%s%s" % (q, s, r)
-=======
-    return "%s%s%s" % (q, s, r)
->>>>>>> pyupyog/develop

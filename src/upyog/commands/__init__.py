@@ -1,10 +1,6 @@
 # imports - compatibility imports
 from __future__ import absolute_import
-<<<<<<< HEAD
 import sys, ast, re
-=======
-import sys
->>>>>>> pyupyog/develop
 import os, os.path as osp
 
 from upyog.commands.util 	import cli_format
@@ -25,10 +21,7 @@ from upyog._compat		    import iteritems, Mapping
 from upyog.config            import environment, get_config_path
 from upyog.__attr__      	import __name__ as NAME
 from upyog.exception         import DependencyNotFoundError
-<<<<<<< HEAD
 import upyog as upy
-=======
->>>>>>> pyupyog/develop
 
 logger    = log.get_logger(level = log.DEBUG)
 
