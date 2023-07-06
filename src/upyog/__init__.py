@@ -30,17 +30,22 @@ from upyog.util._dict  import (
     lvalues,
     check_struct as check_dict_struct,
     is_subdict,
-    getattr2, hasattr2, setattr2
+    getattr2, hasattr2, setattr2,
+    reverse_dict,
+    common_dict,
+    subtract_dict
 )
 from upyog.util._async import (
     asyncify,
     aenumerate,
-    acombine
+    acombine,
+    aiterable
 )
 from upyog.util._json import (
     load_json,
     dump_json,
-    JSONLogger
+    JSONLogger,
+    compare_json
 )
 from upyog._compat import (
     iteritems,
@@ -57,7 +62,9 @@ from upyog.util.array  import (
     sequencify,
     chunkify,
     normalize,
-    is_list_like
+    is_list_like,
+    is_ichunk,
+    iterify
 )
 from upyog.util.string import (
     lower,
@@ -87,7 +94,8 @@ from upyog.util.types    import (
     classname,
     lmap,
     lfilter,
-    lset
+    lset,
+    is_num_like
 )
 from upyog.util.system import (
     get_files,
@@ -171,8 +179,14 @@ from upyog.util.misc import (
     retry
 )
 from upyog.util.op import Op
-from upyog.util.fn import pop
+from upyog.util.fn import (
+    pop,
+    cmp,
+    select
+)
 from upyog.util.query import where
+from upyog.util.profile import aprofile
+from upyog.util.time import atimeit
 
 settings = Settings()
 

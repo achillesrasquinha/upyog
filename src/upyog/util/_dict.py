@@ -60,8 +60,15 @@ def dict_from_list(keys, values = None):
     """
     if isinstance(values, str):
         arr = keys
+<<<<<<< HEAD
         return functools.reduce(
             lambda acc, val: acc.update({ val: values }),
+=======
+        key = values
+
+        return functools.reduce(
+            lambda a, b: a.update({ b[key]: b }) or a,
+>>>>>>> pyupyog/develop
             arr, {}
         )
 
@@ -218,4 +225,54 @@ def setattr2(d, key, value):
 
     copy[keys[-1]] = value
 
+<<<<<<< HEAD
     return copy
+=======
+    return copy
+
+def reverse_dict(d):
+    return { value: key for key, value in iteritems(d) }
+
+_TYPE_LIST_LIKE = (list, tuple, set, frozenset)
+
+def common_dict(a, b):
+    a_keys = set(iterkeys(a))
+    b_keys = set(iterkeys(b))
+
+    common = {}
+
+    common_keys = a_keys & b_keys
+    
+    for key in common_keys:
+        i, j = a[key], b[key]
+
+        if isinstance(i, Mapping) and isinstance(j, Mapping):
+            common[key] = common_dict(i, j)
+        elif isinstance(i, _TYPE_LIST_LIKE) and isinstance(j, _TYPE_LIST_LIKE):
+            common[key] = list(set(i) & set(j))
+        else:
+            if i == j:
+                common[key] = i
+
+    return common
+
+def subtract_dict(a, b):
+    a_keys = set(iterkeys(a))
+    b_keys = set(iterkeys(b))
+
+    subtract = {}
+
+    subtract_keys = a_keys - b_keys
+    
+    for key in subtract_keys:
+        i = a[key]
+
+        if isinstance(i, Mapping):
+            subtract[key] = subtract_dict(i, {})
+        elif isinstance(i, _TYPE_LIST_LIKE):
+            subtract[key] = i
+        else:
+            subtract[key] = i
+
+    return subtract
+>>>>>>> pyupyog/develop

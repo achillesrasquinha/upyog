@@ -174,3 +174,21 @@ pyvenv.cfg
 pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/python
+
+*~
+*#
+*.swp
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+/.coverage
+/.coverage.*
+/.cache
+
+/doc/_autosummary/
+/build
+
+*.egg-info

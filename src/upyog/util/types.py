@@ -166,3 +166,33 @@ def classname(obj):
         'int'
     """
     return obj.__class__.__name__
+
+def is_num_like(x):
+    """
+    Check if an object is numeric.
+
+    :param x: The object to be checked.
+
+    Example::
+
+        >>> upy.is_numeric(1)
+        True
+        >>> upy.is_numeric("Hello World")
+        False
+        >>> upy.is_numeric("1")
+        True
+    """
+    if isinstance(x, str):
+        return x.isdigit()
+    elif isinstance(x, (int, float)):
+        return True
+    
+    return False
+
+def ordered(x):
+    if isinstance(x, dict):
+        return sorted((k, ordered(v)) for k, v in iteritems(x))
+    elif isinstance(x, list):
+        return sorted(ordered(v) for v in x)
+    
+    return x

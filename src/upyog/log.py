@@ -19,7 +19,7 @@ CRITICAL    = logging.CRITICAL
 
 SUCCESS     = 21
 logging.addLevelName(SUCCESS, "SUCCESS")
-MAGIC       = 31
+MAGIC       = 22
 logging.addLevelName(MAGIC,   "MAGIC")
 
 def success(self, message, *args, **kwargs):
@@ -27,8 +27,8 @@ def success(self, message, *args, **kwargs):
         self._log(SUCCESS, message, args, **kwargs)
 
 def magic(self, message, *args, **kwargs):
-    if self.isEnabledFor(SUCCESS):
-        self._log(SUCCESS, message, args, **kwargs)
+    if self.isEnabledFor(MAGIC):
+        self._log(MAGIC, message, args, **kwargs)
 
 logging.Logger.success = success
 logging.Logger.magic   = magic
@@ -56,8 +56,6 @@ class LogFormatter(logging.Formatter):
         return formatter.format(record)
 
 def _log(self, level, msg, *args, **kwargs):
-    timestamp = time.time()
-
     logs = getattr(self, "_logs", [])
     logs.append((time, level, msg, args, kwargs))
 
@@ -83,6 +81,7 @@ def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
         logger.setLevel(level)
 
         logger.addHandler(handler)
+        logger.propagate = False
         # logger._log = _log
         
         _LOGGER[name] = logger
@@ -111,7 +110,7 @@ class StepLogger:
                 self._logger.error("%s: %s" % (self._error, value))
 
 def log_fn(fn):
-    logger = get_logger(fn.__module__)
+    logger = get_logger(fn.__module__ + "." + fn.__name__)
     
     def wrapper(*args, **kwargs):
         logger.magic("%s: (%s, %s)" % (fn.__name__, args, kwargs))

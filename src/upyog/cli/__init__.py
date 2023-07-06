@@ -7,7 +7,14 @@ from upyog.util._dict import merge_dict
 from upyog.util.types import get_function_arguments
 
 def command(fn):
+<<<<<<< HEAD
     args    = get_args()
+=======
+    if "pytest" in sys.modules:
+        args = {}
+    else:
+        args = get_args()
+>>>>>>> pyupyog/develop
     
     params  = get_function_arguments(fn)
 

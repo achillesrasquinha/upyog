@@ -91,6 +91,28 @@ def sequencify(value, type_ = list):
         
     return value
 
+def iterify(value):
+    """
+    Convert a value into iterable.
+
+    :param arr: The object to be converted to iterable.
+
+    :return: An iterator.
+
+    Example::
+
+        >>> upy.iterify([1])
+        [1]
+        >>> upy.iterify(3)
+        [3]
+    """
+    if not isinstance(value, (list, tuple)):
+        value = list([value])
+
+    value = iter(value)
+        
+    return value
+
 def chunkify(arr, n):
     """
     Divide an array into chunks wherein each chunk contains "n" elements.
@@ -115,7 +137,6 @@ def group_by(data, group):
         results[key].append(d)
 
     return results
-
 
 def find(arr, kind, default = None, raise_err = False):
     obj = kind
@@ -186,3 +207,6 @@ def is_list_like(obj):
         False
     """
     return isinstance(obj, (list, tuple, set))
+
+def is_ichunk(i, chunk_size):
+    return i > 0 and i % chunk_size == 0

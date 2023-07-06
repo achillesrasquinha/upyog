@@ -13,8 +13,6 @@ def read(path, *args, **kwargs):
         reader = csv.reader(f, *args, **kwargs)
         header = next(reader, None)
 
-        print(header)
-
         autotype = auto_typecast if auto_cast else lambda x: x
 
         if type_ == "dict":

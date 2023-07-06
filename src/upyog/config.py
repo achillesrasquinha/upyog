@@ -178,7 +178,7 @@ def load_config(fpath):
             except ImportError:
                 pass
 
-            data = yaml.safe_load(f_handler)
+            data = yaml.safe_load(f_handler, Loader=yaml.Loader)
         except ImportError:
             data = load_json(f_handler)
     except ImportError:

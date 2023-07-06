@@ -1,5 +1,6 @@
 import asyncio
 from upyog.util.types import build_fn
+import upyog as upy
 
 def asyncify(func, loop=None, executor=None):
     loop = loop or asyncio.get_event_loop()
@@ -28,3 +29,7 @@ async def acombine(*aiterables):
             except StopAsyncIteration:
                 del aiterators[i]
                 break
+
+async def aiterable(iterable):
+    for x in iterable:
+        yield x
