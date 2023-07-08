@@ -64,14 +64,8 @@ def dict_from_list(keys, values = None):
         arr = keys
         key = values
 
-        def _build_value(a, b, key):
-            if key in a:
-                return upy.sequencify(a[key]) + upy.sequencify(b)
-            else:
-                return b
-
         return functools.reduce(
-            lambda a, b: a.update({ b[key]: _build_value(a, b, key) }) or a,
+            lambda a, b: a.update({ b[key]: b }) or a,
             arr, {}
         )
 
