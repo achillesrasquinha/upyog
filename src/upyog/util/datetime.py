@@ -23,6 +23,7 @@ weekday     = dt.datetime.weekday
 iso_weekday = dt.datetime.isoweekday
 
 _DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
+EPOCH       = dt.datetime(1970, 1, 1)
 
 def get_timestamp_str(format_ = _DEFAULT_TIMESTAMP_FORMAT):
     """
