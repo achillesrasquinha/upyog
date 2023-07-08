@@ -2,6 +2,7 @@ from upyog.util.types import classname
 from upyog._compat import iteritems
 from upyog import log
 import upyog as upy
+from upyog.util.eject import ejectable
 
 class BaseObject(object):
     def __init__(self, *args, **kwargs):

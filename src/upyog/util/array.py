@@ -1,8 +1,9 @@
 # pylint: disable=E1101
 
 # imports - compatibility imports
-from upyog._compat    import _is_python_version, range
+from upyog._compat    import is_python_version, range
 from upyog.util._dict import AutoDict
+from upyog.util.eject import ejectable
 
 # imports - standard imports
 import itertools
@@ -24,6 +25,7 @@ def compact(arr, type_ = list):
     """
     return type_(filter(bool, arr))
 
+@ejectable()
 def squash(seq):
     """
     Return the object in an array in case there is just a single element.
@@ -41,7 +43,7 @@ def squash(seq):
     """
     value = seq
 
-    if isinstance(value, (list, tuple)) and len(value) == 1:
+    if is_list_like(value) and len(value) == 1:
         value = value[0]
     
     return value
@@ -59,7 +61,7 @@ def flatten(arr):
         >>> upy.flatten([[1], [2, 3], [4, 5, 6]])
         [1, 2, 3, 4, 5]
     """
-    if _is_python_version(major = 2, minor = 6): # pragma: no cover
+    if is_python_version(major = 2, minor = 6): # pragma: no cover
         chainer = itertools.chain.from_iterable
     else:
         chainer = itertools.chain
@@ -67,29 +69,6 @@ def flatten(arr):
     flattened = list(chainer(*arr))
 
     return flattened
-
-# @upy.ejectable("sequencify")
-def sequencify(value, type_ = list):
-    """
-    Convert a value into array-like.
-
-    :param arr: The object to be converted to array-like.
-
-    :return: A sequence.
-
-    Example::
-
-        >>> upy.sequencify([1])
-        [1]
-        >>> upy.sequencify(3)
-        [3]
-    """
-    if not isinstance(value, (list, tuple, set, frozenset)):
-        value = list([value])
-
-    value = type_(value)
-        
-    return value
 
 def iterify(value):
     """
@@ -193,6 +172,7 @@ def normalize(arr, max_ = None, a = 0, b = 1):
 
 l = list
 
+@ejectable()
 def is_list_like(obj):
     """
     Check if an object is list-like.
@@ -206,7 +186,31 @@ def is_list_like(obj):
         >>> upy.is_list_like(1)
         False
     """
-    return isinstance(obj, (list, tuple, set))
+    return isinstance(obj, (list, tuple, set, frozenset))
 
+@ejectable(deps = is_list_like)
+def sequencify(value, type_ = list):
+    """
+    Convert a value into array-like.
+
+    :param arr: The object to be converted to array-like.
+
+    :return: A sequence.
+
+    Example::
+
+        >>> upy.sequencify([1])
+        [1]
+        >>> upy.sequencify(3)
+        [3]
+    """
+    if not is_list_like(value):
+        value = list([value])
+
+    value = type_(value)
+        
+    return value
+
+@ejectable()
 def is_ichunk(i, chunk_size):
     return i > 0 and i % chunk_size == 0

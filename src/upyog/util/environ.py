@@ -5,6 +5,7 @@ import os
 import upyog
 from   upyog.util.types 	import auto_typecast
 from   upyog._compat		import string_types
+from upyog.util.eject import ejectable
 
 PREFIX 	= "%s" % upyog.__name__.upper()
 
@@ -43,6 +44,7 @@ def setenv(name, value, overwrite = False, prefix = PREFIX, seperator = "_", rai
 	if set_:
 		os.environ[envvar] = value
 
+@ejectable()
 def value_to_envval(value):
 	"""
 	Convert python types to environment values

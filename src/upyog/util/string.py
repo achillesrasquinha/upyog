@@ -4,10 +4,12 @@ import uuid
 
 from upyog._compat import urlparse
 from upyog.util.array import sequencify
+from upyog.util.eject import ejectable
 
 _REGEX_ANSI_ESCAPE = re.compile(r"\x1B\[[0-?]*[ -/]*[@-~]")
 _REGEX_HTML        = re.compile("<.*?>")
 
+@ejectable()
 def strip(string, type_ = " \n"):
     string = string.lstrip(type_)
     string = string.rstrip(type_)
@@ -80,6 +82,7 @@ def sanitize_text(text):
     text = strip(text)
     return text
 
+@ejectable()
 def upper(text):
     text = text.upper()
     return text

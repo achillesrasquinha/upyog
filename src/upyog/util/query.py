@@ -1,8 +1,9 @@
 import upyog as upy
-from collections.abc import Mapping
-from upyog.util.op import Op
 
+@upy.ejectable()
 def where(data, clause):
+    import upyog as upy
+
     arraify = upy.is_list_like(data)
     data    = upy.sequencify(data)
 
@@ -13,9 +14,9 @@ def where(data, clause):
 
         for key, value in upy.iteritems(clause):
             if key in record:
-                if isinstance(value, Mapping):
+                if isinstance(value, upy.Mapping):
                     for op, val in upy.iteritems(value):
-                        constraint = Op[op]
+                        constraint = upy.Op[op]
 
                         op1 = record[key]
                         op2 = val

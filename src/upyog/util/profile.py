@@ -1,10 +1,14 @@
-import cProfile, pstats, asyncio
+import asyncio
 from upyog._compat import StringIO
 from upyog.util.system import write
+from upyog.util.eject import ejectable
 
+@ejectable()
 def aprofile(output = None, sort = 'cumulative'):
     def decorator(func):
         async def wrapper(*args, **kwargs):
+            import cProfile, pstats
+
             prof = cProfile.Profile()
             prof.enable()
 

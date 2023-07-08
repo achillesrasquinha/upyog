@@ -1,8 +1,12 @@
-import asyncio
 from upyog.util.types import build_fn
 import upyog as upy
+from upyog.util.eject import ejectable
+from upyog.util.eject import ejectable
 
+@ejectable()
 def asyncify(func, loop=None, executor=None):
+    import asyncio
+
     loop = loop or asyncio.get_event_loop()
 
     async def async_func(*args, **kwargs):
@@ -11,6 +15,7 @@ def asyncify(func, loop=None, executor=None):
 
     return async_func
 
+@ejectable()
 async def aenumerate(aiterable, start=0):
     i = start
     async for x in aiterable:
@@ -30,6 +35,7 @@ async def acombine(*aiterables):
                 del aiterators[i]
                 break
 
+@ejectable()
 async def aiterable(iterable):
     for x in iterable:
         yield x

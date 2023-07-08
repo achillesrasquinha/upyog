@@ -61,6 +61,7 @@ src/upyog/util/array.py
 src/upyog/util/cli.py
 src/upyog/util/datetime.py
 src/upyog/util/doc.py
+src/upyog/util/eject.py
 src/upyog/util/environ.py
 src/upyog/util/error.py
 src/upyog/util/fn.py
@@ -71,6 +72,7 @@ src/upyog/util/misc.py
 src/upyog/util/mixin.py
 src/upyog/util/ml.py
 src/upyog/util/op.py
+src/upyog/util/profile.py
 src/upyog/util/progress.py
 src/upyog/util/proxy.py
 src/upyog/util/query.py
@@ -79,6 +81,7 @@ src/upyog/util/string.py
 src/upyog/util/system.py
 src/upyog/util/template.py
 src/upyog/util/test.py
+src/upyog/util/time.py
 src/upyog/util/types.py
 tests/conftest.py
 tests/bpyutils/test_exception.py

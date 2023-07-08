@@ -114,3 +114,8 @@ def test_tb():
     assert tb() == '  '
     assert tb(point = 4) == '    '
     assert tb('foobar') == '  foobar'
+
+def test_encapsulate():
+    from upyog.util.string import encapsulate
+    assert encapsulate('foo', '"') == '"foo"'
+    assert encapsulate('foo', '(', ')') == '(foo)'

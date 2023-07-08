@@ -3,6 +3,7 @@ import csv
 from upyog.util._dict import dict_from_list, lkeys, lvalues
 from upyog.util.types import lmap, auto_typecast
 from upyog.util.string import strip
+from upyog.util.eject import ejectable
 
 def read(path, *args, **kwargs):
     data  = []
@@ -36,6 +37,7 @@ def write(path, rows, mode = "w", *args, **kwargs):
         for row in rows:
             writer.writerow(row)
 
+@ejectable(deps = lmap)
 def rows_to_dicts(rows, header = False, auto_cast = True):
     if header:
         header = rows[0]

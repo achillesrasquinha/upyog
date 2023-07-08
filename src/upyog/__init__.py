@@ -16,6 +16,7 @@ from upyog.__attr__ import (
     __description__,
     __author__
 )
+from upyog.util.eject import ejectable
 from upyog import cli
 from upyog.__main__    import main
 from upyog.config      import Settings
@@ -53,7 +54,9 @@ from upyog._compat import (
     itervalues,
     urlparse,
     quote as urlquote,
-    StringIO
+    StringIO,
+    is_python_version,
+    Mapping
 )
 from upyog.util.array  import (
     compact,
@@ -165,7 +168,7 @@ from upyog.cli.util import (
 from upyog.exception import PopenError
 from upyog.i18n import _
 from upyog.model import BaseObject
-from upyog.log import get_logger, StepLogger
+from upyog.log import get_logger, StepLogger, log_fn
 from upyog.limits import (
     MAX_UNSIGNED_SHORT
 )
@@ -178,7 +181,7 @@ from upyog.util.error import (
 from upyog.util.misc import (
     retry
 )
-from upyog.util.op import Op
+from upyog.util.op import Op, O as OpType
 from upyog.util.fn import (
     pop,
     cmp,
@@ -187,6 +190,7 @@ from upyog.util.fn import (
 from upyog.util.query import where
 from upyog.util.profile import aprofile
 from upyog.util.time import atimeit
+from upyog.cache import Cache
 
 settings = Settings()
 

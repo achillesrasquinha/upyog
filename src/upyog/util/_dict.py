@@ -3,6 +3,8 @@ import functools
 from collections import defaultdict
 
 from upyog._compat import iteritems, Mapping, iterkeys, itervalues
+from upyog.util.eject import ejectable
+import upyog as upy
 
 def merge_deep(source, dest):
     # https://stackoverflow.com/a/20666342
@@ -62,8 +64,14 @@ def dict_from_list(keys, values = None):
         arr = keys
         key = values
 
+        def _build_value(a, b, key):
+            if key in a:
+                return upy.sequencify(a[key]) + upy.sequencify(b)
+            else:
+                return b
+
         return functools.reduce(
-            lambda a, b: a.update({ b[key]: b }) or a,
+            lambda a, b: a.update({ b[key]: _build_value(a, b, key) }) or a,
             arr, {}
         )
 
@@ -208,6 +216,7 @@ def getattr2(d, key, default = None):
 def hasattr2(d, key):
     return getattr2(d, key, "__missing__") != "__missing__"
 
+@ejectable()
 def setattr2(d, key, value):
     copy = d.copy()
     keys = key.split(".")

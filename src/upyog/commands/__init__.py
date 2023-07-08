@@ -257,6 +257,8 @@ def _command(*args, **kwargs):
 
         handlers = set()
 
+        _UPY_FN_PATTERN = re.compile(r"upy\.[a-zA-Z0-9_]+")
+
         for root, _, files in upy.walk(path):
             for file in files:
                 if file.endswith(".py"):
@@ -265,8 +267,7 @@ def _command(*args, **kwargs):
                     with open(file_path, "r") as f:
                         content = f.read()
 
-                    pattern = re.compile(r"upy\.[a-zA-Z0-9_]+")
-                    groups  = pattern.findall(content)
+                    groups  = _UPY_FN_PATTERN.findall(content)
 
                     for group in groups:
                         handlers.add(group)
@@ -279,3 +280,44 @@ def _command(*args, **kwargs):
             if a.upy_eject:
                 path = osp.abspath(a.upy_eject)
                 logger.info("Ejecting handlers to %s..." % path)
+
+                sources = []
+
+                def _sanitize_source(source):
+                    # replace (@upy.)ejectable(*) with nothing
+                    source = re.sub(r"(@upy\.)*@*ejectable\((.*)\)", "", source)
+                    source = upy.strip(source)
+                    return source
+
+                def _get_source(handler, sources = {}):
+                    from upyog.util.eject import _ejectables
+
+                    if handler:
+                        fn_name = handler.split(".")[-1]
+                        if fn_name not in sources:
+                            handler = _ejectables.get(fn_name)
+                            if handler:
+                                source = inspect.getsource(handler)
+                                source = _sanitize_source(source)
+
+                                if source:
+                                    sources[fn_name] = source
+
+                                groups = _UPY_FN_PATTERN.findall(source)
+                                for group in groups:
+                                    parent_source = _get_source(group, sources = sources)
+                                    if parent_source and group not in sources:
+                                        sources[group] = _sanitize_source(parent_source)
+
+                        return sources.get(fn_name)
+
+                import inspect
+                sources = []
+                for handler in handlers:
+                    source = _get_source(handler)
+                    if source:
+                        sources.append(source)
+
+                print("\n\n".join(sources))
+                if sources:
+                    upy.write(path, "\n\n".join(sources), force = True)

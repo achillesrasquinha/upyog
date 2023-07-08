@@ -1,8 +1,10 @@
 import upyog as upy
+from upyog.util.eject import ejectable
 
 LOG = upy.get_logger(__name__)
 
-def atimeit(f):
+@ejectable()
+def atimeit():
     def decorator(fn):
         async def wrapper(*args, **kwargs):
             start  = upy.now()

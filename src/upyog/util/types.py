@@ -6,6 +6,7 @@ from upyog             import _compat
 from upyog._compat     import iteritems
 from upyog.util._dict  import dict_from_list
 from upyog.util.datetime import auto_datetime
+from upyog.util.eject import ejectable
 
 # imports - standard imports
 import sys
@@ -69,6 +70,7 @@ def get_function_arguments(fn):
 
 #     return x
 
+@ejectable()
 def auto_typecast(value):
     """
     Automatically convert a string into its desired data type.
