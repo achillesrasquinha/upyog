@@ -1,13 +1,14 @@
 import upyog as upy
 
 @upy.ejectable()
-def where(data, clause):
+def where(data, clause, other = False):
     import upyog as upy
 
     arraify = upy.is_list_like(data)
     data    = upy.sequencify(data)
 
     results = []
+    others  = []
 
     for record in data:
         add = True
@@ -40,5 +41,13 @@ def where(data, clause):
 
         if add:
             results.append(record)
+        else:
+            others.append(record)
+
+    if other:
+        if arraify:
+            return results, others
+        else:
+            return upy.squash(results), upy.squash(others)
 
     return results if arraify else upy.squash(results)
