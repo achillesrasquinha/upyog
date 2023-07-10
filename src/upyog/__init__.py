@@ -67,7 +67,8 @@ from upyog.util.array  import (
     normalize,
     is_list_like,
     is_ichunk,
-    iterify
+    iterify,
+    is_subset
 )
 from upyog.util.string import (
     lower,
