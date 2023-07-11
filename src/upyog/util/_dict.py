@@ -286,6 +286,7 @@ def subtract_dict(a, b):
                 i = type_(set(i) - set(b[key]))
             subtract[key] = i
         else:
-            subtract[key] = i
+            if key in b and i != b[key]:
+                subtract[key] = i
     
     return subtract
