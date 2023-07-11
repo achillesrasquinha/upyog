@@ -1,4 +1,5 @@
 from upyog.exception import DependencyNotFoundError
+from upyog.util.eject import ejectable
 
 class HandlerRegistry(dict):
     def __missing__(self, name):
@@ -16,6 +17,7 @@ class HandlerRegistry(dict):
 
 _HANDLER_REGISTRY = HandlerRegistry()
 
+@ejectable()
 def import_handler(name):
     """
         Import anything from module path.
@@ -27,6 +29,7 @@ def import_handler(name):
     handler = _HANDLER_REGISTRY[name]
     return handler
 
+@ejectable(deps = [import_handler])
 def import_or_raise(package, name = None, dep = "upyog"):
     name = name or package
 

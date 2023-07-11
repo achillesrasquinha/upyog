@@ -23,6 +23,7 @@ from upyog.cli.util        import _CAN_ANSI_FORMAT, add_github_args
 from upyog.util.git        import resolve_git_url
 from upyog.util.system     import check_file
 from upyog.config          import load_config
+from upyog.util.eject      import ejectable
 
 _DESCRIPTION_JUMBOTRON = \
 """
@@ -40,6 +41,7 @@ class ConfigFileAction(argparse.Action):
         config = load_config(values)
         setattr(namespace, self.dest, config)
 
+@ejectable()
 def get_base_parser(prog, description, help_ = True):
     parser = argparse.ArgumentParser(
         prog            = prog,

@@ -5,11 +5,13 @@ from upyog._compat     import zip_longest
 
 # imports - module imports
 from upyog.util.string import strip_ansi
+import upyog as upy
 
 def _sanitize_string(string):
     """
     Helper for tabulate to sanitize strings.
     """
+    string = str(string)
     string = strip_ansi(string)
     return string
 
@@ -31,9 +33,14 @@ def tabulate(rows):
     return result, sizes
 
 class Table(object):
-    def __init__(self, header = None):
-        self.rows   = [ ]
+    def __init__(self, rows = [ ], header = None, type_ = "rows"):
+        self._type  = type_
         self.header = header or [ ]
+
+        self.rows   = [ ]
+
+        for row in rows:
+            self.insert(row)
 
     @property
     def empty(self):
@@ -41,7 +48,14 @@ class Table(object):
         return _empty
 
     def insert(self, row):
-        self.rows.append(row)
+        if self._type == "record":
+            values = upy.lvalues(row)
+            if not self.header:
+                self.header = upy.lkeys(row)
+        else:
+            values = row
+
+        self.rows.append(values)
 
     def render(self, header = True):
         string = ""
@@ -61,7 +75,7 @@ class Table(object):
             string  = "\n".join(tabulated)
 
         return string
-    
+
     def __len__(self):
         length = len(self.rows)
         return length

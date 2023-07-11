@@ -215,5 +215,6 @@ def sequencify(value, type_ = list):
 def is_ichunk(i, chunk_size):
     return i > 0 and i % chunk_size == 0
 
+@ejectable()
 def is_subset(a, b):
     return set(a) <= set(b)

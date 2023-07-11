@@ -22,6 +22,7 @@ async def aenumerate(aiterable, start=0):
         yield i, x
         i += 1
 
+@ejectable()
 async def acombine(*aiterables):
     """
         Merge multiple async iterables into one.

@@ -7,6 +7,7 @@ import datetime as dt
 import math
 
 from upyog.util._math import sign
+from upyog.util.eject import ejectable
 
 now         = dt.datetime.now
 utcnow      = dt.datetime.utcnow
@@ -22,10 +23,10 @@ except ImportError:
 weekday     = dt.datetime.weekday
 iso_weekday = dt.datetime.isoweekday
 
-_DEFAULT_TIMESTAMP_FORMAT = '%Y-%m-%d %H:%M:%S'
 EPOCH       = dt.datetime(1970, 1, 1)
 
-def get_timestamp_str(format_ = _DEFAULT_TIMESTAMP_FORMAT):
+@ejectable()
+def get_timestamp_str(format_ = '%Y-%m-%d %H:%M:%S'):
     """
     Get current timestamp string.
 
@@ -38,6 +39,8 @@ def get_timestamp_str(format_ = _DEFAULT_TIMESTAMP_FORMAT):
         >>> upy.get_timestamp_str(format_ = '%d/%m/%Y')
         '15/09/2021'
     """
+    import time, datetime as dt
+
     now       = time.time()
     
     datetime_ = dt.datetime.fromtimestamp(now)

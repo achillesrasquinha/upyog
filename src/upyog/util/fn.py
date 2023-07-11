@@ -1,4 +1,5 @@
 import upyog as upy
+from upyog.util.eject import ejectable
 
 def pop(x, *keys):
     x = x.copy()
@@ -11,6 +12,7 @@ def pop(x, *keys):
 
     return x, upy.squash(values)
 
+@ejectable()
 def cmp(a, b):
     if a < b:
         return -1

@@ -9,6 +9,7 @@ from upyog.util.eject import ejectable
 
 PREFIX 	= "%s" % upyog.__name__.upper()
 
+# @ejectable()
 def getenvvar(name, prefix = PREFIX, seperator = "_"):
 	if not prefix:
 		prefix	  = ""
@@ -17,6 +18,7 @@ def getenvvar(name, prefix = PREFIX, seperator = "_"):
 	envvar = "%s%s%s" % (prefix, seperator, name)
 	return envvar
 
+# @ejectable()
 def getenv(name, default = None, cast = True, prefix = PREFIX, seperator = "_", raise_err = False):
     envvar = getenvvar(name, prefix = prefix, seperator = seperator)
 

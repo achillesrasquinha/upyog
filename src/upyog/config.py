@@ -17,9 +17,11 @@ from upyog.util._dict   import autodict
 from upyog.util._json   import load_json
 from upyog._compat      import (iterkeys, itervalues, iteritems, configparser as cp)
 from upyog.log import get_logger
+from upyog.util.eject   import ejectable
 
 logger = get_logger(__name__)
 
+@ejectable()
 def get_config_path(name):
     if getenv("LAMBDA_FUNCTION_NAME", prefix = "AWS"):
         basedir = "/tmp"

@@ -8,6 +8,7 @@ from upyog.util.string import strip, safe_decode
 from upyog.util.array  import is_list_like
 from upyog.util.types  import ordered
 from upyog import log
+from upyog.util.eject import ejectable
 
 logger = log.get_logger(__name__)
 
@@ -128,6 +129,7 @@ def dump_json(data, path, *args, **kwargs):
     content = json.dumps(data, *args, **kwargs)
     write(path, content, force = force)
 
+@ejectable()
 def compare_json(a, b):
     a = load_json(a)
     b = load_json(b)

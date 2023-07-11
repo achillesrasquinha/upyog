@@ -113,6 +113,7 @@ lfilter = _gen_to_seq(filter)
 lmap    = _gen_to_seq(map)
 lset    = _gen_to_seq(set)
 
+@ejectable()
 def build_fn(fn, *args, **kwargs):
     """Build a function caller with default arguments.
 
@@ -130,6 +131,7 @@ def build_fn(fn, *args, **kwargs):
         >>> fn()
         3
     """
+    from functools import partial
     return partial(fn, *args, **kwargs)
 
 def check_array(o, raise_err = True):
@@ -153,7 +155,8 @@ def check_array(o, raise_err = True):
             raise TypeError("Object is not an array.")
         else:
             return False
-        
+
+@ejectable()
 def classname(obj):
     """
     Get the name of a class.
@@ -169,6 +172,7 @@ def classname(obj):
     """
     return obj.__class__.__name__
 
+@ejectable()
 def is_num_like(x):
     """
     Check if an object is numeric.
@@ -177,11 +181,11 @@ def is_num_like(x):
 
     Example::
 
-        >>> upy.is_numeric(1)
+        >>> upy.is_num_like(1)
         True
-        >>> upy.is_numeric("Hello World")
+        >>> upy.is_num_like("Hello World")
         False
-        >>> upy.is_numeric("1")
+        >>> upy.is_num_like("1")
         True
     """
     if isinstance(x, str):

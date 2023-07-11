@@ -32,6 +32,7 @@ from upyog.util.array      import sequencify
 from upyog.util.environ    import SECRETS, value_to_envval
 from upyog._compat         import iteritems, PY2
 from upyog.log             import get_logger
+from upyog.util.eject import ejectable
 
 logger = get_logger()
 
@@ -152,7 +153,9 @@ def walk(top, *args, **kwargs):
 
         yield root, dirs, files
 
+@ejectable()
 def pardir(fname, level = 1):
+    import os.path as osp
     for _ in range(level):
         fname = osp.dirname(fname)
     return fname
@@ -528,5 +531,6 @@ def get_user():
     username = os.environ.get("USER")
     return username
 
+@ejectable()
 def noop(*args, **kwargs):
     pass

@@ -6,6 +6,7 @@ from upyog._compat import iteritems, Mapping, iterkeys, itervalues
 from upyog.util.eject import ejectable
 import upyog as upy
 
+@ejectable()
 def merge_deep(source, dest):
     # https://stackoverflow.com/a/20666342
     for key, value in iteritems(source):
@@ -17,6 +18,7 @@ def merge_deep(source, dest):
             
     return dest
 
+@ejectable(deps = [merge_deep])
 def merge_dict(*args, **kwargs):
     """
     Merge Dictionaries.
@@ -46,6 +48,7 @@ def merge_dict(*args, **kwargs):
 
     return merged
 
+@ejectable()
 def dict_from_list(keys, values = None):
     """
     Generate a dictionary from a list of keys and values.
@@ -60,6 +63,8 @@ def dict_from_list(keys, values = None):
         >>> upy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
         {'a': 1, 'b': 2, 'c': 3}
     """
+    import functools
+
     if isinstance(values, str):
         arr = keys
         key = values
@@ -77,6 +82,7 @@ def dict_from_list(keys, values = None):
 class AutoDict(defaultdict):
     __repr__ = dict.__repr__
 
+@ejectable()
 def autodict(*args, **kwargs):
     """
     Automatically adds a key to a dictionary.
@@ -132,6 +138,7 @@ def lvalues(d):
     """
     return list(itervalues(d))
 
+@ejectable()
 def check_struct(d, struct, raise_err = True):
     """
     Check if a dictionary has a certain structure.
@@ -193,6 +200,7 @@ def is_subdict(a, b):
 
     return sub_dict
 
+@ejectable()
 # TODO: raise exception if key not found
 def getattr2(d, key, default = None):
     keys  = key.split(".")
@@ -230,6 +238,7 @@ def reverse_dict(d):
 
 _TYPE_LIST_LIKE = (list, tuple, set, frozenset)
 
+@ejectable()
 def common_dict(a, b):
     a_keys = set(iterkeys(a))
     b_keys = set(iterkeys(b))
@@ -251,6 +260,10 @@ def common_dict(a, b):
 
     return common
 
+# @ejectable(deps = [
+#     iterkeys,
+#     Mapping
+# ])
 def subtract_dict(a, b):
     a_keys = set(iterkeys(a))
     b_keys = set(iterkeys(b))

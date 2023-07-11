@@ -87,10 +87,12 @@ def upper(text):
     text = text.upper()
     return text
 
+@ejectable()
 def lower(text, only = None):
     text = text.lower()
     return text
 
+@ejectable()
 def capitalize(text):
     text = text.capitalize()
     return text
@@ -139,6 +141,7 @@ def tb(s = "", point = 2, type_ = " "):
     indent = type_ * point
     return "%s%s" % (indent, s)
 
+@ejectable()
 def encapsulate(s, q, r = None):
     if r is None:
         r = q
