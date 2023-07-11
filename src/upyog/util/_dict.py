@@ -233,6 +233,7 @@ def setattr2(d, key, value):
 
     return copy
 
+@ejectable()
 def reverse_dict(d):
     return { value: key for key, value in iteritems(d) }
 
@@ -267,19 +268,24 @@ def common_dict(a, b):
 def subtract_dict(a, b):
     a_keys = set(iterkeys(a))
     b_keys = set(iterkeys(b))
-
-    subtract = {}
-
-    subtract_keys = a_keys - b_keys
     
-    for key in subtract_keys:
+    subtract = {}
+    
+    intersect_keys = a_keys.intersection(b_keys)
+    subtract_keys = a_keys - b_keys
+    all_keys = set(list(intersect_keys) + list(subtract_keys))
+    
+    for key in all_keys:
         i = a[key]
-
+    
         if isinstance(i, Mapping):
             subtract[key] = subtract_dict(i, {})
         elif isinstance(i, _TYPE_LIST_LIKE):
+            if key in b and isinstance(i, _TYPE_LIST_LIKE):
+                type_ = type(i)
+                i = type_(set(i) - set(b[key]))
             subtract[key] = i
         else:
             subtract[key] = i
-
+    
     return subtract

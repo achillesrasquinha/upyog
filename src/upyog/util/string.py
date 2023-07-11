@@ -107,7 +107,10 @@ def ellipsis(string, threshold = 50, pattern = "..."):
 
     return string
 
+@ejectable()
 def get_random_str(length = None, remove_hyphen = True):
+    import uuid
+
     uuid_   = uuid.uuid4()
     string  = str(uuid_)
 
