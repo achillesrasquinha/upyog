@@ -284,7 +284,8 @@ def subtract_dict(a, b):
             if key in b and isinstance(i, _TYPE_LIST_LIKE):
                 type_ = type(i)
                 i = type_(set(i) - set(b[key]))
-            subtract[key] = i
+                if i:
+                    subtract[key] = i
         else:
             if key in b and i != b[key]:
                 subtract[key] = i
