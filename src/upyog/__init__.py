@@ -71,6 +71,7 @@ from upyog.util.array  import (
     is_subset
 )
 from upyog.util.string import (
+    sanitize,
     lower,
     upper,
     capitalize,
@@ -81,7 +82,8 @@ from upyog.util.string import (
     safe_encode,
     safe_decode,
     ellipsis,
-    encapsulate
+    encapsulate,
+    to_html
 )
 from upyog.util.datetime import (
     check_datetime_format,

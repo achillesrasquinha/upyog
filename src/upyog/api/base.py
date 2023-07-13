@@ -137,6 +137,10 @@ class BaseAPI(BaseObject):
               "POST": self.post,
                "PUT": self.put,
             "DELETE": self.delete,
+              "AGET": self.aget,
+             "APOST": self.apost,
+              "APUT": self.aput,
+           "ADELETE": self.adelete
         }
 
         doc = api.get("doc")
@@ -150,6 +154,7 @@ class BaseAPI(BaseObject):
             method = api.get("method", "GET")
             auth_required = api.get("auth", False)
             stream = api.get("stream", False)
+            blob = api.get("blob", False)
 
             if params:
                 parameters = []
@@ -186,6 +191,8 @@ class BaseAPI(BaseObject):
                         "data": json.dumps(kwargs["json"]),
                         "headers": {"Content-Type": "application/json"}
                     }
+                elif blob:
+                    args = {"files": data}
                 else:
                     args = {"data": data}
             else:
@@ -282,7 +289,7 @@ class BaseAPI(BaseObject):
 
         proxies     = kwargs.pop("proxies", self._proxies)
         data        = kwargs.get("params",  kwargs.get("data"))
-        prefix       = kwargs.get("prefix",    True)
+        prefix      = kwargs.pop("prefix",    True)
         async_      = kwargs.pop("async_",  False)
 
         verify      = kwargs.get("verify", 

@@ -82,6 +82,14 @@ def sanitize_text(text):
     text = strip(text)
     return text
 
+def sanitize(string, encoding = "utf-8"):
+    string = safe_decode(string, encoding = encoding)
+    string = strip(string)
+    string = strip_ansi(string)
+    string = sanitize_html(string)
+    string = sanitize_text(string)
+    return string
+
 @ejectable()
 def upper(text):
     text = text.upper()
@@ -139,6 +147,10 @@ def check_url(s, raise_err = True):
 def nl(s = "", space = 1):
     space = "\n" * space
     return "%s%s" % (s, space)
+
+def to_html(s):
+    s = s.replace("\n", "<br>")
+    return s
 
 def tb(s = "", point = 2, type_ = " "):
     indent = type_ * point
