@@ -77,6 +77,14 @@ def sanitize_html(html):
     sanitized = re.sub(_REGEX_HTML, "", html)
     return sanitized
 
+def is_ascii(string):
+    try:
+        string.encode("ascii")
+    except UnicodeEncodeError:
+        return False
+    else:
+        return True
+
 def sanitize_text(text):
     text = text.replace("&nbsp;", " ")
     text = strip(text)

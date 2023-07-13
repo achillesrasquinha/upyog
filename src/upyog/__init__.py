@@ -83,7 +83,8 @@ from upyog.util.string import (
     safe_decode,
     ellipsis,
     encapsulate,
-    to_html
+    to_html,
+    is_ascii
 )
 from upyog.util.datetime import (
     check_datetime_format,
