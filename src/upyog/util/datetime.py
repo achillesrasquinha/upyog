@@ -170,3 +170,43 @@ def human_datetime(dt, year = True):
     format_ += "%I:%M %p"
 
     return dt.strftime(format_)
+
+def dt2cron(dt, **kwargs):
+    dt      = auto_datetime(dt)
+
+    string  = ""
+
+    attrs   = [ "minute", "hour",
+        { "attr": "day",   "target": "daily",   "default": True },
+        { "attr": "month", "target": "monthly", "default": True },
+        { "attr": "year",  "target": "yearly",  "default": True }
+    ]
+
+    n_attrs = len(attrs)
+    
+    for i, attr in enumerate(attrs):
+        value = None
+
+        if isinstance(attr, dict):
+            target  = attr.get("target")
+            default = attr.get("default", False)
+
+            if target in kwargs and kwargs[target] or default:
+                value = "*"
+
+            attr = attr["attr"]
+
+        if not value:
+            value = getattr(dt, attr, value)
+
+            if value is not None:
+                string += str(value)
+            else:
+                string += "*"
+        else:
+            string += value
+
+        if i < n_attrs - 1:
+            string += " "
+
+    return string
