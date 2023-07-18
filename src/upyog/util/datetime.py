@@ -179,6 +179,7 @@ def dt2cron(dt, **kwargs):
     attrs   = [ "minute", "hour",
         { "attr": "day",   "target": "daily",   "default": True },
         { "attr": "month", "target": "monthly", "default": True },
+        { "attr": "week",  "target": "weekly",  "default": True, "value": "?" },
         { "attr": "year",  "target": "yearly",  "default": True }
     ]
 
@@ -192,7 +193,7 @@ def dt2cron(dt, **kwargs):
             default = attr.get("default", False)
 
             if target in kwargs and kwargs[target] or default:
-                value = "*"
+                value = attr.get("value", "*")
 
             attr = attr["attr"]
 
