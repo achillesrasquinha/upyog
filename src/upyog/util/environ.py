@@ -67,3 +67,21 @@ def value_to_envval(value):
 SECRETS = (
 	getenvvar("JOBS_GITHUB_TOKEN"),
 )
+
+@ejectable()
+def create_param_string(**kwargs):
+	string = ""
+
+	import upyog as upy
+	for i, (key, value) in enumerate(upy.iteritems(kwargs)):
+		if upy.is_list_like(value):
+			value = ",".join(upy.lmap(str, value))
+		else:
+			value = value_to_envval(value)
+
+		string += "%s=%s" % (key, value)
+
+		if i < len(kwargs) - 1:
+			string += ";"
+
+	return string
