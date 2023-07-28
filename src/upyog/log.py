@@ -9,6 +9,7 @@ from upyog.util.cli import CYAN, GRAY, ORANGE
 from upyog.util import cli as _cli
 from upyog.__attr__   import __name__ as NAME
 from upyog._compat    import iteritems
+from upyog.util.string import ellipsis
 
 NOTSET      = logging.NOTSET
 DEBUG       = logging.DEBUG
@@ -113,7 +114,8 @@ def log_fn(fn):
     logger = get_logger(fn.__module__ + "." + fn.__name__)
     
     def wrapper(*args, **kwargs):
-        logger.magic("%s: (%s, %s)" % (fn.__name__, args, kwargs))
+        magstr = ellipsis("%s: (%s, %s)" % (fn.__name__, args, kwargs), 100)
+        logger.magic(magstr)
         return fn(*args, **kwargs)
 
     return wrapper

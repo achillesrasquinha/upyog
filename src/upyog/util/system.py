@@ -129,7 +129,7 @@ def which(executable, raise_err = False):
         exec_ = _find_executable(executable)
         
     if not exec_ and raise_err:
-        raise ValueError("Executable %s not found." % exec_)
+        raise ValueError("Executable %s not found." % executable)
     
     return exec_
 

@@ -2,7 +2,7 @@
 from upyog._compat import PY2
 
 # imports - standard imports
-import os.path as osp
+import os.path as osp, upyog as upy
 
 if PY2:
     import cgi as module_escape
@@ -102,5 +102,9 @@ def render_template(template, context = None, dirs = [ ], **kwargs):
             context[name] = item
 
         rendered = rendered.format(**context)
+
+    output = kwargs.get("output")
+    if output:
+        upy.write(output, rendered)
     
     return rendered

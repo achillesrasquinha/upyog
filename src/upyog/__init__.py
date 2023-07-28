@@ -84,7 +84,8 @@ from upyog.util.string import (
     ellipsis,
     encapsulate,
     to_html,
-    is_ascii
+    is_ascii,
+    kebab_case
 )
 from upyog.util._crypto import (
     sha256
@@ -130,7 +131,8 @@ from upyog.util.system import (
     noop,
     copy,
     list_tree,
-    list_files
+    list_files,
+    make_archive
 )
 from upyog.util.environ import (
     getenv,
