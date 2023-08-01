@@ -114,9 +114,7 @@ def log_fn(fn):
     logger = get_logger(fn.__module__ + "." + fn.__name__)
     
     def wrapper(*args, **kwargs):
-        dirs   = copy.deepcopy(kwargs)
-        dirs   = { k: ellipsis(str(v), 50) for k, v in iteritems(dirs) }
-        magstr = "%s: (%s, %s)" % (fn.__name__, args, dirs)
+        magstr = "%s: (%s, %s)" % (fn.__name__, args, { k: ellipsis(str(v), 50) for k, v in iteritems(kwargs) })
         logger.magic(magstr)
         return fn(*args, **kwargs)
 

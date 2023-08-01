@@ -40,3 +40,16 @@ async def acombine(*aiterables):
 async def aiterable(iterable):
     for x in iterable:
         yield x
+
+class AsyncIterator:
+    def __init__(self, sequence):
+        self._iter = iter(sequence)
+
+    async def __aiter__(self):
+        return self
+    
+    async def __anext__(self):
+        try:
+            return next(self._iter)
+        except StopIteration:
+            raise StopAsyncIteration

@@ -40,7 +40,8 @@ from upyog.util._async import (
     asyncify,
     aenumerate,
     acombine,
-    aiterable
+    aiterable,
+    AsyncIterator
 )
 from upyog.util._json import (
     load_json,
