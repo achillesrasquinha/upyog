@@ -112,7 +112,7 @@ def group_by(data, group):
     results = AutoDict(list)
 
     for d in data:
-        key = d.pop(group)
+        key = d.get(group)
         results[key].append(d)
 
     return results

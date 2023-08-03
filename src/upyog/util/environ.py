@@ -53,11 +53,12 @@ def value_to_envval(value):
 	"""
 
 	if not isinstance(value, string_types):
-		if   value == True:
-			value = "true"
-		elif value == False:
-			value = "false"
-		elif isinstance(value, int):
+		if isinstance(value, bool):
+			if value == True:
+				value = "true"
+			elif value == False:
+				value = "false"
+		elif isinstance(value, (int, float)):
 			value = str(value)
 		else:
 			raise TypeError("Unknown parameter type %s with value %r" % (value, type(value)))

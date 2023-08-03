@@ -181,11 +181,19 @@ def check_struct(d, struct, raise_err = True):
             if not check_struct(d[key], value, raise_err):
                 return False
         else:
+            check = True
+
+            if callable(value) and not value(d[key]):
+                if raise_err:
+                    raise ValueError("The value of the key '%s' does not satisfy the condition." % key)
+                check = False
             if not isinstance(d[key], value):
                 if raise_err:
                     raise ValueError("The value of the key '%s' is not of type '%s'." % (key, value))
-                else:
-                    return False
+                check = False
+            
+            if not check:
+                return False
 
     return d
 
