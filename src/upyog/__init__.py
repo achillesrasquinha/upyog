@@ -69,7 +69,8 @@ from upyog.util.array  import (
     is_list_like,
     is_ichunk,
     iterify,
-    is_subset
+    is_subset,
+    group_by
 )
 from upyog.util.string import (
     sanitize,
