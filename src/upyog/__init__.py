@@ -205,6 +205,7 @@ from upyog.util.query import where
 from upyog.util.profile import aprofile
 from upyog.util.time import atimeit
 from upyog.cache import Cache
+from upyog.util.algo import find_best_groups
 
 settings = Settings()
 
