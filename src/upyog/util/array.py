@@ -148,15 +148,6 @@ def clip(arr, low = None, high = None):
 
     return clipped
 
-def group_by(array, group):
-    results = AutoDict(list)
-
-    for d in array:
-        key = d.pop(group)
-        results[key].append(d)
-
-    return results
-
 def normalize(arr, max_ = None, a = 0, b = 1):
     if len(arr) > 0:
         min_ = min(arr)
