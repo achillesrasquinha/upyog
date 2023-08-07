@@ -1,5 +1,5 @@
 from upyog.util.types import build_fn
-import upyog as upy
+import upyog as upy, asyncio
 from upyog.util.eject import ejectable
 from upyog.util.eject import ejectable
 
@@ -53,3 +53,6 @@ class AsyncIterator:
             return next(self._iter)
         except StopIteration:
             raise StopAsyncIteration
+
+async def run_in_bg(coro):
+    return asyncio.create_task(coro)
