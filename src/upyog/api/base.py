@@ -52,9 +52,10 @@ class BaseAPI(BaseObject):
 
         self._url = self._format_uri_path(url or getattr(self, "url"),
             **kwargs)
+        
+        self._async   = async_
 
-        if async_:
-            self._async   = True
+        if self._async:
             self._session = None
         else:
             self._requests = import_or_raise("requests")
@@ -436,5 +437,5 @@ class BaseAPI(BaseObject):
         return await self.aclose()
 
     async def aclose(self):
-        if self._session:
+        if self._async and self._session:
             return await self._session.aclose()
