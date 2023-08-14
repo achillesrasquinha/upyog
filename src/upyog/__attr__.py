@@ -1,8 +1,4 @@
-
-
-
 from __future__ import absolute_import
-
 
 import sys
 import os, os.path as osp
@@ -10,9 +6,7 @@ import subprocess
 
 PY2 = sys.version_info.major == 2
 
-    
 if PY2:
-    
     FileNotFoundError = OSError
 
 def read(fname):
@@ -67,7 +61,7 @@ path["base"]                = pardir(__file__)
 path["version"]             = osp.join(path["base"], "VERSION")
 
 __name__                    = "upyog"
-__alias__                   = "PyUpyog"
+__alias__                   = "upyog"
 __command__                 = "upyog"
 __version__                 = read(osp.join(pardir(__file__), "VERSION"))
 __build__                   = get_revision(pardir(__file__, 2), short = True, raise_err = False)
