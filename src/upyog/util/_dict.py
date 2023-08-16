@@ -221,7 +221,7 @@ def getattr2(d, key, default = None):
         else:
             value = None
 
-    return value or default
+    return value if value != default else default
 
 def hasattr2(d, key):
     return getattr2(d, key, "__missing__") != "__missing__"
