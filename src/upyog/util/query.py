@@ -14,9 +14,10 @@ def where(data, clause, other = False, clauses = False):
 
     force    = True
 
-    if "$or" in clause:
-        clause = clause["$or"]
-        force  = False
+    if isinstance(clause, upy._compat.Mapping):
+        if "$or" in clause:
+            clause = clause["$or"]
+            force  = False
 
     for record in data:
         add  = []
