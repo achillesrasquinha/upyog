@@ -54,5 +54,7 @@ class AsyncIterator:
         except StopIteration:
             raise StopAsyncIteration
 
+@ejectable()
 async def run_in_bg(coro):
+    import asyncio
     return asyncio.create_task(coro)

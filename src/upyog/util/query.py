@@ -2,8 +2,6 @@ import upyog as upy
 
 @upy.ejectable()
 def where(data, clause, other = False, clauses = False):
-    import upyog as upy
-
     arraify  = upy.is_list_like(data)
     data     = upy.sequencify(data)
 

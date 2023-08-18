@@ -21,6 +21,7 @@ def cmp(a, b):
     else:
         return 0
 
+@ejectable()
 def select(x, *keys):
     x = x.copy()
     y = {}

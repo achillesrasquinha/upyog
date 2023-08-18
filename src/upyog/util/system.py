@@ -245,7 +245,10 @@ def touch(filename):
         with open(filename, "w") as f:
             pass
 
+@ejectable()
 def remove(*paths, **kwargs):
+    import shutil, os, os.path as osp
+
     recursive = kwargs.get("recursive", False)
     raise_err = kwargs.get("raise_err", True)
 

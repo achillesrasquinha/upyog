@@ -113,6 +113,7 @@ def capitalize(text):
     text = text.capitalize()
     return text
 
+@ejectable()
 def ellipsis(string, threshold = 50, pattern = "..."):
     length      = len(string)
     expected    = threshold + len(pattern) 

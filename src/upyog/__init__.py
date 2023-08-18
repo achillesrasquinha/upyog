@@ -71,7 +71,8 @@ from upyog.util.array  import (
     is_ichunk,
     iterify,
     is_subset,
-    group_by
+    group_by,
+    find
 )
 from upyog.util.string import (
     sanitize,
