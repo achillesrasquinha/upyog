@@ -17,7 +17,7 @@ class HandlerRegistry(dict):
 
 _HANDLER_REGISTRY = HandlerRegistry()
 
-@ejectable()
+@ejectable(deps = [HandlerRegistry, _HANDLER_REGISTRY])
 def import_handler(name):
     """
         Import anything from module path.

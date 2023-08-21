@@ -21,8 +21,10 @@ from upyog.util.eject   import ejectable
 
 logger = get_logger(__name__)
 
-@ejectable()
+@ejectable(deps = [getenv])
 def get_config_path(name):
+    import os.path as osp
+
     if getenv("LAMBDA_FUNCTION_NAME", prefix = "AWS"):
         basedir = "/tmp"
     else:

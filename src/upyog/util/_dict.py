@@ -138,7 +138,22 @@ def lvalues(d):
     """
     return list(itervalues(d))
 
-@ejectable()
+def litems(d):
+    """
+    Get the items of a dictionary as a list.
+
+    :param d: A dictionary.
+
+    :returns: list
+
+    Example::
+
+        >>> upy.litems({ 'foo': 'bar', 'baz': 'boo' })
+        [('foo', 'bar'), ('baz', 'boo')]
+    """
+    return list(iteritems(d))
+
+@ejectable(as_ = "check_dict_struct")
 def check_struct(d, struct, raise_err = True):
     """
     Check if a dictionary has a certain structure.

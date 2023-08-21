@@ -204,6 +204,7 @@ def get_parser():
         help    = "Disable Pretty Error"
     )
     parser.add_argument("--upy-scan",
+        action  = "append",
         help    = "Scan for files containing upyog"
     )
     parser.add_argument("--upy-eject",

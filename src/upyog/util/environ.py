@@ -9,7 +9,7 @@ from upyog.util.eject import ejectable
 
 PREFIX 	= "%s" % upyog.__name__.upper()
 
-# @ejectable()
+@ejectable()
 def getenvvar(name, prefix = PREFIX, seperator = "_"):
 	if not prefix:
 		prefix	  = ""
@@ -18,8 +18,10 @@ def getenvvar(name, prefix = PREFIX, seperator = "_"):
 	envvar = "%s%s%s" % (prefix, seperator, name)
 	return envvar
 
-# @ejectable()
+@ejectable(deps = [getenvvar], globals_ = { "PREFIX": PREFIX })
 def getenv(name, default = None, cast = True, prefix = PREFIX, seperator = "_", raise_err = False):
+    import os
+
     envvar = getenvvar(name, prefix = prefix, seperator = seperator)
 
     if not envvar in list(os.environ) and raise_err:
@@ -69,14 +71,16 @@ SECRETS = (
 	getenvvar("JOBS_GITHUB_TOKEN"),
 )
 
-@ejectable()
+from upyog.util.array import is_list_like
+from upyog._compat import iteritems
+from upyog.util.types import lmap
+@ejectable(deps = [iteritems, is_list_like, value_to_envval, lmap])
 def create_param_string(**kwargs):
 	string = ""
 
-	import upyog as upy
-	for i, (key, value) in enumerate(upy.iteritems(kwargs)):
-		if upy.is_list_like(value):
-			value = ",".join(upy.lmap(str, value))
+	for i, (key, value) in enumerate(iteritems(kwargs)):
+		if is_list_like(value):
+			value = ",".join(lmap(str, value))
 		else:
 			value = value_to_envval(value)
 

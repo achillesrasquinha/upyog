@@ -98,10 +98,13 @@ _AUTO_FORMATS = [
     '%Y-%m-%dT%H:%M:%S.%f%z'
 ]
 
+@ejectable(globals_ = { "_AUTO_FORMATS": _AUTO_FORMATS })
 def auto_datetime(string):
     """
         Convert string to datetime object
     """
+    import datetime as dt
+
     if isinstance(string, dt.datetime):
         return string
 

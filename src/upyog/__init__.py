@@ -29,6 +29,7 @@ from upyog.util._dict  import (
     autodict,
     lkeys,
     lvalues,
+    litems,
     check_struct as check_dict_struct,
     is_subdict,
     getattr2, hasattr2, setattr2,
@@ -207,6 +208,7 @@ from upyog.util.profile import aprofile
 from upyog.util.time import atimeit
 from upyog.cache import Cache
 from upyog.util.algo import find_best_groups
+from upyog.util._tqdm import FakeAsyncTqdm
 
 settings = Settings()
 

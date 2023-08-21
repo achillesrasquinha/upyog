@@ -252,25 +252,26 @@ def _command(*args, **kwargs):
                         .pr()
     
     if a.upy_scan:
-        path = osp.abspath(a.upy_scan)
-        logger.info("Running upy scan at %s..." % path)
+        paths = [osp.abspath(path) for path in a.upy_scan]
+        logger.info("Running upy scan at %s..." % paths)
 
         handlers = set()
 
         _UPY_FN_PATTERN = re.compile(r"upy\.[a-zA-Z0-9_]+")
 
-        for root, _, files in upy.walk(path):
-            for file in files:
-                if file.endswith(".py"):
-                    file_path = osp.join(root, file)
+        for path in paths:
+            for root, _, files in upy.walk(path):
+                for file in files:
+                    if file.endswith(".py"):
+                        file_path = osp.join(root, file)
 
-                    with open(file_path, "r") as f:
-                        content = f.read()
+                        with open(file_path, "r") as f:
+                            content = f.read()
 
-                    groups  = _UPY_FN_PATTERN.findall(content)
+                        groups  = _UPY_FN_PATTERN.findall(content)
 
-                    for group in groups:
-                        handlers.add(group)
+                        for group in groups:
+                            handlers.add(group)
 
         handlers = sorted(handlers)
 
@@ -281,19 +282,19 @@ def _command(*args, **kwargs):
                 path = osp.abspath(a.upy_eject)
                 logger.info("Ejecting handlers to %s..." % path)
 
-                sources = []
-
                 def _sanitize_source(source):
                     # replace (@upy.)ejectable(*) with nothing
                     source = re.sub(r"(@upy\.)*@*ejectable\((.*)\)", "", source)
                     source = upy.strip(source)
                     return source
 
-                def _get_source(handler, sources = {}):
-                    from upyog.util.eject import _ejectables
+                from upyog.util.eject import _ejectables
+                from pprint import pprint
 
+                def _get_source(handler, sources = {}):
                     if handler:
-                        fn_name = handler.split(".")[-1]
+                        # fn_name = handler.split(".")[-1]
+                        fn_name = handler
                         if fn_name not in sources:
                             handler = _ejectables.get(fn_name)
                             if handler:
@@ -313,11 +314,29 @@ def _command(*args, **kwargs):
 
                 import inspect
                 sources = []
+
+                others = []
+
+                for key, value in upy.iteritems(_ejectables):
+                    if not inspect.isfunction(value):
+                        if inspect.isclass(value):
+                            source = inspect.getsource(value)
+                            source = _sanitize_source(source)
+
+                            if source:
+                                sources.append(source)
+                        else:
+                            sources.append(f"{key} = {repr(value)}")
+                    else:
+                        others.append(key)
+
+                handlers = [handler.split(".")[-1] for handler in handlers]
+                handlers = list(set(handlers + others))
                 for handler in handlers:
                     source = _get_source(handler)
                     if source:
                         sources.append(source)
 
-                print("\n\n".join(sources))
+                # print("\n\n".join(sources))
                 if sources:
                     upy.write(path, "\n\n".join(sources), force = True)

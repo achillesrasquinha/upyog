@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 # imports - compatibility imports
 from upyog._compat import iteritems
+import upyog as upy
 
 # imports - standard imports
 import hashlib
@@ -163,7 +164,10 @@ def pardir(fname, level = 1):
 def dict_to_cmd_args(dictionary, prefix = "--", sep = "=", join = " "):
     return join.join([prefix + key + sep + value_to_envval(value) for key, value in iteritems(dictionary)])
 
+@ejectable()
 def popen(*args, **kwargs):
+    import os, subprocess as sp
+
     output      = kwargs.get("output", False)
     quiet       = kwargs.get("quiet" , False)
     directory   = kwargs.get("cwd")
@@ -464,6 +468,7 @@ def check_file(path, raise_err = True):
 def list_tree(*args, **kwargs):
     return list(walk(*args, **kwargs))
 
+@ejectable(deps = [walk])
 def list_files(*args, **kwargs):
     include_dirs = kwargs.pop("include_dirs", True)
     files = []
