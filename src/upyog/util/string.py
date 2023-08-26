@@ -11,6 +11,10 @@ _REGEX_HTML        = re.compile("<.*?>")
 
 @ejectable()
 def strip(string, type_ = " \n"):
+    import unicodedata
+
+    string = unicodedata.normalize("NFKD", string)
+
     string = string.lstrip(type_)
     string = string.rstrip(type_)
 
@@ -57,6 +61,7 @@ def kebab_case(string, delimiter = " ", to_lower = True):
     
     return kebab
 
+@ejectable()
 def safe_encode(obj, encoding = "utf-8"):
     try:
         obj = obj.encode(encoding)
@@ -65,6 +70,7 @@ def safe_encode(obj, encoding = "utf-8"):
     
     return obj
 
+@ejectable()
 def safe_decode(obj, encoding = "utf-8"):
     try:
         obj = obj.decode(encoding)

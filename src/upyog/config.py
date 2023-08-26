@@ -21,7 +21,7 @@ from upyog.util.eject   import ejectable
 
 logger = get_logger(__name__)
 
-@ejectable(deps = [getenv])
+@ejectable(deps = ["getenv"])
 def get_config_path(name):
     import os.path as osp
 

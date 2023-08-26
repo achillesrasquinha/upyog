@@ -1,9 +1,13 @@
 import upyog as upy
+from upyog._compat import Mapping, iteritems
+from upyog.util.array import is_list_like, sequencify, squash
+from upyog.util._dict import hasattr2, getattr2
+from upyog.util.op import op
 
-@upy.ejectable()
+@upy.ejectable(deps = ["is_list_like", "sequencify", "squash", "hasattr2", "getattr2", "op"], sources = ["upyog._compat"])
 def where(data, clause, other = False, clauses = False):
-    arraify  = upy.is_list_like(data)
-    data     = upy.sequencify(data)
+    arraify  = is_list_like(data)
+    data     = sequencify(data)
 
     results  = []
     others   = []
@@ -12,7 +16,7 @@ def where(data, clause, other = False, clauses = False):
 
     force    = True
 
-    if isinstance(clause, upy._compat.Mapping):
+    if isinstance(clause, Mapping):
         if "$or" in clause:
             clause = clause["$or"]
             force  = False
@@ -26,8 +30,8 @@ def where(data, clause, other = False, clauses = False):
 
                 if force:
                     break
-        elif isinstance(clause, upy._compat.Mapping):
-            for key, value in upy.iteritems(clause):
+        elif isinstance(clause, Mapping):
+            for key, value in iteritems(clause):
                 ref = key
 
                 key = key.split("$")
@@ -38,17 +42,17 @@ def where(data, clause, other = False, clauses = False):
 
                 added = False
 
-                if upy.hasattr2(record, key):
-                    if isinstance(value, upy.Mapping):
-                        for op, val in upy.iteritems(value):
-                            if callable(op):
-                                constraint = op
+                if hasattr2(record, key):
+                    if isinstance(value, Mapping):
+                        for op_, val in iteritems(value):
+                            if callable(op_):
+                                constraint = op_
                             else:
-                                constraint = upy.Op[op]
+                                constraint = op(op_)
 
-                            op1 = upy.getattr2(record, key)
+                            op1 = getattr2(record, key)
                             op2 = val
-                            
+
                             try:
                                 if not constraint(op1, op2):
                                     add.append(False)
@@ -64,7 +68,7 @@ def where(data, clause, other = False, clauses = False):
                                 if force:
                                     break
                     elif callable(value):
-                        if not value(upy.getattr2(record, key)):
+                        if not value(getattr2(record, key)):
                             add.append(False)
                             added = True
                             
@@ -72,7 +76,7 @@ def where(data, clause, other = False, clauses = False):
                                 break
                     else:
                         # TODO: callable for value?
-                        if upy.getattr2(record, key) != value:
+                        if getattr2(record, key) != value:
                             add.append(False)
                             added = True
 
@@ -104,9 +108,9 @@ def where(data, clause, other = False, clauses = False):
         if arraify:
             output = results, others
         else:
-            output = upy.squash(results), upy.squash(others)
+            output = squash(results), squash(others)
 
-    output = output or (results if arraify else upy.squash(results))
+    output = output or (results if arraify else squash(results))
 
     if clauses:
         output = output, triggers

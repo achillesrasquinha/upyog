@@ -3,11 +3,9 @@ import sys, os
 
 # imports - module imports
 import platform
-from upyog.util.eject import ejectable
 
 PYTHON_VERSION = sys.version_info
 
-@ejectable()
 def is_python_version(*args, **kwargs):
     """
     Determines the current python version.
@@ -35,7 +33,6 @@ PY2 = is_python_version(major = 2)
 def cmp(a, b):
     return ((a > b) - (a < b))
 
-@ejectable(deps = is_python_version)
 def iteritems(dict_, **kwargs):
     if is_python_version(major = 2):
         iterator = dict_.iteritems()

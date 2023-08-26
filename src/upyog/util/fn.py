@@ -1,6 +1,8 @@
 import upyog as upy
+from upyog.util.array import squash
 from upyog.util.eject import ejectable
 
+@ejectable()
 def pop(x, *keys):
     x = x.copy()
 
@@ -10,7 +12,7 @@ def pop(x, *keys):
         values.append(x[key])
         del x[key]
 
-    return x, upy.squash(values)
+    return x, squash(values)
 
 @ejectable()
 def cmp(a, b):

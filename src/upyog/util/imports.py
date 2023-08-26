@@ -17,7 +17,7 @@ class HandlerRegistry(dict):
 
 _HANDLER_REGISTRY = HandlerRegistry()
 
-@ejectable(deps = [HandlerRegistry, _HANDLER_REGISTRY])
+# @ejectable(deps = [_HANDLER_REGISTRY])
 def import_handler(name):
     """
         Import anything from module path.
@@ -29,7 +29,7 @@ def import_handler(name):
     handler = _HANDLER_REGISTRY[name]
     return handler
 
-@ejectable(deps = [import_handler])
+@ejectable(deps = ["import_handler"])
 def import_or_raise(package, name = None, dep = "upyog"):
     name = name or package
 

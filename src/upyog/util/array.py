@@ -2,7 +2,7 @@
 
 # imports - compatibility imports
 from upyog._compat    import is_python_version, range
-from upyog.util._dict import AutoDict
+from upyog.util._dict import autodict
 from upyog.util.eject import ejectable
 
 # imports - standard imports
@@ -92,6 +92,7 @@ def iterify(value):
         
     return value
 
+@ejectable()
 def chunkify(arr, n):
     """
     Divide an array into chunks wherein each chunk contains "n" elements.
@@ -108,8 +109,10 @@ def chunkify(arr, n):
     for i in range(0, len(arr), n):
         yield arr[i:i + n]
 
+@ejectable(deps = ["autodict"])
 def group_by(data, group):
-    results = AutoDict(list)
+    from collections import defaultdict
+    results = defaultdict(list)
 
     for d in data:
         key = d.get(group)

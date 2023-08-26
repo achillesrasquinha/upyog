@@ -9,6 +9,7 @@ from upyog.util.array  import is_list_like
 from upyog.util.types  import ordered
 from upyog import log
 from upyog.util.eject import ejectable
+from upyog._compat import Mapping
 
 logger = log.get_logger(__name__)
 
@@ -104,10 +105,13 @@ class JSONLogger(AutoDict):
     def __repr__(self):
         return str(self.store)
 
+@ejectable(deps = ["is_list_like", "safe_decode", "read"])
 def load_json(path, *args, **kwargs):
+    import json, os.path as osp
+
     object_hook = kwargs.pop("object_hook", None)
 
-    if is_list_like(path) or isinstance(path, dict):
+    if is_list_like(path) or isinstance(path, Mapping):
         return path
 
     path = safe_decode(path)
@@ -124,12 +128,14 @@ def load_json(path, *args, **kwargs):
 
     return data
 
+@ejectable()
 def dump_json(data, path, *args, **kwargs):
-    force = kwargs.pop("force", False)
+    import json
+    force   = kwargs.pop("force", False)
     content = json.dumps(data, *args, **kwargs)
     write(path, content, force = force)
 
-@ejectable()
+@ejectable(deps = ["ordered"])
 def compare_json(a, b):
     a = load_json(a)
     b = load_json(b)

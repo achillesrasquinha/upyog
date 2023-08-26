@@ -1,4 +1,6 @@
-import upyog as upy
+from upyog.util.array import is_list_like
+from upyog.util._dict import lvalues
+from upyog.util.eject import ejectable
 from functools import reduce
 
 O = {
@@ -22,8 +24,9 @@ O = {
     "NOT_IN_STRING": "notin"
 }
 
+@ejectable()
 def _check_in(x, y, op):
-    if upy.is_list_like(x):
+    if is_list_like(x):
         if op == "in":
             return y in x
         else:
@@ -34,6 +37,7 @@ def _check_in(x, y, op):
         else:
             return x not in y
 
+@ejectable(globals_ = { "O": O }, deps = ["_check_in"])
 def op(t):
     if t in (O["EQUALS_STRING"], O["EQUALS_OPERATOR_1"], O["EQUALS_OPERATOR_2"]):
         return lambda x, y: x == y
@@ -56,4 +60,4 @@ def op(t):
     else:
         raise ValueError(f"Invalid operator: {t}")
 
-Op = reduce(lambda a, b: a.update({b: op(b)}) or a, upy.lvalues(O), {})
+Op = reduce(lambda a, b: a.update({b: op(b)}) or a, lvalues(O), {})

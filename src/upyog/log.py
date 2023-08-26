@@ -10,7 +10,6 @@ from upyog.util import cli as _cli
 from upyog.__attr__   import __name__ as NAME
 from upyog._compat    import iteritems
 from upyog.util.string import ellipsis
-from upyog.util.eject  import ejectable
 
 NOTSET      = logging.NOTSET
 DEBUG       = logging.DEBUG
@@ -68,7 +67,6 @@ def _log(self, level, msg, *args, **kwargs):
     super_ = super(logging.Logger, self)
     super_._log(level, msg, *args, **kwargs)
 
-@ejectable(globals_ = { "_LOGGER": {}, "NAME": NAME, "DEBUG": DEBUG, "_FORMAT": _FORMAT })
 def get_logger(name = NAME, level = DEBUG, format_ = _FORMAT):
     global _LOGGER
     import logging

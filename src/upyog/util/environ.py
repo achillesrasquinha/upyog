@@ -6,6 +6,9 @@ import upyog
 from   upyog.util.types 	import auto_typecast
 from   upyog._compat		import string_types
 from upyog.util.eject import ejectable
+from upyog.util.array import is_list_like
+from upyog._compat import iteritems
+from upyog.util.types import lmap
 
 PREFIX 	= "%s" % upyog.__name__.upper()
 
@@ -71,10 +74,7 @@ SECRETS = (
 	getenvvar("JOBS_GITHUB_TOKEN"),
 )
 
-from upyog.util.array import is_list_like
-from upyog._compat import iteritems
-from upyog.util.types import lmap
-@ejectable(deps = [iteritems, is_list_like, value_to_envval, lmap])
+@ejectable(deps = ["iteritems", "is_list_like", "value_to_envval", "lmap"])
 def create_param_string(**kwargs):
 	string = ""
 

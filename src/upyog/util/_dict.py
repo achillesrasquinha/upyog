@@ -18,7 +18,7 @@ def merge_deep(source, dest):
             
     return dest
 
-@ejectable(deps = [merge_deep])
+@ejectable(deps = ["merge_deep"])
 def merge_dict(*args, **kwargs):
     """
     Merge Dictionaries.
@@ -93,6 +93,11 @@ def autodict(*args, **kwargs):
         >>> d['foo']['bar']['baz'] = 'boo'
         {'foo': {'bar': {'baz': 'boo'}}}
     """
+    from collections import defaultdict
+
+    class AutoDict(defaultdict):
+        __repr__ = dict.__repr__
+
     dict_type = kwargs.pop("dict_type", dict)
 
     _autodict = AutoDict(autodict)
@@ -108,6 +113,7 @@ def autodict(*args, **kwargs):
     
     return _autodict
 
+@ejectable()
 def lkeys(d):
     """
     Get the keys of a dictionary as a list.
@@ -123,6 +129,7 @@ def lkeys(d):
     """
     return list(iterkeys(d))
 
+@ejectable()
 def lvalues(d):
     """
     Get the values of a dictionary as a list.
@@ -138,6 +145,7 @@ def lvalues(d):
     """
     return list(itervalues(d))
 
+@ejectable()
 def litems(d):
     """
     Get the items of a dictionary as a list.
@@ -238,6 +246,7 @@ def getattr2(d, key, default = None):
 
     return value if value != default else default
 
+@ejectable(deps = ["getattr2"])
 def hasattr2(d, key):
     return getattr2(d, key, "__missing__") != "__missing__"
 
@@ -264,6 +273,8 @@ _TYPE_LIST_LIKE = (list, tuple, set, frozenset)
 
 @ejectable()
 def common_dict(a, b):
+    _TYPE_LIST_LIKE = (list, tuple, set, frozenset)
+
     a_keys = set(iterkeys(a))
     b_keys = set(iterkeys(b))
 
@@ -284,11 +295,10 @@ def common_dict(a, b):
 
     return common
 
-# @ejectable(deps = [
-#     iterkeys,
-#     Mapping
-# ])
+@ejectable()
 def subtract_dict(a, b):
+    _TYPE_LIST_LIKE = (list, tuple, set, frozenset)
+
     a_keys = set(iterkeys(a))
     b_keys = set(iterkeys(b))
     

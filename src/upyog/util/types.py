@@ -94,11 +94,13 @@ def auto_typecast(value):
 
     return value
 
+@ejectable()
 def _gen_to_seq(gen, type_ = list):
     def fn(*args, **kwargs):
         return type_(gen(*args, **kwargs))
     return fn
 
+@ejectable(deps = ["check_array"])
 def filter2(fn, arr):
     if not callable(fn):
         if check_array(fn, raise_err = False):
@@ -109,9 +111,17 @@ def filter2(fn, arr):
 
     return filter(fn, arr)
 
-lfilter = _gen_to_seq(filter)
-lmap    = _gen_to_seq(map)
-lset    = _gen_to_seq(set)
+@ejectable(deps = ["_gen_to_seq", "filter2"])
+def lfilter(fn, arr):
+    return _gen_to_seq(filter2)(fn, arr)
+
+@ejectable(deps = ["_gen_to_seq"])
+def lmap(fn, arr):
+    return _gen_to_seq(map)(fn, arr)
+
+@ejectable(deps = ["_gen_to_seq"])
+def lset(arr):
+    return _gen_to_seq(set)(arr)
 
 @ejectable()
 def build_fn(fn, *args, **kwargs):
@@ -134,6 +144,7 @@ def build_fn(fn, *args, **kwargs):
     from functools import partial
     return partial(fn, *args, **kwargs)
 
+@ejectable()
 def check_array(o, raise_err = True):
     """
     Check if an object is an array.
@@ -195,6 +206,7 @@ def is_num_like(x):
     
     return False
 
+@ejectable()
 def ordered(x):
     if isinstance(x, dict):
         return sorted((k, ordered(v)) for k, v in iteritems(x))

@@ -21,6 +21,7 @@ from upyog.config      import PATH
 
 logger = get_logger()
 
+# @ejectable()
 def _render_template_jinja(template, context = None):
     jinja2 = import_or_raise("jinja2", "Jinja2")
 
@@ -34,6 +35,7 @@ def _render_template_jinja(template, context = None):
 
         return out.getvalue()
 
+# @ejectable(deps = ["_render_template_jinja"])
 def render_template(template, context = None, dirs = [ ], **kwargs):
     """
     Renders a template. The template must be of the string format. For more 
@@ -57,6 +59,9 @@ def render_template(template, context = None, dirs = [ ], **kwargs):
         >>> render_template("foobar.html", dirs = "templates", bar = "baz")
         'foobaz'
     """
+    import os.path as osp
+
+
     jinja = kwargs.get("jinja", False)
     if jinja:
         return _render_template_jinja(template, context = context)

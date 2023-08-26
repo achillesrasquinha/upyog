@@ -43,6 +43,7 @@ VIDEO_EXTENSIONS = (
     ".avi", ".mp4", ".mkv", ".mov", ".flv", ".wmv", ".webm", ".mpg", ".mpeg"
 )
 
+@ejectable(deps = ["strip"])
 def read(fname, mode = "r", sanitize = False, encoding = "utf-8"):
     """Read content from a given file.
 
@@ -274,6 +275,7 @@ def remove(*paths, **kwargs):
                 if raise_err:
                     raise
 
+# @ejectable()
 @contextlib.contextmanager
 def make_temp_dir(root_dir = None, remove = True):
     if root_dir:

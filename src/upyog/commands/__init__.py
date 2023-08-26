@@ -268,7 +268,7 @@ def _command(*args, **kwargs):
                         with open(file_path, "r") as f:
                             content = f.read()
 
-                        groups  = _UPY_FN_PATTERN.findall(content)
+                        groups = _UPY_FN_PATTERN.findall(content)
 
                         for group in groups:
                             handlers.add(group)
@@ -292,51 +292,75 @@ def _command(*args, **kwargs):
                 from pprint import pprint
 
                 def _get_source(handler, sources = {}):
-                    if handler:
-                        # fn_name = handler.split(".")[-1]
-                        fn_name = handler
-                        if fn_name not in sources:
-                            handler = _ejectables.get(fn_name)
-                            if handler:
-                                source = inspect.getsource(handler)
-                                source = _sanitize_source(source)
+                    fn_name = str(handler)
+                    source = inspect.getsource(handler)
+                    source = _sanitize_source(source)
 
-                                if source:
-                                    sources[fn_name] = source
+                    if source:
+                        sources[fn_name] = source
 
-                                groups = _UPY_FN_PATTERN.findall(source)
-                                for group in groups:
-                                    parent_source = _get_source(group, sources = sources)
-                                    if parent_source and group not in sources:
-                                        sources[group] = _sanitize_source(parent_source)
-
-                        return sources.get(fn_name)
+                    return sources.get(fn_name)
 
                 import inspect
                 sources = []
 
-                others = []
+                handlers  = [handler.split(".")[-1] for handler in handlers]
+                handlers  = list(set(handlers))
 
-                for key, value in upy.iteritems(_ejectables):
-                    if not inspect.isfunction(value):
-                        if inspect.isclass(value):
-                            source = inspect.getsource(value)
-                            source = _sanitize_source(source)
+                expanded  = []
+                raw = {}
 
-                            if source:
-                                sources.append(source)
-                        else:
-                            sources.append(f"{key} = {repr(value)}")
-                    else:
-                        others.append(key)
+                def _get_handlers(handler):
+                    handler = _ejectables.get(handler)
+                    expand = []
 
-                handlers = [handler.split(".")[-1] for handler in handlers]
-                handlers = list(set(handlers + others))
+                    if handler:
+                        expand.append(handler["base"])
+
+                        deps = handler["deps"]
+
+                        for dep in deps:
+                            dep = _get_handlers(dep)
+                            if dep:
+                                expand.extend(dep)
+
+                        sources = handler["sources"]
+
+                        for source in sources:
+                            if source not in raw:
+                                out = _get_source(source)
+                                san = []
+
+                                for line in out.split("\n"):
+                                    if not "upyog" in line:
+                                        san.append(line)
+
+                                if out:
+                                    raw[source] = "\n".join(san)
+
+                        globals_ = handler["globals"]
+                        if globals_:
+                            for glob_ in globals_:
+                                key, value = glob_["key"], glob_["value"]
+                                if key not in raw:
+                                    raw[key] = "%s = %s" % (key, repr(value))
+
+                    return expand
+                
+                expanded = []
+
                 for handler in handlers:
+                    alls = _get_handlers(handler)
+                    if alls:
+                        expanded.extend(alls)
+
+                for handler in expanded:
                     source = _get_source(handler)
                     if source:
                         sources.append(source)
 
-                # print("\n\n".join(sources))
                 if sources:
+                    sources = upy.lvalues(raw) + sources
                     upy.write(path, "\n\n".join(sources), force = True)
+
+                    upy.popen("black %s" % path)
