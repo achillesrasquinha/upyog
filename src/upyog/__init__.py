@@ -209,6 +209,7 @@ from upyog.util.time import atimeit
 from upyog.cache import Cache
 from upyog.util.algo import find_best_groups
 from upyog.util._tqdm import FakeAsyncTqdm
+from upyog.table import Table
 
 settings = Settings()
 
