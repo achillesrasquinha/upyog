@@ -1,4 +1,4 @@
-from upyog.util.array import is_list_like
+from upyog.util.array import is_list_like, sequencify
 from upyog.util._dict import lvalues
 from upyog.util.eject import ejectable
 from functools import reduce
@@ -26,16 +26,14 @@ O = {
 
 @ejectable()
 def _check_in(x, y, op):
-    if is_list_like(x):
-        if op == "in":
-            return y in x
-        else:
-            return y not in x
+    x = sequencify(x)
+
+    if op == "in":
+        output = any([i in y for i in x])
     else:
-        if op == "in":
-            return x in y
-        else:
-            return x not in y
+        output = all([i not in y for i in x])
+
+    return output
 
 @ejectable(globals_ = { "O": O }, deps = ["_check_in"])
 def op(t):
