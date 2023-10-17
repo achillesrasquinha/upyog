@@ -74,6 +74,9 @@ def percentile(arr, p):
     length  = len(arr)
     sorted_ = sorted(arr)
 
+    if not arr:
+        return nan
+
     return sorted_[int(ceil((length * p) / 100 )) - 1]
 
 def lt(a, b):

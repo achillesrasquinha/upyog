@@ -18,18 +18,32 @@ from upyog.exception   import TemplateNotFoundError
 from upyog.util.string import _REGEX_HTML
 from upyog._compat     import iteritems, StringIO
 from upyog.config      import PATH
+import upyog as upy
 
 logger = get_logger()
 
 # @ejectable()
-def _render_template_jinja(template, context = None):
+def _render_template_jinja(template, context = None, template_dirs = None):
     jinja2 = import_or_raise("jinja2", "Jinja2")
+    template_dirs = sequencify(template_dirs or [])
 
     with open(template, "r") as f:
         content = f.read()
+
+    context = context or { }
+    context = upy.merge_dict(context, {
+        "upy": upy
+    })
     
     with StringIO() as out:
-        jinja2.Template(content) \
+        args = {}
+
+        if template_dirs:
+            args["loader"] = jinja2.FileSystemLoader(template_dirs)
+            
+        env = jinja2.Environment(**args)
+
+        env.from_string(content) \
             .stream(context) \
             .dump(out)
 
@@ -61,55 +75,58 @@ def render_template(template, context = None, dirs = [ ], **kwargs):
     """
     import os.path as osp
 
-
     jinja = kwargs.get("jinja", False)
     if jinja:
-        return _render_template_jinja(template, context = context)
-
-    dirs  = sequencify(dirs)
-    if PATH["TEMPLATES"] not in dirs:
-        dirs.append(PATH["TEMPLATES"])
-
-    dirs = [osp.abspath(dir_) for dir_ in dirs]
-
-    logger.info("Searching for templates within directories: %s" % dirs)
-
-    path = None
-    for dir_ in dirs:
-        temp = osp.join(dir_, template)
-        if osp.exists(temp):
-            path = temp
-            break
-    
-    if not path:
-        as_string = kwargs.get("as_string", False)
-
-        if as_string:
-            rendered = template
-        else:
-            raise TemplateNotFoundError("Template %s not found." % template)
+        template_dirs = kwargs.get("template_dirs")
+        rendered = _render_template_jinja(template, context = context,
+            template_dirs = template_dirs)
     else:
-        html     = read(path)
-        rendered = html
+        dirs  = sequencify(dirs)
+        if PATH["TEMPLATES"] not in dirs:
+            dirs.append(PATH["TEMPLATES"])
 
-    if not context:
-        context = kwargs
+        dirs = [osp.abspath(dir_) for dir_ in dirs]
 
-    if context:
-        escape = False
+        logger.info("Searching for templates within directories: %s" % dirs)
 
-        for name, item in iteritems(context):
-            item = str(item)
+        path = None
+        for dir_ in dirs:
+            temp = osp.join(dir_, template)
+            if osp.exists(temp):
+                path = temp
+                break
+        
+        if not path:
+            as_string = kwargs.get("as_string", False)
 
-            if escape:
-                item = module_escape.escape(item)
-            
-            context[name] = item
+            if as_string:
+                rendered = template
+            else:
+                raise TemplateNotFoundError("Template %s not found." % template)
+        else:
+            html     = read(path)
+            rendered = html
 
-        rendered = rendered.format(**context)
+        if not context:
+            context = kwargs
+
+        if context:
+            escape = False
+
+            for name, item in iteritems(context):
+                item = str(item)
+
+                if escape:
+                    item = module_escape.escape(item)
+                
+                context[name] = item
+
+            rendered = rendered.format(**context)
 
     output = kwargs.get("output")
     if output:
-        upy.write(output, rendered)
+        force = kwargs.get("force", False)
+        upy.write(output, rendered, force = force)
+        print(output, rendered)
     
     return rendered

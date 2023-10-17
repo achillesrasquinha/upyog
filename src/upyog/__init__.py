@@ -21,7 +21,7 @@ from upyog import cli
 from upyog.__main__    import main
 from upyog.config      import Settings
 from upyog.util.jobs   import run_all as run_all_jobs, run_job
-from upyog.api.base    import BaseAPI
+from upyog.api.base    import BaseAPI, SuperAPI
 from upyog.util._dict  import (
     merge_dict,
     merge_deep,
@@ -35,7 +35,9 @@ from upyog.util._dict  import (
     getattr2, hasattr2, setattr2,
     reverse_dict,
     common_dict,
-    subtract_dict
+    subtract_dict,
+    pretty_dict,
+    param_dict
 )
 from upyog.util._async import (
     asyncify,
@@ -73,7 +75,8 @@ from upyog.util.array  import (
     iterify,
     is_subset,
     group_by,
-    find
+    find,
+    chain
 )
 from upyog.util.string import (
     sanitize,
@@ -205,7 +208,10 @@ from upyog.util.fn import (
 )
 from upyog.util.query import where
 from upyog.util.profile import aprofile
-from upyog.util.time import atimeit
+from upyog.util.time import (
+    timeit,
+    atimeit
+)
 from upyog.cache import Cache
 from upyog.util.algo import find_best_groups
 from upyog.util._tqdm import FakeAsyncTqdm

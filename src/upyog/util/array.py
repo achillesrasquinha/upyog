@@ -212,3 +212,10 @@ def is_ichunk(i, chunk_size):
 @ejectable()
 def is_subset(a, b):
     return set(a) <= set(b)
+
+@ejectable()
+def chain(*fns, query):
+    result = query
+    for fn in fns:
+        result = fn(result)
+    return result

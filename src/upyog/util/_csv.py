@@ -9,7 +9,7 @@ def read(path, *args, **kwargs):
     data  = []
     type_ = kwargs.pop("type", "dict")
     auto_cast = kwargs.pop("auto_cast", True)
-    
+
     with open(path) as f:
         reader = csv.reader(f, *args, **kwargs)
         header = next(reader, None)

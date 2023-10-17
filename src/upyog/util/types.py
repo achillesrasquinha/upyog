@@ -7,6 +7,7 @@ from upyog._compat     import iteritems
 from upyog.util._dict  import dict_from_list
 from upyog.util.datetime import auto_datetime
 from upyog.util.eject import ejectable
+from upyog.util.string import capitalize
 
 # imports - standard imports
 import sys

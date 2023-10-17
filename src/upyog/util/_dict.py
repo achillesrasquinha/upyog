@@ -324,3 +324,40 @@ def subtract_dict(a, b):
                 subtract[key] = i
     
     return subtract
+
+@ejectable()
+def pretty_dict(d, sep = ", "):
+    s = []
+
+    for key, value in iteritems(d):
+        s.append("%s: %s" % (key, value))
+
+    return f"{sep}".join(s)
+
+@ejectable()
+def param_dict(arg, auto_cast = True):
+    output = {}
+
+    if arg:
+        params = arg.split(";")
+
+        
+        for param in params:
+            key, value = param.split("=")
+            key   = upy.strip(key)
+
+            value = upy.strip(value)
+            value = upy.lmap(
+                upy.strip, value.split(",")
+            )
+            value = upy.squash(value)
+
+            if auto_cast:
+                if upy.is_list_like(value):
+                    value = upy.lmap(upy.auto_typecast, value)
+                else:
+                    value = upy.auto_typecast(value)
+
+            output[key] = value
+
+    return output

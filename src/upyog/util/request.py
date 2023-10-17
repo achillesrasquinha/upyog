@@ -73,11 +73,13 @@ def check_url(url, raise_err = True):
     
     return True
 
-def download_file(url, target = None, chunk_size = None, req_kwargs = {}):
+def download_file(url, target = None, chunk_size = None, req_kwargs = {}, session = None):
+    session     = session or requests.Session()
+
     chunk_size  = chunk_size or upy.settings.get("max_chunk_download_bytes")
 
     if not isinstance(url, requests.Response):
-        response = req.get(url, stream = True, **req_kwargs)
+        response = session.get(url, stream = True, **req_kwargs)
     else:
         response = url
 
@@ -125,8 +127,8 @@ def download_file(url, target = None, chunk_size = None, req_kwargs = {}):
     if progress_bar:
         progress_bar.close()
 
-        if size_total != 0 and progress_bar.n != size_total:
-            raise ValueError("Unable to read downloaded file into path %s." % target)
+        # if size_total != 0 and progress_bar.n != size_total:
+        #     raise ValueError("Unable to read downloaded file into path %s." % target)
 
     return target
 

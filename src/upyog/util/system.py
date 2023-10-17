@@ -44,7 +44,7 @@ VIDEO_EXTENSIONS = (
 )
 
 @ejectable(deps = ["strip"])
-def read(fname, mode = "r", sanitize = False, encoding = "utf-8"):
+def read(fname, mode = "r", sanitize = False, encoding = "utf-8", clean = True):
     """Read content from a given file.
 
     Args:
@@ -65,7 +65,7 @@ def read(fname, mode = "r", sanitize = False, encoding = "utf-8"):
         with open(fname, mode = mode or "r", encoding = encoding) as f:
             data = f.read()
 
-            if data:
+            if data and clean:
                 data = strip(data)
 
     return data
@@ -135,6 +135,7 @@ def which(executable, raise_err = False):
     
     return exec_
 
+@ejectable()
 def walk(top, *args, **kwargs):
     abspath = kwargs.pop("abspath", False)
 
@@ -158,6 +159,7 @@ def walk(top, *args, **kwargs):
 @ejectable()
 def pardir(fname, level = 1):
     import os.path as osp
+    fname = osp.abspath(fname)
     for _ in range(level):
         fname = osp.dirname(fname)
     return fname

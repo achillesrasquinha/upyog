@@ -55,11 +55,22 @@ def labelize(string):
 
     return result.title()
 
+@ejectable()
 def kebab_case(string, delimiter = " ", to_lower = True):
     words = string.replace(delimiter, " ").split()
     kebab = "-".join([word.lower() if to_lower else word for word in words])
     
     return kebab
+
+@ejectable()
+def camel_case(string, delimiter = " ", to_lower = True):
+    words = string.replace(delimiter, " ").split()
+
+    camel = words[0].lower() if to_lower else words[0]
+
+    camel = camel + "".join([word.title() for word in words[1:]])
+
+    return camel
 
 @ejectable()
 def safe_encode(obj, encoding = "utf-8"):

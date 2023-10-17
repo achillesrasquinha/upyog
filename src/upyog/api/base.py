@@ -1,5 +1,5 @@
 # imports - standard imports
-import os, random
+import os, random, os.path as osp
 import re
 import string
 import json
@@ -17,6 +17,7 @@ from upyog.log                  import get_logger
 from upyog.util.request         import (
     download_file
 )
+from upyog.util.string          import get_random_str
 
 logger = get_logger()
 
@@ -46,11 +47,12 @@ class BaseAPI(BaseObject):
     """
     def __init__(self, url = None, proxies = [ ], test = False, token = None,
                  verbose = False, rate = None, auth = None, session = None, async_ = False,
-                 retries = 1, on_error = None, timeout = None, **kwargs):
+                 retries = 1, on_error = None, timeout = None, api_key = None, 
+                 cert = None, **kwargs):
         super_ = super(BaseAPI, self)
         super_.__init__(**kwargs)
 
-        self._url = self._format_uri_path(url or getattr(self, "url"),
+        self._url = self._format_uri_path(url or getattr(self, "url") or "",
             **kwargs)
         
         self._async   = async_
@@ -80,6 +82,9 @@ class BaseAPI(BaseObject):
 
         self._retries  = retries
         self._timeout  = timeout
+
+        self._api_key  = api_key
+        self._cert     = cert
 
         self._build_api()
 
@@ -273,7 +278,12 @@ class BaseAPI(BaseObject):
         req_args = self._get_req_args(method, path, *args, **kwargs)
         self._session.verify = req_args["verify"]
 
+        if self._api_key:
+            headers = req_args["headers"]
+            headers.update({"X-Api-Key": self._api_key})
+
         response = self._session.request(method, req_args["url"],
+            cert = self._cert,
             headers = req_args["headers"],
             *req_args["args"],
             **req_args["kwargs"]
@@ -293,7 +303,7 @@ class BaseAPI(BaseObject):
         prefix      = kwargs.pop("prefix",    True)
         async_      = kwargs.pop("async_",  False)
 
-        verify      = kwargs.get("verify", 
+        verify      = kwargs.pop("verify", 
             os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")                             
         )
 
@@ -333,11 +343,19 @@ class BaseAPI(BaseObject):
         async with self:
             verify = req_args.pop("verify", None)
             httpx  = import_or_raise("httpx")
+            
+            port  = req_args["kwargs"].pop("port", None)
+            url   = req_args["url"]
+            if port:
+                url_parsed = urlparse(req_args["url"])
+                url = "%s://%s:%s%s" % (url_parsed.scheme, url_parsed.hostname, port, url_parsed.path)
 
-            transport = httpx.AsyncHTTPTransport(retries = self._retries)
-            session   = httpx.AsyncClient(transport = transport, verify = verify)
+            cert  = req_args["kwargs"].pop("cert", None)
+            transport = httpx.AsyncHTTPTransport(retries = self._retries,
+                verify = verify, cert = cert)
+            session   = httpx.AsyncClient(transport = transport)
             async with session:
-                response = await session.request(method, req_args["url"],
+                response = await session.request(method, url,
                     headers = req_args["headers"],
                     *req_args["args"], **req_args["kwargs"])
                 return response
@@ -439,3 +457,28 @@ class BaseAPI(BaseObject):
     async def aclose(self):
         if self._async and self._session:
             return await self._session.aclose()
+        
+DEFAULT = {
+    "retries": 5
+}
+
+class SuperAPI(BaseObject):
+    def __init__(self, config = None, retries = DEFAULT["retries"],
+                 on_error = None, **kwargs):
+        super_ = super(SuperAPI, self)
+        super_.__init__(**kwargs)
+
+        self.on_error = on_error
+
+        config    = sequencify(config or [])
+
+        interface = kwargs.pop("interface", getattr(self, "interface", None))
+        if not interface:
+            raise ValueError("interface not specified")
+
+        self.pool = {
+            get_random_str(): {
+                "client": interface(retries = retries, on_error = on_error),
+                 "config": cfg
+            } for cfg in config
+        }

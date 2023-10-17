@@ -24,6 +24,7 @@ from upyog.util.git        import resolve_git_url
 from upyog.util.system     import check_file
 from upyog.config          import load_config
 from upyog.util.eject      import ejectable
+from upyog.util.array      import sequencify
 
 _DESCRIPTION_JUMBOTRON = \
 """
@@ -40,6 +41,23 @@ class ConfigFileAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string = None):
         config = load_config(values)
         setattr(namespace, self.dest, config)
+
+class ParamAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string = None):
+        params = getattr(namespace, self.dest)
+
+        if not params:
+            params = dict()
+
+        if values:
+            values = sequencify(values)
+
+            for value in values:
+                if "=" in value:
+                    key, value = value.split("=")
+                    params[key] = value
+
+        setattr(namespace, self.dest, params)
 
 @ejectable()
 def get_base_parser(prog, description, help_ = True):
@@ -96,6 +114,10 @@ def get_base_parser(prog, description, help_ = True):
         action  = "store_true",
         default = getenv("FORCE", False),
         help    = "Force."
+    )
+    parser.add_argument("-p", "--param",
+        help    = "Parameters",
+        action  = ParamAction
     )
 
     if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
@@ -168,10 +190,6 @@ def get_parser():
     parser.add_argument("--online",
         action  = "store_true",
         help    = "Run ML pipeline in online mode"
-    )
-    parser.add_argument("-p", "--param",
-        action  = "append",
-        help    = "Parameters"
     )
     parser.add_argument("--dbshell",
         default = getenv("DATABASE_SHELL"),
