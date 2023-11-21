@@ -2,7 +2,7 @@
 import os, random, os.path as osp
 import re
 import string
-import json
+import json, time
 
 from upyog.model.base           import BaseObject
 from upyog.util.imports         import import_or_raise
@@ -300,8 +300,9 @@ class BaseAPI(BaseObject):
 
         proxies     = kwargs.pop("proxies", self._proxies)
         data        = kwargs.get("params",  kwargs.get("data"))
-        prefix      = kwargs.pop("prefix",    True)
+        prefix      = kwargs.pop("prefix",  True)
         async_      = kwargs.pop("async_",  False)
+        wait        = kwargs.pop("wait",    None)
 
         verify      = kwargs.pop("verify", 
             os.environ.get("REQUESTS_CA_BUNDLE", "/etc/ssl/certs/ca-certificates.crt")                             
@@ -334,7 +335,8 @@ class BaseAPI(BaseObject):
             "raise_error": raise_error,
             "verify": verify,
             "args": args,
-            "kwargs": kwargs
+            "kwargs": kwargs,
+            "wait": wait
         }
 
     async def arequest(self, method, path = None, *args, **kwargs):
@@ -350,11 +352,15 @@ class BaseAPI(BaseObject):
                 url_parsed = urlparse(req_args["url"])
                 url = "%s://%s:%s%s" % (url_parsed.scheme, url_parsed.hostname, port, url_parsed.path)
 
-            cert  = req_args["kwargs"].pop("cert", None)
+            cert      = req_args["kwargs"].pop("cert", None)
             transport = httpx.AsyncHTTPTransport(retries = self._retries,
                 verify = verify, cert = cert)
             session   = httpx.AsyncClient(transport = transport)
             async with session:
+                wait = req_args.pop("wait", None)
+                if wait:
+                    time.sleep(wait)
+
                 response = await session.request(method, url,
                     headers = req_args["headers"],
                     *req_args["args"], **req_args["kwargs"])

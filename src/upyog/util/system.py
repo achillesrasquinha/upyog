@@ -70,6 +70,11 @@ def read(fname, mode = "r", sanitize = False, encoding = "utf-8", clean = True):
 
     return data
 
+@ejectable()
+def readlines(*args, **kwargs):
+    content = read(*args, **kwargs)
+    return content.split("\n")
+
 def write(fname, data = None, force = False, append = False, mode = None):
     if not osp.exists(fname) or append or force:
         if force:
@@ -137,6 +142,8 @@ def which(executable, raise_err = False):
 
 @ejectable()
 def walk(top, *args, **kwargs):
+    import os.path as osp
+
     abspath = kwargs.pop("abspath", False)
 
     if abspath:
@@ -277,9 +284,11 @@ def remove(*paths, **kwargs):
                 if raise_err:
                     raise
 
-# @ejectable()
+@ejectable()
 @contextlib.contextmanager
 def make_temp_dir(root_dir = None, remove = True):
+    import shutil, tempfile
+
     if root_dir:
         makedirs(root_dir, exist_ok = True)
         

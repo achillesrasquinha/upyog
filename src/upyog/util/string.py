@@ -187,3 +187,7 @@ def encapsulate(s, q, r = None):
     if r is None:
         r = q
     return "%s%s%s" % (q, s, r)
+
+@ejectable()
+def charsplit(s, split = "\n"):
+    return s.split(split)
