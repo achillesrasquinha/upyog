@@ -129,11 +129,16 @@ def load_json(path, *args, **kwargs):
     return data
 
 @ejectable()
-def dump_json(data, path, *args, **kwargs):
+def dump_json(data, path = None, *args, **kwargs):
     import json
-    force   = kwargs.pop("force", False)
+
     content = json.dumps(data, *args, **kwargs)
-    write(path, content, force = force)
+    
+    if path:
+        force = kwargs.pop("force", False)
+        write(path, content, force = force)
+
+    return content
 
 @ejectable(deps = ["ordered"])
 def compare_json(a, b):

@@ -95,7 +95,8 @@ from upyog.util.string import (
     is_ascii,
     kebab_case,
     charsplit,
-    strip_ansi
+    strip_ansi,
+    sanitize_text
 )
 from upyog.util._crypto import (
     sha256

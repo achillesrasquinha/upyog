@@ -228,7 +228,8 @@ def popen(*args, **kwargs):
             error  = safe_decode(error)
             error  = strip(error)
 
-            logger.error("Error executing command %s: %s" % (command, error))
+            if not quiet:
+                logger.error("Error executing command %s: %s" % (command, error))
 
         if quiet:
             return code
