@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 # imports - standard imports
-import os, sys
+import os, sys, os.path as osp
 import argparse
 import multiprocessing as mp
 import json

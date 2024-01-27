@@ -127,6 +127,5 @@ def render_template(template, context = None, dirs = [ ], **kwargs):
     if output:
         force = kwargs.get("force", False)
         upy.write(output, rendered, force = force)
-        print(output, rendered)
     
     return rendered

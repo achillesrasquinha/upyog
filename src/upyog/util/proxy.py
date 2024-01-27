@@ -36,7 +36,7 @@ def fetch():
         try:
             popen("git pull origin master", cwd = repo)
         except PopenError:
-            logger.warn("Unable to pull latest branch")
+            logger.warning("Unable to pull latest branch")
 
     proxies_path = osp.join(repo, "proxies.csv")
 

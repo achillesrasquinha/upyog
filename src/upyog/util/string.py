@@ -2,7 +2,7 @@
 import re
 import uuid
 
-from upyog._compat import urlparse
+from upyog._compat import urlparse, iteritems
 from upyog.util.array import sequencify
 from upyog.util.eject import ejectable
 
@@ -191,3 +191,9 @@ def encapsulate(s, q, r = None):
 @ejectable()
 def charsplit(s, split = "\n"):
     return s.split(split)
+
+@ejectable()
+def format2(s, *args, **kwargs):
+    for k, v in iteritems(kwargs):
+        s = s.replace("{{%s}}" % k, v)
+    return s

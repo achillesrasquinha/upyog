@@ -96,7 +96,11 @@ from upyog.util.string import (
     kebab_case,
     charsplit,
     strip_ansi,
-    sanitize_text
+    sanitize_text,
+    format2
+)
+from upyog.util._xml import (
+    xml2dict
 )
 from upyog.util._crypto import (
     sha256
