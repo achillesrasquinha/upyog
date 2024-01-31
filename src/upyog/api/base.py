@@ -318,7 +318,6 @@ class BaseAPI(BaseObject):
 
         if proxies:
             proxies = random.choice(proxies)
-            logger.info("Using proxy %s to dispatch request." % proxies)
 
         url = self._build_url(path, prefix = prefix)
 
