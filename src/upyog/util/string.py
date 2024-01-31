@@ -197,3 +197,7 @@ def format2(s, *args, **kwargs):
     for k, v in iteritems(kwargs):
         s = s.replace("{{%s}}" % k, v)
     return s
+
+@ejectable()
+def replace(s, old, new):
+    return s.replace(old, new)

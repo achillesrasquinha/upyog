@@ -97,7 +97,8 @@ from upyog.util.string import (
     charsplit,
     strip_ansi,
     sanitize_text,
-    format2
+    format2,
+    replace
 )
 from upyog.util._xml import (
     xml2dict
