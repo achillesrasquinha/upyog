@@ -1,6 +1,0 @@
-#!/bin/bash
-# Mark this script executable to install console scripts corresponding to the
-# Python-default interpreter into ENVROOT/bin. It will receive a list of
-# discovered script names on stdin and must emit a list of script names to
-# install on stdout.
-cat -
