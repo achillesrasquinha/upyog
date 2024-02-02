@@ -556,3 +556,26 @@ def get_user():
 @ejectable()
 def noop(*args, **kwargs):
     pass
+
+@ejectable()
+def parse_config_string(config, auto_cast = True):
+    params = config.split(";")
+    result = {}
+
+    for param in params:
+        key, value = param.split("=")
+        key   = strip(key)
+
+        value = strip(value)
+        value = lmap(strip, value.split(","))
+        value = upy.squash(value)
+
+        if auto_cast:
+            if upy.is_list_like(value):
+                value = lmap(upy.auto_typecast, value)
+            else:
+                value = upy.auto_typecast(value)
+                
+        result[key] = value
+    
+    return result

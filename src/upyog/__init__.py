@@ -149,7 +149,8 @@ from upyog.util.system import (
     list_tree,
     list_files,
     make_archive,
-    readlines
+    readlines,
+    parse_config_string
 )
 from upyog.util.environ import (
     getenv,
