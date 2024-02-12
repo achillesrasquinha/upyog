@@ -128,7 +128,7 @@ def load_json(path, *args, **kwargs):
 
     return data
 
-@ejectable()
+@ejectable(deps = ["write"])
 def dump_json(data, path = None, *args, **kwargs):
     import json
 
@@ -140,7 +140,7 @@ def dump_json(data, path = None, *args, **kwargs):
 
     return content
 
-@ejectable(deps = ["ordered"])
+@ejectable(deps = ["ordered", "load_json"])
 def compare_json(a, b):
     a = load_json(a)
     b = load_json(b)

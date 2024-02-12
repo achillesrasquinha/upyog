@@ -170,6 +170,7 @@ def check_url(s, raise_err = True):
 
     return is_url
 
+@ejectable()
 def nl(s = "", space = 1):
     space = "\n" * space
     return "%s%s" % (s, space)
@@ -178,6 +179,7 @@ def to_html(s):
     s = s.replace("\n", "<br>")
     return s
 
+@ejectable()
 def tb(s = "", point = 2, type_ = " "):
     indent = type_ * point
     return "%s%s" % (indent, s)

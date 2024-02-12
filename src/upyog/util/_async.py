@@ -3,7 +3,7 @@ import upyog as upy, asyncio
 from upyog.util.eject import ejectable
 from upyog.util.eject import ejectable
 
-@ejectable()
+@ejectable(deps = [ "build_fn" ])
 def asyncify(func, loop=None, executor=None):
     import asyncio
 

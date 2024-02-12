@@ -1,23 +1,19 @@
 from upyog.exception import DependencyNotFoundError
 from upyog.util.eject import ejectable
 
-class HandlerRegistry(dict):
-    def __missing__(self, name):
-        if '.' not in name:
-            handler = __import__(name)
-        else:
-            module_name, handler_name = name.rsplit('.', 1)
+@ejectable()
+def get_handler(name):
+    if '.' not in name:
+        handler = __import__(name)
+    else:
+        module_name, handler_name = name.rsplit('.', 1)
+        module  = __import__(module_name, fromlist=[handler_name])
+        handler = getattr(module, handler_name)
+    return handler
 
-            module  = __import__(module_name, {}, {}, [handler_name])
-            handler = getattr(module, handler_name)
+HANDLER_REGISTRY = {}
 
-        self[name] = handler
-
-        return handler
-
-_HANDLER_REGISTRY = HandlerRegistry()
-
-# @ejectable(deps = [_HANDLER_REGISTRY])
+@ejectable(globals_ = { "HANDLER_REGISTRY": dict() }, deps = ["get_handler"])
 def import_handler(name):
     """
         Import anything from module path.
@@ -26,8 +22,9 @@ def import_handler(name):
         >>> from upyog.util.imports import import_handler
         >>> abspath = import_handler("os.path.abspath")
     """
-    handler = _HANDLER_REGISTRY[name]
-    return handler
+    if name not in HANDLER_REGISTRY:
+        HANDLER_REGISTRY[name] = get_handler(name)
+    return HANDLER_REGISTRY[name]
 
 @ejectable(deps = ["import_handler"])
 def import_or_raise(package, name = None, dep = "upyog"):

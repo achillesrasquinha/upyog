@@ -1,6 +1,6 @@
 from upyog.util.types import classname
 from upyog._compat import iteritems
-from upyog import log
+from upyog.log import *
 import upyog as upy
 from upyog.util.eject import ejectable
 
@@ -10,7 +10,7 @@ class BaseObject(object):
             setattr(self, kwarg, value)
         
         verbose = getattr(self, "verbose", True)
-        self._logger = log.get_logger(self.c_name, level = log.DEBUG if verbose else log.INFO)
+        self._logger = get_logger(self.c_name, level = DEBUG if verbose else INFO)
         self._flag = upy.autodict()
 
     @property
@@ -34,7 +34,7 @@ class BaseObject(object):
         getattr(self._logger, type_)(message, *args, **kwargs)
 
     def step_log(self, *args, **kwargs):
-        return log.StepLogger(logger = self._logger, *args, **kwargs)
+        return StepLogger(logger = self._logger, *args, **kwargs)
 
     @property
     def c_name(self):

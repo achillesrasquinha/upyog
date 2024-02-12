@@ -1,14 +1,16 @@
 # imports - compatibility imports
 from __future__ import absolute_import
-import sys, ast, re
+import sys, ast, re, inspect
 import os, os.path as osp
 
-from upyog.commands.util 	import cli_format
+from upyog.commands.util 	 import cli_format
 from upyog.util._dict        import merge_dict
-from upyog.util.types        import lmap, auto_typecast
+from upyog.util.types        import lmap, auto_typecast, lfilter
 from upyog.util.string       import strip
 from upyog.util.imports      import import_handler
-from upyog.util.system       import touch, make_temp_dir, popen, ShellEnvironment
+from upyog.util.system       import (
+    touch, make_temp_dir, popen, ShellEnvironment, get_files, read)
+from upyog.util.array        import flatten
 from upyog.util.error        import pretty_print_error
 from upyog.util.test         import generate_tests
 from upyog.util.doc          import generate_docs
@@ -16,10 +18,10 @@ from upyog.i18n.util         import generate_translations
 from upyog.util.git          import resolve_git_url
 from upyog.util.datetime     import get_timestamp_str
 from upyog.db                import run_db_shell
-from upyog 		      	    import (cli, log, parallel)
-from upyog._compat		    import iteritems, Mapping
+from upyog 		      	     import (cli, log, parallel)
+from upyog._compat		     import iteritems, Mapping
 from upyog.config            import environment, get_config_path
-from upyog.__attr__      	import __name__ as NAME
+from upyog.__attr__      	 import __name__ as NAME
 from upyog.exception         import DependencyNotFoundError
 import upyog as upy
 
@@ -252,115 +254,125 @@ def _command(*args, **kwargs):
                         .pr()
     
     if a.upy_scan:
-        paths = [osp.abspath(path) for path in a.upy_scan]
-        logger.info("Running upy scan at %s..." % paths)
+        files = lfilter(
+            lambda x: x.endswith(".py"),
+            flatten(map(get_files, a.upy_scan))
+        )
 
         handlers = set()
 
         _UPY_FN_PATTERN = re.compile(r"upy\.[a-zA-Z0-9_]+")
 
-        for path in paths:
-            for root, _, files in upy.walk(path):
-                for file in files:
-                    if file.endswith(".py"):
-                        file_path = osp.join(root, file)
+        for f in files:
+            content = read(f)
 
-                        with open(file_path, "r") as f:
-                            content = f.read()
+            groups  = _UPY_FN_PATTERN.findall(content)
 
-                        groups = _UPY_FN_PATTERN.findall(content)
-
-                        for group in groups:
-                            handlers.add(group)
+            for group in groups:
+                group = group.split(".")[-1]
+                handlers.add(group)
 
         handlers = sorted(handlers)
 
         if handlers:
-            logger.success("Found %d handlers: %s" % (len(handlers), ", ".join(handlers)))
+            logger.info(f"Found {len(handlers)} handlers: {', '.join(handlers)}")
 
             if a.upy_eject:
-                path = osp.abspath(a.upy_eject)
-                logger.info("Ejecting handlers to %s..." % path)
-
-                def _sanitize_source(source):
-                    # replace (@upy.)ejectable(*) with nothing
-                    source = re.sub(r"(@upy\.)*@*ejectable\((.*)\)", "", source)
-                    source = upy.strip(source)
-                    return source
-
-                from upyog.util.eject import _ejectables
-                from pprint import pprint
-
-                def _get_source(handler, sources = {}):
-                    fn_name = str(handler)
-                    source = inspect.getsource(handler)
-                    source = _sanitize_source(source)
-
-                    if source:
-                        sources[fn_name] = source
-
-                    return sources.get(fn_name)
-
-                import inspect
-                sources = []
-
-                handlers  = [handler.split(".")[-1] for handler in handlers]
-                handlers  = list(set(handlers))
-
-                expanded  = []
-                raw = {}
-
-                def _get_handlers(handler):
-                    handler = _ejectables.get(handler)
-                    expand = []
-
-                    if handler:
-                        expand.append(handler["base"])
-
-                        deps = handler["deps"]
-
-                        for dep in deps:
-                            dep = _get_handlers(dep)
-                            if dep:
-                                expand.extend(dep)
-
-                        sources = handler["sources"]
-
-                        for source in sources:
-                            if source not in raw:
-                                out = _get_source(source)
-                                san = []
-
-                                for line in out.split("\n"):
-                                    if not "upyog" in line:
-                                        san.append(line)
-
-                                if out:
-                                    raw[source] = "\n".join(san)
-
-                        globals_ = handler["globals"]
-                        if globals_:
-                            for glob_ in globals_:
-                                key, value = glob_["key"], glob_["value"]
-                                if key not in raw:
-                                    raw[key] = "%s = %s" % (key, repr(value))
-
-                    return expand
+                target = osp.abspath(a.upy_eject)
+                logger.info(f"Ejecting handlers to {target}...")
                 
-                expanded = []
+                from upyog.util.eject import _ejectables
 
+                _SOURCE = """
+import logging
+
+LOG = logging.getLogger(__name__)
+"""
+
+                content = []
+                content.append({
+                    "key": "LOG", "value": _SOURCE
+                })
+
+                files   = ["_compat.py", "exception.py"]
+
+                for f in files:
+                    f = osp.join(upy.pardir(__file__, 2), f)
+                    content.append({ "key": f, "value": read(f) })
+
+                def _get_source_from_ejectable(handler, sources = []):
+                    ejectable = _ejectables[handler]
+
+                    imports_  = ejectable.get("imports")
+                    if imports_:
+                        for import_ in imports_:
+                            source = f"import {import_}"
+                            sources.append({
+                                "key": import_, "value": source
+                            })
+
+                    alias = ejectable.get("alias")
+                    if alias:
+                        name, value = ejectable["name"], alias
+                        imports = ejectable["imports"]
+
+                        for import_ in imports:
+                            source = f"import {import_}"
+                            sources.append({
+                                "key": import_, "value": source
+                            })
+
+                        source = f"{name} = {value}"
+                        sources.append({
+                            "key": name, "value": source
+                        })
+
+                        return sources
+                    else:
+                        module    = ejectable["base"]
+
+                        globals_  = ejectable["globals"]
+
+                        for global_ in globals_:
+                            key, value = global_["key"], global_["value"]
+                            source = f"{key} = {repr(value)}"
+                            sources.append({
+                                "key": key, "value": source
+                            })
+
+                        deps = ejectable["deps"]
+                        if deps:
+                            for dep in deps:
+                                if dep in _ejectables:
+                                    source = _get_source_from_ejectable(dep, sources = sources)
+                                    sources.append({
+                                        "key": dep, "value": source
+                                    })
+
+                        source = inspect.getsource(module)
+                        source = re.sub(r"(@upy\.)*@*ejectable\((.*)\)", "", source)
+                        source = strip(source)
+                        sources.append({
+                            "key": handler, "value": source
+                        })
+                        
+                        return sources
+                
                 for handler in handlers:
-                    alls = _get_handlers(handler)
-                    if alls:
-                        expanded.extend(alls)
+                    if handler in _ejectables:
+                        response = _get_source_from_ejectable(handler, sources = [])
+                        content += response
 
-                for handler in expanded:
-                    source = _get_source(handler)
-                    if source:
-                        sources.append(source)
+                if content:
+                    final   = {}
+                    for item in content:
+                        key, value = item["key"], item["value"]
+                        if key not in final:
+                            final[key] = value
 
-                if sources:
-                    sources = upy.lvalues(raw) + sources
-                    upy.write(path, "\n\n".join(sources), force = True)
+                    content = upy.lvalues(final)
 
-                    upy.popen("black %s" % path)
+                    sources = content
+                    sources = "\n".join(sources)
+                    upy.write(target, strip(sources), force = True)
+                    upy.popen(f"black {target}")

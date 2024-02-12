@@ -59,7 +59,7 @@ class ParamAction(argparse.Action):
 
         setattr(namespace, self.dest, params)
 
-@ejectable()
+# @ejectable()
 def get_base_parser(prog, description, help_ = True):
     parser = argparse.ArgumentParser(
         prog            = prog,

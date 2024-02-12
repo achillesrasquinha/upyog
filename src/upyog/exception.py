@@ -1,14 +1,14 @@
 # imports - standard imports
 import subprocess as sp
 
-class upyogError(Exception):
+class UpyogError(Exception):
     pass
 
-class PopenError(upyogError, sp.CalledProcessError):
+class PopenError(UpyogError, sp.CalledProcessError):
     pass
 
 class DependencyNotFoundError(ImportError):
     pass
 
-class TemplateNotFoundError(upyogError):
+class TemplateNotFoundError(UpyogError):
     pass

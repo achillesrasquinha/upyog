@@ -28,14 +28,14 @@ from upyog.util.string     import (
     get_random_str,
     safe_encode
 )
-from upyog.util.types      import lmap, lfilter
-from upyog.util.array      import sequencify
+from upyog.util.types      import lmap, lfilter, auto_typecast
+from upyog.util.array      import sequencify, squash, is_list_like
 from upyog.util.environ    import SECRETS, value_to_envval
 from upyog._compat         import iteritems, PY2
 from upyog.log             import get_logger
 from upyog.util.eject import ejectable
 
-logger = get_logger()
+LOG = get_logger()
 
 __STDOUT__ = None
 
@@ -75,7 +75,10 @@ def readlines(*args, **kwargs):
     content = read(*args, **kwargs)
     return content.split("\n")
 
+@ejectable(deps = ["makepath"])
 def write(fname, data = None, force = False, append = False, mode = None):
+    import os.path as osp
+
     if not osp.exists(fname) or append or force:
         if force:
             makepath(fname)
@@ -142,7 +145,7 @@ def which(executable, raise_err = False):
 
 @ejectable()
 def walk(top, *args, **kwargs):
-    import os.path as osp
+    import os.path as osp, fnmatch, re
 
     abspath = kwargs.pop("abspath", False)
 
@@ -196,7 +199,7 @@ def popen(*args, **kwargs):
     command     = " ".join([str(arg) for arg in args])
 
     if not quiet:
-        logger.info("Executing command: %s" % command)
+        LOG.info("Executing command: %s" % command)
 
     if quiet:
         output = True
@@ -229,7 +232,7 @@ def popen(*args, **kwargs):
             error  = strip(error)
 
             if not quiet:
-                logger.error("Error executing command %s: %s" % (command, error))
+                LOG.error("Error executing command %s: %s" % (command, error))
 
         if quiet:
             return code
@@ -238,7 +241,10 @@ def popen(*args, **kwargs):
     else:
         return code
 
+@ejectable()
 def makedirs(dirs, exist_ok = False):
+    import os.path as osp, errno
+
     dirs = osp.abspath(dirs)
 
     try:
@@ -249,7 +255,10 @@ def makedirs(dirs, exist_ok = False):
 
     return dirs
 
+@ejectable(deps = ["makedirs"])
 def makepath(path):
+    import os.path as osp
+
     dirs = osp.dirname(path)
     makedirs(dirs, exist_ok = True)
 
@@ -285,7 +294,8 @@ def remove(*paths, **kwargs):
                 if raise_err:
                     raise
 
-@ejectable()
+ejectable(imports = "contextlib")
+
 @contextlib.contextmanager
 def make_temp_dir(root_dir = None, remove = True):
     import shutil, tempfile
@@ -557,7 +567,7 @@ def get_user():
 def noop(*args, **kwargs):
     pass
 
-@ejectable()
+@ejectable(deps = ["strip", "lmap", "squash", "auto_typecast", "is_list_like"])
 def parse_config_string(config, auto_cast = True):
     params = config.split(";")
     result = {}
@@ -568,13 +578,13 @@ def parse_config_string(config, auto_cast = True):
 
         value = strip(value)
         value = lmap(strip, value.split(","))
-        value = upy.squash(value)
+        value = squash(value)
 
         if auto_cast:
-            if upy.is_list_like(value):
-                value = lmap(upy.auto_typecast, value)
+            if is_list_like(value):
+                value = lmap(auto_typecast, value)
             else:
-                value = upy.auto_typecast(value)
+                value = auto_typecast(value)
                 
         result[key] = value
     

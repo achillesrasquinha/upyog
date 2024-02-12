@@ -5,7 +5,23 @@ _ejectables = {}
 def _get_name(obj):
     return obj.__name__ if hasattr(obj, "__name__") else obj.__class__.__name__
 
-def ejectable(deps = None, globals_ = None, sources = None, as_ = None):
+def ejectable(deps = None, globals_ = None, sources = None, as_ = None, alias = None,
+    imports = None):
+    if imports:
+        imports = imports if isinstance(imports, (list, tuple)) else list([imports])
+        for import_ in imports:
+            if not import_ in _ejectables:
+                _ejectables[import_] = {
+                    "base": None, "deps": [], "globals": [], "sources": [],
+                    "imports": import_
+                }
+
+    if alias:
+        key, value = alias["key"], alias["alias"]
+        if not key in _ejectables:
+            _ejectables[key] = { "name": key,
+                "imports": [alias["imports"]], "alias": value, "base": None, "deps": [], "globals": [], "sources": []
+            }
 
     def decorator(fn, deps = deps, globals_ = globals_):
         name = _get_name(fn)

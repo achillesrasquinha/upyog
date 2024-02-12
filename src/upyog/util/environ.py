@@ -21,7 +21,7 @@ def getenvvar(name, prefix = PREFIX, seperator = "_"):
 	envvar = "%s%s%s" % (prefix, seperator, name)
 	return envvar
 
-@ejectable(deps = [getenvvar], globals_ = { "PREFIX": PREFIX })
+@ejectable(deps = ["getenvvar"], globals_ = { "PREFIX": PREFIX })
 def getenv(name, default = None, cast = True, prefix = PREFIX, seperator = "_", raise_err = False):
     import os
 

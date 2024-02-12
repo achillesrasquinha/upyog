@@ -1,15 +1,16 @@
 import upyog as upy
+from upyog.util.datetime import now
 from upyog.util.eject import ejectable
 
 LOG = upy.get_logger(__name__)
 
-@ejectable()
+@ejectable(deps = ["now"])
 def atimeit():
     def decorator(fn):
         async def wrapper(*args, **kwargs):
-            start  = upy.now()
+            start  = now()
             result = await fn(*args, **kwargs)
-            end    = upy.now()
+            end    = now()
 
             name   = fn.__name__
 

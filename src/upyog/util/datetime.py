@@ -9,7 +9,9 @@ import math
 from upyog.util._math import sign
 from upyog.util.eject import ejectable
 
+ejectable(alias = { "key": "now", "alias": "datetime.datetime.now", "imports": "datetime" })
 now         = dt.datetime.now
+ejectable(alias = { "key": "utcnow", "alias": "datetime.datetime.utcnow", "imports": "datetime" })
 utcnow      = dt.datetime.utcnow
 timedelta   = dt.timedelta
 datetime    = dt.datetime

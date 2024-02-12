@@ -7,7 +7,7 @@ from upyog.util.string import strip, nl, tb
 from upyog.util.types  import lmap
 from upyog.util.array  import find
 from upyog.util.system import read
-from upyog.util.eject import ejectable
+from upyog.util.eject  import ejectable
 
 _REGEX_PATTERN_TEXT_QUOTES = r'"([^"]*)"'
 _COLOR_LINE_NUMBER = _cli.GRAY
@@ -61,8 +61,10 @@ def _get_error_line_info(error_line):
 
     return path_file, line_num, method
 
-@ejectable()
+@ejectable(globals_ = { "_INDENT": _INDENT }, deps = ["nl", "tb"])
 def pretty_print_error(e):
+    import traceback
+
     error_type = type(e)
     error_name = error_type.__name__
     error_msg  = getattr(e, "message", str(e))
