@@ -16,6 +16,8 @@ utcnow      = dt.datetime.utcnow
 timedelta   = dt.timedelta
 datetime    = dt.datetime
 
+today       = dt.date.today
+
 try:
     import pytz
     timezone = pytz.timezone
@@ -109,6 +111,9 @@ def auto_datetime(string):
 
     if isinstance(string, dt.datetime):
         return string
+    
+    if isinstance(string, (int, float)):
+        return dt.datetime.fromtimestamp(string)
 
     for format_ in _AUTO_FORMATS:
         try:
@@ -137,6 +142,7 @@ def start_of(dt, type_):
 
     return norm
 
+@ejectable(as_ = "dt_add")
 def add(dt, value, type_):
     if type_ == "year":
         type_ = "days"
@@ -144,6 +150,7 @@ def add(dt, value, type_):
 
     return dt + timedelta(**{ type_: value })
 
+@ejectable(as_ = "dt_subtract")
 def subtract(dt, value, type_):
     return add(dt, -value, type_)
 

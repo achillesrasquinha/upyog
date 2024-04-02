@@ -282,8 +282,10 @@ class BaseAPI(BaseObject):
             headers = req_args["headers"]
             headers.update({"X-Api-Key": self._api_key})
 
+        cert = self._cert or req_args["kwargs"].pop("cert", None)
+
         response = self._session.request(method, req_args["url"],
-            cert = self._cert,
+            cert = cert,
             headers = req_args["headers"],
             *req_args["args"],
             **req_args["kwargs"]
@@ -350,6 +352,9 @@ class BaseAPI(BaseObject):
             if port:
                 url_parsed = urlparse(req_args["url"])
                 url = "%s://%s:%s%s" % (url_parsed.scheme, url_parsed.hostname, port, url_parsed.path)
+
+            if self._api_key:
+                req_args["headers"].update({"X-Api-Key": self._api_key})
 
             cert      = req_args["kwargs"].pop("cert", None)
             transport = httpx.AsyncHTTPTransport(retries = self._retries,
