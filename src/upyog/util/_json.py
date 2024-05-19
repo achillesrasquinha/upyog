@@ -131,11 +131,11 @@ def load_json(path, *args, **kwargs):
 @ejectable(deps = ["write"])
 def dump_json(data, path = None, *args, **kwargs):
     import json
+    force = kwargs.pop("force", False)
 
     content = json.dumps(data, *args, **kwargs)
     
     if path:
-        force = kwargs.pop("force", False)
         write(path, content, force = force)
 
     return content

@@ -182,6 +182,22 @@ def is_list_like(obj):
     """
     return isinstance(obj, (list, tuple, set, frozenset))
 
+@ejectable()
+def is_sequence_like(obj):
+    """
+    Check if an object is sequence-like.
+
+    :param obj: The object to be checked.
+
+    Example::
+
+        >>> upy.is_sequence_like([1, 2, 3])
+        True
+        >>> upy.is_sequence_like(1)
+        False
+    """
+    return is_list_like(obj) or isinstance(obj, str)
+
 @ejectable(deps = is_list_like)
 def sequencify(value, type_ = list):
     """

@@ -215,3 +215,15 @@ def ordered(x):
         return sorted(ordered(v) for v in x)
     
     return x
+
+@ejectable()
+def to_object(d):
+    class O(object):
+        pass
+
+    params = O()
+
+    for k, v in iteritems(d):
+        setattr(params, k, v)
+
+    return params

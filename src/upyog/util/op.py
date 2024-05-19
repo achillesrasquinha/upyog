@@ -1,5 +1,6 @@
-from upyog.util.array import is_list_like, sequencify
+from upyog.util.array import is_list_like, sequencify, is_sequence_like
 from upyog.util._dict import lvalues
+from upyog.util.types import lmap
 from upyog.util.eject import ejectable
 from functools import reduce
 
@@ -24,14 +25,20 @@ O = {
     "NOT_IN_STRING": "notin"
 }
 
-@ejectable()
+@ejectable(deps = ["is_sequence_like"])
 def _check_in(x, y, op):
     x = sequencify(x)
 
+    output = False
+
     if op == "in":
-        output = any([i in y for i in x])
+        for i in x:
+            if (is_sequence_like(i) and i in y) or i == y:
+                output = True
+                break
     else:
-        output = all([i not in y for i in x])
+        for i in x:
+            output = output and (is_sequence_like(i) and i not in y) or i != y
 
     return output
 

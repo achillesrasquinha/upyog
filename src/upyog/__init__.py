@@ -122,7 +122,8 @@ from upyog.util.types    import (
     lmap,
     lfilter,
     lset,
-    is_num_like
+    is_num_like,
+    to_object
 )
 from upyog.util.system import (
     get_files,

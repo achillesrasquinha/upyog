@@ -110,6 +110,7 @@ def sanitize_text(text):
 def sanitize(string, encoding = "utf-8"):
     string = safe_decode(string, encoding = encoding)
     string = strip(string)
+    string = strip(string, type_ = " ")
     string = strip_ansi(string)
     string = sanitize_html(string)
     string = sanitize_text(string)
