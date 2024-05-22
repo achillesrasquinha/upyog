@@ -306,7 +306,7 @@ class BaseAPI(BaseObject):
         async_      = kwargs.pop("async_",  False)
         wait        = kwargs.pop("wait",    None)
 
-        verify      = kwargs.pop("verify", os.environ.get("REQUESTS_CA_BUNDLE")) or False
+        verify      = kwargs.pop("verify", False)
 
         if token:
             headers.update({

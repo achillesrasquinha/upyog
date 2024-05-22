@@ -2,12 +2,11 @@
 from functools import partial
 
 # imports - compatibility imports
-from upyog             import _compat
-from upyog._compat     import iteritems
-from upyog.util._dict  import dict_from_list
+from upyog import _compat
+from upyog._compat import iteritems, iterkeys, itervalues
+from upyog.util._dict import dict_from_list
 from upyog.util.datetime import auto_datetime
 from upyog.util.eject import ejectable
-from upyog.util.string import capitalize
 
 # imports - standard imports
 import sys
@@ -227,3 +226,10 @@ def to_object(d):
         setattr(params, k, v)
 
     return params
+
+@ejectable()
+def combinations(options):
+    import itertools
+    return [
+        dict(zip(iterkeys(options), value)) for value in itertools.product(itervalues(options))
+    ]
