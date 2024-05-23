@@ -223,7 +223,7 @@ def check_struct(d, struct, raise_err = True):
 def is_subdict(a, b):
     sub_dict = True
 
-    for key, value in iteritems(b):
+    for key in iterkeys(b):
         if key in a:
             if a[key] != b[key]:
                 sub_dict = False
@@ -361,3 +361,4 @@ def param_dict(arg, auto_cast = True):
             output[key] = value
 
     return output
+

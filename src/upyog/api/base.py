@@ -142,11 +142,13 @@ class BaseAPI(BaseObject):
                "GET": self.get,
               "POST": self.post,
                "PUT": self.put,
+             "PATCH": self.patch,
             "DELETE": self.delete,
               "AGET": self.aget,
              "APOST": self.apost,
               "APUT": self.aput,
-           "ADELETE": self.adelete
+           "ADELETE": self.adelete,
+            "APATCH": self.apatch,
         }
 
         doc = api.get("doc")
@@ -412,6 +414,20 @@ class BaseAPI(BaseObject):
         Dispatch a PUT request to the server.
         """
         response = await self.arequest("PUT", url, *args, **kwargs)
+        return response
+
+    def patch(self, url, *args, **kwargs):
+        """
+        Dispatch a PATCH request to the server.
+        """
+        response = self.request("PATCH", url, *args, **kwargs)
+        return response
+    
+    async def apatch(self, url, *args, **kwargs):
+        """
+        Dispatch a PATCH request to the server.
+        """
+        response = await self.arequest("PATCH", url, *args, **kwargs)
         return response
 
     def delete(self, url, *args, **kwargs):

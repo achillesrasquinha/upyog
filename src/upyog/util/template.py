@@ -22,10 +22,27 @@ import upyog as upy
 
 logger = get_logger()
 
+_TEMPLATE_JINJA_EXTENSION = (".jinja", ".jinja2", ".j2")
+
 # @ejectable()
 def _render_template_jinja(template, context = None, template_dirs = None):
     jinja2 = import_or_raise("jinja2", "Jinja2")
     template_dirs = sequencify(template_dirs or [])
+
+    exists = False
+
+    if osp.exists(template):
+        exists = True
+    else:
+        for ext in _TEMPLATE_JINJA_EXTENSION:
+            path = f"{template}{ext}"
+            if osp.exists(path):
+                exists   = True
+                template = path
+                break
+
+    if not exists:
+        raise TemplateNotFoundError("Template %s not found." % template)
 
     with open(template, "r") as f:
         content = f.read()

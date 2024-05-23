@@ -3,7 +3,7 @@ from functools import partial
 
 # imports - compatibility imports
 from upyog import _compat
-from upyog._compat import iteritems, iterkeys, itervalues
+from upyog._compat import iteritems, iterkeys, itervalues, Mapping
 from upyog.util._dict import dict_from_list
 from upyog.util.datetime import auto_datetime
 from upyog.util.eject import ejectable
@@ -207,6 +207,22 @@ def is_num_like(x):
     return False
 
 @ejectable()
+def is_dict_like(x):
+    """
+    Check if an object is a dictionary.
+
+    :param x: The object to be checked.
+
+    Example::
+
+        >>> upy.is_dict_like({ "foo": "bar" })
+        True
+        >>> upy.is_dict_like([1, 2, 3])
+        False
+    """
+    return isinstance(x, Mapping)
+
+@ejectable()
 def ordered(x):
     if isinstance(x, dict):
         return sorted((k, ordered(v)) for k, v in iteritems(x))
@@ -231,5 +247,5 @@ def to_object(d):
 def combinations(options):
     import itertools
     return [
-        dict(zip(iterkeys(options), value)) for value in itertools.product(itervalues(options))
+        dict(zip(iterkeys(options), value)) for value in itertools.product(*itervalues(options))
     ]

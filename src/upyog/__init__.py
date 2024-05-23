@@ -123,7 +123,9 @@ from upyog.util.types    import (
     lfilter,
     lset,
     is_num_like,
-    to_object
+    to_object,
+    combinations,
+    is_dict_like,
 )
 from upyog.util.system import (
     get_files,
