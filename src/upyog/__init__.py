@@ -101,7 +101,8 @@ from upyog.util.string import (
     replace
 )
 from upyog.util._xml import (
-    xml2dict
+    xml2dict,
+    dict2xml
 )
 from upyog.util._crypto import (
     sha256
