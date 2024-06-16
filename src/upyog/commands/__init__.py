@@ -253,24 +253,29 @@ def _command(*args, **kwargs):
                         )\
                         .pr()
     
-    if a.upy_scan:
-        files = lfilter(
-            lambda x: x.endswith(".py"),
-            flatten(map(get_files, a.upy_scan))
-        )
-
+    if a.upy_scan or a.upy_api:
         handlers = set()
 
-        _UPY_FN_PATTERN = re.compile(r"upy\.[a-zA-Z0-9_]+")
+        if a.upy_scan:
+            files = lfilter(
+                lambda x: x.endswith(".py"),
+                flatten(map(get_files, a.upy_scan))
+            )
 
-        for f in files:
-            content = read(f)
+            _UPY_FN_PATTERN = re.compile(r"upy\.[a-zA-Z0-9_]+")
 
-            groups  = _UPY_FN_PATTERN.findall(content)
+            for f in files:
+                content = read(f)
 
-            for group in groups:
-                group = group.split(".")[-1]
-                handlers.add(group)
+                groups  = _UPY_FN_PATTERN.findall(content)
+
+                for group in groups:
+                    group = group.split(".")[-1]
+                    handlers.add(group)
+
+        if a.upy_api:
+            for api in a.upy_api:
+                handlers.add(api)
 
         handlers = sorted(handlers)
 
@@ -283,11 +288,12 @@ def _command(*args, **kwargs):
                 
                 from upyog.util.eject import _ejectables
 
-                _SOURCE = """
-import logging
+#                 _SOURCE = """
+# import logging
 
-LOG = logging.getLogger(__name__)
-"""
+# LOG = logging.getLogger(__name__)
+# """
+                _SOURCE = ""
 
                 content = []
                 content.append({
@@ -295,6 +301,7 @@ LOG = logging.getLogger(__name__)
                 })
 
                 files   = ["_compat.py", "exception.py"]
+                files   = []
 
                 for f in files:
                     f = osp.join(upy.pardir(__file__, 2), f)

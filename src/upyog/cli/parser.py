@@ -228,6 +228,10 @@ def get_parser():
     parser.add_argument("--upy-eject",
         help    = "Eject upyog from the project to files."
     )
+    parser.add_argument("--upy-api",
+        action  = "append",
+        help    = "API to eject."
+    )
 
     if any("upyog" in arg for arg in sys.argv):
         parser.add_argument("-h", "--help",

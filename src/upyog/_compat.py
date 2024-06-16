@@ -4,27 +4,54 @@ import sys, os
 # imports - module imports
 import platform
 
+from upyog.util.eject import ejectable
+
 PYTHON_VERSION = sys.version_info
 
+@ejectable()
 def is_python_version(*args, **kwargs):
     """
-    Determines the current python version.
+    Determines the current Python Version.
+
+    Args:
+        major: Major Version.
+        minor: Minor Version.
+        micro: Patch Version.
+        release: Release Level.
+        serial: Serial Number.
+
+    Returns:
+        bool
+
+    Example::
+        >>> is_python_version(major = 3)
+        True
+        >>> is_python_version(major = 2, minor = 7)
+        False
+        >>> is_python_version(major = 3, minor = 6, micro = 7)
+        True
     """
     import sys
-    PYTHON_VERSION = sys.version_info
+    python_version = sys.version_info
 
-    major  = kwargs.get("major", None)
-    minor  = kwargs.get("minor", None)
-    patch  = kwargs.get("patch", None)
+    major   = kwargs.get("major", None)
+    minor   = kwargs.get("minor", None)
+    micro   = kwargs.get("micro", None)
+    release = kwargs.get("release", None)
+    serial  = kwargs.get("serial", None)
 
-    result = True
+    result  = True
 
     if major:
-        result = result and major == PYTHON_VERSION.major
+        result = result and major   == python_version.major
     if minor:
-        result = result and minor == PYTHON_VERSION.minor
-    if patch:
-        result = result and patch == PYTHON_VERSION.micro
+        result = result and minor   == python_version.minor
+    if micro:
+        result = result and micro   == python_version.micro
+    if release:
+        result = result and release == python_version.releaselevel
+    if serial:
+        result = result and serial  == python_version.serial
         
     return result
 
@@ -33,6 +60,7 @@ PY2 = is_python_version(major = 2)
 def cmp(a, b):
     return ((a > b) - (a < b))
 
+@ejectable(deps = ["is_python_version"])
 def iteritems(dict_, **kwargs):
     if is_python_version(major = 2):
         iterator = dict_.iteritems()
@@ -47,8 +75,9 @@ def iterkeys(dict_, **kwargs):
         iterator = iter(dict_.keys(), **kwargs)
     return iterator
 
+@ejectable(deps = ["is_python_version"])
 def itervalues(dict_, **kwargs):
-    if PY2: # pragma: no cover
+    if is_python_version(major = 2): # pragma: no cover
         iterator = dict_.itervalues()
     else:
         iterator = iter(dict_.values(), **kwargs)

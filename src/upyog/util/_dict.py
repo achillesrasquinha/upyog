@@ -6,7 +6,7 @@ from upyog._compat import iteritems, Mapping, iterkeys, itervalues
 from upyog.util.eject import ejectable
 import upyog as upy
 
-@ejectable()
+@ejectable(deps = ["iteritems"])
 def merge_deep(source, dest):
     # https://stackoverflow.com/a/20666342
     for key, value in iteritems(source):
@@ -52,9 +52,11 @@ def merge_dict(*args, **kwargs):
 def dict_from_list(keys, values = None):
     """
     Generate a dictionary from a list of keys and values.
+    You can also use this function to generate a dictionary from a list of dictionaries.
 
     :param keys: A list of keys.
     :param values: A list of values.
+        If `values` is a string, it will be used as the key to generate the dictionary.
 
     :returns: dict
 
@@ -62,6 +64,10 @@ def dict_from_list(keys, values = None):
 
         >>> upy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
         {'a': 1, 'b': 2, 'c': 3}
+        >>> upy.dict_from_list([{'name': 'foo'}, {'name': 'bar'}], 'name')
+        {'foo': {'name': 'foo'}, 'bar': {'name': 'bar'}}
+        >>> upy.dict_from_list(['a', 'b', 'c'])
+        {'a': None, 'b': None, 'c': None}
     """
     import functools
 
@@ -362,3 +368,27 @@ def param_dict(arg, auto_cast = True):
 
     return output
 
+@ejectable()
+def pop(d, keys, default = None, raise_err = False):
+    copy = d.copy()
+    vals = []
+
+    for key in keys:
+        try:
+            vals = copy.pop(key)
+        except KeyError:
+            if raise_err:
+                raise KeyError(f"Key '{key}' not found in dictionary.")
+            vals.append(default)
+
+    return copy, vals
+
+@ejectable()
+def magic_dict(*args, **kwargs):
+    class AttrDict(dict):
+        def __init__(self, *args, **kwargs):
+            super_ = super(AttrDict, self)
+            super_.__init__(*args, **kwargs)
+            self.__dict__ = self
+
+    return AttrDict(*args, **kwargs)

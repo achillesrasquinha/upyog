@@ -9,6 +9,8 @@ try:
 except ImportError:
     pass
 
+from pprint import pprint
+
 # imports - module imports
 from upyog.__attr__ import (
     __name__,
@@ -37,7 +39,9 @@ from upyog.util._dict  import (
     common_dict,
     subtract_dict,
     pretty_dict,
-    param_dict
+    param_dict,
+    pop,
+    magic_dict
 )
 from upyog.util._async import (
     asyncify,
@@ -216,7 +220,6 @@ from upyog.util.misc import (
 )
 from upyog.util.op import Op, O as OpType
 from upyog.util.fn import (
-    pop,
     cmp,
     select
 )

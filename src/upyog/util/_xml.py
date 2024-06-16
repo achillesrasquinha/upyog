@@ -1,13 +1,16 @@
 from xml.etree import ElementTree as ET
 import re
 from upyog._compat import iteritems, Mapping
-from upyog.util.string import safe_decode
+from upyog.util.string import safe_decode, strip
 
 def _sanitize_tag(tag):
-    tag = re.sub(r'\{.*?\}', '', tag)
-    return tag
+    return tag.strip().replace('-', '_')
 
 def _xml2dict(e):
+    if isinstance(e, str):
+        e = strip(e)
+        e = ET.fromstring(e)
+
     d = {}
 
     for child in e:
@@ -26,9 +29,12 @@ def _xml2dict(e):
             else:
                 d[t] = cd
 
-    if e.text:
-        t    = _sanitize_tag(e.tag)
-        d[t] = e.text
+    if e.text and strip(e.text):
+        text = strip(e.text)
+        if len(d) == 0:
+            d = text
+        else:
+            d['_text'] = text
 
     return d
 

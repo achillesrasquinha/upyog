@@ -95,13 +95,13 @@ def auto_typecast(value):
     return value
 
 @ejectable()
-def _gen_to_seq(gen, type_ = list):
+def gen2seq(gen, type_ = list):
     def fn(*args, **kwargs):
         return type_(gen(*args, **kwargs))
     return fn
 
 @ejectable(deps = ["check_array"])
-def filter2(fn, arr):
+def filter2(fn, arr, other = False):
     if not callable(fn):
         if check_array(fn, raise_err = False):
             l  = fn
@@ -109,19 +109,29 @@ def filter2(fn, arr):
         else:
             fn = lambda x: x != fn
 
-    return filter(fn, arr)
+    filtered, others = [], []
+    for x in arr:
+        if fn(x):
+            filtered.append(x)
+        else:
+            others.append(x)
+    
+    if other:
+        return filtered, others
+    else:
+        return filtered
 
-@ejectable(deps = ["_gen_to_seq", "filter2"])
-def lfilter(fn, arr):
-    return _gen_to_seq(filter2)(fn, arr)
+@ejectable(deps = ["gen2seq", "filter2"])
+def lfilter(fn, arr, other = False):
+    return gen2seq(filter2)(fn, arr, other = other)
 
-@ejectable(deps = ["_gen_to_seq"])
+@ejectable(deps = ["gen2seq"])
 def lmap(fn, arr):
-    return _gen_to_seq(map)(fn, arr)
+    return gen2seq(map)(fn, arr)
 
-@ejectable(deps = ["_gen_to_seq"])
+@ejectable(deps = ["gen2seq"])
 def lset(arr):
-    return _gen_to_seq(set)(arr)
+    return gen2seq(set)(arr)
 
 @ejectable()
 def build_fn(fn, *args, **kwargs):

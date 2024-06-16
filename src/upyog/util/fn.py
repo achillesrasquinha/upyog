@@ -3,18 +3,6 @@ from upyog.util.array import squash
 from upyog.util.eject import ejectable
 
 @ejectable()
-def pop(x, *keys):
-    x = x.copy()
-
-    values = []
-
-    for key in keys:
-        values.append(x[key])
-        del x[key]
-
-    return x, squash(values)
-
-@ejectable()
 def cmp(a, b):
     if a < b:
         return -1
