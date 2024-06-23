@@ -24,6 +24,10 @@ from upyog.__main__    import main
 from upyog.config      import Settings
 from upyog.util.jobs   import run_all as run_all_jobs, run_job
 from upyog.api.base    import BaseAPI, SuperAPI
+from upyog.util.cli import (
+    get_ansi_code,
+    format_ansi
+)
 from upyog.util._dict  import (
     merge_dict,
     merge_deep,
@@ -41,7 +45,10 @@ from upyog.util._dict  import (
     pretty_dict,
     param_dict,
     pop,
-    magic_dict
+    magic_dict,
+    dict_keys,
+    dict_values,
+    dict_items,
 )
 from upyog.util._async import (
     asyncify,
@@ -125,12 +132,16 @@ from upyog.util.types    import (
     build_fn,
     classname,
     lmap,
-    lfilter,
+    array_filter,
     lset,
     is_num_like,
     to_object,
     combinations,
     is_dict_like,
+    str2bool,
+    gen2seq,
+    check_array,
+    combinations
 )
 from upyog.util.system import (
     get_files,
@@ -205,7 +216,12 @@ from upyog.cli.util import (
 from upyog.exception import PopenError
 from upyog.i18n import _
 from upyog.model import BaseObject
-from upyog.log import get_logger, StepLogger, log_fn
+from upyog.util.log import (
+    get_log_level,
+    get_logger,
+    StepLogger
+)
+from upyog.log import log_fn
 from upyog.limits import (
     MAX_UNSIGNED_SHORT
 )

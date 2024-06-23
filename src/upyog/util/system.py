@@ -28,7 +28,7 @@ from upyog.util.string     import (
     get_random_str,
     safe_encode
 )
-from upyog.util.types      import lmap, lfilter, auto_typecast
+from upyog.util.types      import lmap, array_filter, auto_typecast
 from upyog.util.array      import sequencify, squash, is_list_like
 from upyog.util.environ    import SECRETS, value_to_envval
 from upyog._compat         import iteritems, PY2
@@ -56,7 +56,7 @@ def read(fname, mode = "r", sanitize = False, encoding = "utf-8", clean = True):
 
     Example
 
-        >>> upy.read("path/to/file")
+        read("path/to/file")
         'Hello, World!'
     """
     if hasattr(fname, "read"):
@@ -162,16 +162,43 @@ def walk(top, *args, **kwargs):
             files = lmap(lambda f: osp.join(root, f), files)
 
         if include:
-            files = lfilter(lambda f: re.match(include, f), files)
+            files = array_filter(lambda f: re.match(include, f), files)
 
         yield root, dirs, files
 
 @ejectable()
-def pardir(fname, level = 1):
+def pardir(fname, level = 1, raise_err = True):
+    """
+        Get the parent directory of a given file.
+
+        Args:
+            fname (str): The path to the file.
+            level (int): The number of levels to go up from the file.
+            raise_err (bool): Raise `FileNotFoundError` if a give file isn't found, else ignore.
+
+        Returns:
+            str: The parent directory of the file.
+
+        Example:
+            >>> pardir("path/to/file")
+            '/abspath/path/to'
+            >>> pardir("path/to/file", level = 2)
+            '/abspath/path'
+    """
     import os.path as osp
+    
     fname = osp.abspath(fname)
+
+    if not osp.exists(fname) and raise_err:
+        raise FileNotFoundError("File %s not found." % fname)
+
     for _ in range(level):
+        prev  = fname
         fname = osp.dirname(fname)
+        
+        if fname == prev and raise_err:
+            raise ValueError("Level is too high.")
+    
     return fname
 
 def dict_to_cmd_args(dictionary, prefix = "--", sep = "=", join = " "):
@@ -399,7 +426,7 @@ def move(*files, **kwargs):
 
     Example:
 
-        >>> upy.move("path/to/file1", "path/to/file2", dest = "path/to/dest")
+        move("path/to/file1", "path/to/file2", dest = "path/to/dest")
     """
     dest = kwargs["dest"]
 
@@ -419,7 +446,7 @@ def copy(*files, **kwargs):
 
     Example:
 
-        >>> upy.copy("path/to/file1", "path/to/file2", dest = "path/to/dest")
+        copy("path/to/file1", "path/to/file2", dest = "path/to/dest")
     """
     dest  = kwargs["dest"]
     raise_err = kwargs.get("raise_err", False)
@@ -454,7 +481,7 @@ def extract_all(source, dest):
 
     Example
 
-        >>> upy.extract_all("path/to/src", "path/to/dest")
+        extract_all("path/to/src", "path/to/dest")
     """
     source = osp.abspath(source)
     dest   = osp.abspath(dest)
@@ -512,7 +539,7 @@ def abslistdir(path, filter_ = None):
     l = lmap(lambda f: osp.join(path, f), os.listdir(path))
     
     if filter_:
-        l = lfilter(filter_, l)
+        l = array_filter(filter_, l)
 
     return l
 

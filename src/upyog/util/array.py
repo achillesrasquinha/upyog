@@ -20,7 +20,7 @@ def compact(arr, type_ = list):
 
     Example::
 
-        >>> upy.compact([1, None, 2, False, 3, 4, "", 5])
+        compact([1, None, 2, False, 3, 4, "", 5])
         [1, 2, 3, 4, 5]
     """
     return type_(filter(bool, arr))
@@ -36,9 +36,9 @@ def squash(seq):
 
     Example::
 
-        >>> upy.squash([1, 2, 3, 4, 5])
+        squash([1, 2, 3, 4, 5])
         [1, 2, 3, 4, 5]
-        >>> upy.squash([1])
+        squash([1])
         1
     """
     value = seq
@@ -58,7 +58,7 @@ def flatten(arr):
 
     Example::
 
-        >>> upy.flatten([[1], [2, 3], [4, 5, 6]])
+        flatten([[1], [2, 3], [4, 5, 6]])
         [1, 2, 3, 4, 5]
     """
     if is_python_version(major = 2, minor = 6): # pragma: no cover
@@ -80,9 +80,9 @@ def iterify(value):
 
     Example::
 
-        >>> upy.iterify([1])
+        iterify([1])
         [1]
-        >>> upy.iterify(3)
+        iterify(3)
         [3]
     """
     if not isinstance(value, (list, tuple)):
@@ -104,7 +104,7 @@ def chunkify(arr, n):
 
     Example::
 
-        >>> upy.sequencify([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3)
+        sequencify([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 3)
     """
     for i in range(0, len(arr), n):
         yield arr[i:i + n]
@@ -175,9 +175,9 @@ def is_list_like(obj):
 
     Example::
 
-        >>> upy.is_list_like([1, 2, 3])
+        is_list_like([1, 2, 3])
         True
-        >>> upy.is_list_like(1)
+        is_list_like(1)
         False
     """
     return isinstance(obj, (list, tuple, set, frozenset))
@@ -191,9 +191,9 @@ def is_sequence_like(obj):
 
     Example::
 
-        >>> upy.is_sequence_like([1, 2, 3])
+        is_sequence_like([1, 2, 3])
         True
-        >>> upy.is_sequence_like(1)
+        is_sequence_like(1)
         False
     """
     return is_list_like(obj) or isinstance(obj, str)
@@ -209,9 +209,9 @@ def sequencify(value, type_ = list):
 
     Example::
 
-        >>> upy.sequencify([1])
+        sequencify([1])
         [1]
-        >>> upy.sequencify(3)
+        sequencify(3)
         [3]
     """
     if not is_list_like(value):

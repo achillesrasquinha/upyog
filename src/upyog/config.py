@@ -33,11 +33,13 @@ def get_config_path(name):
     return osp.join(basedir, ".config", name)
 
 PATH                = autodict()
-PATH["BASE"]        = pardir(__file__)
+PATH["ROOT"]        = pardir(__file__, 3)
+PATH["BASE"]        = osp.join(PATH["ROOT"], "src", NAME)
 PATH["DATA"]        = osp.join(PATH["BASE"], "data")
 PATH["CACHE"]       = get_config_path(NAME)
 PATH["JOBS"]        = osp.join(PATH["BASE"], "jobs")
 PATH["TEMPLATES"]   = osp.join(PATH["DATA"], "templates")
+PATH["TESTS"]       = osp.join(PATH["ROOT"], "tests", NAME)
 
 class Configuration(object):
     # BUGFIX: # 63 Always complains about invalid config.ini - https://github.com/achillesrasquinha/pipupgrade/issues/63

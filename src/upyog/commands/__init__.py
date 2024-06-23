@@ -5,7 +5,7 @@ import os, os.path as osp
 
 from upyog.commands.util 	 import cli_format
 from upyog.util._dict        import merge_dict
-from upyog.util.types        import lmap, auto_typecast, lfilter
+from upyog.util.types        import lmap, auto_typecast, array_filter
 from upyog.util.string       import strip
 from upyog.util.imports      import import_handler
 from upyog.util.system       import (
@@ -20,7 +20,7 @@ from upyog.util.datetime     import get_timestamp_str
 from upyog.db                import run_db_shell
 from upyog 		      	     import (cli, log, parallel)
 from upyog._compat		     import iteritems, Mapping
-from upyog.config            import environment, get_config_path
+from upyog.config            import environment, get_config_path, PATH
 from upyog.__attr__      	 import __name__ as NAME
 from upyog.exception         import DependencyNotFoundError
 import upyog as upy
@@ -257,7 +257,7 @@ def _command(*args, **kwargs):
         handlers = set()
 
         if a.upy_scan:
-            files = lfilter(
+            files = array_filter(
                 lambda x: x.endswith(".py"),
                 flatten(map(get_files, a.upy_scan))
             )
@@ -278,6 +278,7 @@ def _command(*args, **kwargs):
                 handlers.add(api)
 
         handlers = sorted(handlers)
+        test_handlers = []
 
         if handlers:
             logger.info(f"Found {len(handlers)} handlers: {', '.join(handlers)}")
@@ -326,7 +327,8 @@ def _command(*args, **kwargs):
                         for import_ in imports:
                             source = f"import {import_}"
                             sources.append({
-                                "key": import_, "value": source
+                                "key": import_, "value": source,
+                                "import": True
                             })
 
                         source = f"{name} = {value}"
@@ -337,7 +339,6 @@ def _command(*args, **kwargs):
                         return sources
                     else:
                         module    = ejectable["base"]
-
                         globals_  = ejectable["globals"]
 
                         for global_ in globals_:
@@ -355,6 +356,7 @@ def _command(*args, **kwargs):
                                     sources.append({
                                         "key": dep, "value": source
                                     })
+                                    test_handlers.append(dep)
 
                         source = inspect.getsource(module)
                         source = re.sub(r"(@upy\.)*@*ejectable\((.*)\)", "", source)
@@ -371,7 +373,7 @@ def _command(*args, **kwargs):
                         content += response
 
                 if content:
-                    final   = {}
+                    final = {}
                     for item in content:
                         key, value = item["key"], item["value"]
                         if key not in final:
@@ -383,3 +385,30 @@ def _command(*args, **kwargs):
                     sources = "\n".join(sources)
                     upy.write(target, strip(sources), force = True)
                     upy.popen(f"black {target}")
+
+    if a.upy_eject_tests:
+        output = ""
+
+        for handler in (handlers + test_handlers):
+            test_path = osp.join(PATH["TESTS"], f"test_upyog_{handler}.py")
+            if osp.exists(test_path):
+                content = read(test_path)
+                module  = a.upy_eject_module
+                alias   = a.upy_eject_alias
+
+                if module:
+                    prefix  = module.replace(".", "_")
+                    content = re.sub(r"test_upyog", f"test_{prefix}", content)
+                    content = re.sub(r"upyog", module, content)
+
+                if alias:
+                    content = re.sub(r"upy", alias, content)
+
+                target_base = osp.abspath(a.upy_eject_tests)
+
+                output = f"{output}\n{content}"
+            else:
+                logger.warning(f"No tests found for handler {handler}")
+        
+        upy.write(target_base, output, force = True)
+        upy.popen(f"black {target_base}")

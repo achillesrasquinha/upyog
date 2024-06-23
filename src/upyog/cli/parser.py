@@ -18,6 +18,7 @@ from upyog.__attr__     import (
 from upyog.i18n import _
 from upyog.util.environ    import getenv
 from upyog.cli             import util as _cli
+from upyog.util.cli        import cli_format
 from upyog.cli.formatter   import ArgumentParserFormatter
 from upyog.cli.util        import _CAN_ANSI_FORMAT, add_github_args
 from upyog.util.git        import resolve_git_url
@@ -32,9 +33,9 @@ _DESCRIPTION_JUMBOTRON = \
 
 %s
 """ % (
-    _cli.format(__name__,        _cli.RED),
-    _cli.format(__version__,     _cli.BOLD),
-    _cli.format(__description__, _cli.BOLD)
+    cli_format(__name__,        _cli.RED),
+    cli_format(__version__,     _cli.BOLD),
+    cli_format(__description__, _cli.BOLD)
 )
 
 class ConfigFileAction(argparse.Action):
@@ -232,6 +233,15 @@ def get_parser():
         action  = "append",
         help    = "API to eject."
     )
+    parser.add_argument("--upy-eject-tests",
+        help    = "Eject tests."
+    )
+    parser.add_argument("--upy-eject-module",
+        help    = "Eject alias."
+    )
+    parser.add_argument("--upy-eject-alias",
+        help    = "Eject alias."
+    )
 
     if any("upyog" in arg for arg in sys.argv):
         parser.add_argument("-h", "--help",
@@ -264,9 +274,9 @@ def _render_jumbotron(name, version = None, description = None):
 
 %s
 """ % (
-    _cli.format(__name__,        _cli.RED),
-    _cli.format(__version__,     _cli.BOLD),
-    _cli.format(__description__, _cli.BOLD)
+    cli_format(__name__,        _cli.RED),
+    cli_format(__version__,     _cli.BOLD),
+    cli_format(__description__, _cli.BOLD)
 )
 
     return jumbotron

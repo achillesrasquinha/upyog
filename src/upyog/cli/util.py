@@ -53,17 +53,6 @@ def confirm(query, quit_ = True):
     
     return output in _ACCEPTABLE_INPUTS_YES
 
-def format(string, type_):
-    if _CAN_ANSI_FORMAT_WINDOWS: # pragma: no cover
-        import ctypes
-        kernel32 = ctypes.windll.kernel32
-        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
-
-    if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
-        string = "{}{}{}".format(type_, string, CLEAR)
-
-    return string
-
 def echo(string = "", file = None, nl = True):
     nl = "\n" if nl else ""
     
@@ -71,7 +60,7 @@ def echo(string = "", file = None, nl = True):
     
     if file:
         string = strip_ansi(string)
-        write(file, string + nl, append = True)
+        upy.write(file, string + nl, append = True)
 
 def add_github_args(parser, env_prefix = None):
     parser.add_argument("--github-access-token",
@@ -87,3 +76,14 @@ def add_github_args(parser, env_prefix = None):
         default = getenv("GITHUB_USERNAME", prefix = env_prefix)
     )
     return parser
+
+def format(string, type_):
+    if _CAN_ANSI_FORMAT_WINDOWS: # pragma: no cover
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        kernel32.SetConsoleMode(kernel32.GetStdHandle(-11), 7)
+
+    if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
+        string = "{}{}{}".format(type_, string, CLEAR)
+
+    return string

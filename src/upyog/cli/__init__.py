@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 # imports - module imports
-from upyog.cli.util   import *
+from upyog.util.cli   import *
 from upyog.cli.parser import get_args
 from upyog.util._dict import merge_dict
 from upyog.util.types import get_function_arguments

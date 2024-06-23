@@ -1,7 +1,7 @@
 # imports - module imports
 from upyog.util.types import (
     get_function_arguments,
-    lfilter,
+    array_filter,
     lmap,
     build_fn
 )
@@ -16,11 +16,11 @@ def test_get_function_arguments():
     assert get_function_arguments(foobar) == dict(foo = "bar", bar = "baz")
     assert get_function_arguments(barfoo) == dict()
 
-def test_lfilter():
+def test_array_filter():
     l = [1, 2, 3, 4, 5]
     is_even = lambda x: x % 2 == 0
 
-    assert lfilter(is_even, l) == list(filter(is_even, l))
+    assert array_filter(is_even, l) == list(filter(is_even, l))
 
 def test_lmap():
     l = [1, 2, 3, 4, 5]

@@ -31,11 +31,11 @@ def _extract_and_format_snippet(path_file, from_ = 0, offset = 3, indent = 4):
             line_num_color  = _COLOR_LINE_NUMBER
 
             if line_num == from_:
-                line_num_format = "%s%s" % (_cli.format("→ ", _cli.RED), line_num_format)
+                line_num_format = "%s%s" % (cli_format("→ ", _cli.RED), line_num_format)
                 line_indent = 2
                 line_num_color = _cli.BOLD
 
-            line_num_format += _cli.format(str(line_num), line_num_color) + _cli.format("|", _COLOR_LINE_NUMBER)
+            line_num_format += cli_format(str(line_num), line_num_color) + cli_format("|", _COLOR_LINE_NUMBER)
 
             formatted_line = nl(tb(line_num_format, line_indent) + tb(line, indent))
 
@@ -70,9 +70,9 @@ def pretty_print_error(e):
     error_msg  = getattr(e, "message", str(e))
     indent     = _INDENT
     
-    formatted  = nl(tb(_cli.format(error_name, _cli.RED), indent))
+    formatted  = nl(tb(cli_format(error_name, _cli.RED), indent))
     if error_msg:
-        formatted += nl() + nl(tb(_cli.format(error_msg, _cli.BOLD), indent))
+        formatted += nl() + nl(tb(cli_format(error_msg, _cli.BOLD), indent))
 
     _cli.echo(formatted)
 
@@ -83,9 +83,9 @@ def pretty_print_error(e):
         path_file, line_num, method = _get_error_line_info(error_line)
 
         formatted = \
-            nl(tb("at " + _cli.format(path_file, _cli.GREEN)    \
-            + _cli.format(":%s in " % line_num, _cli.BOLD)      \
-            + _cli.format(method, _cli.CYAN), indent))
+            nl(tb("at " + cli_format(path_file, _cli.GREEN)    \
+            + cli_format(":%s in " % line_num, _cli.BOLD)      \
+            + cli_format(method, _cli.CYAN), indent))
 
         formatted  += _extract_and_format_snippet(path_file, from_ = line_num,
             indent = 4)

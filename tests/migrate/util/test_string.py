@@ -45,11 +45,6 @@ def test_safe_decode():
     
     assert safe_decode(123456789) == 123456789
 
-def test_upper():
-    assert upper('foobar') == 'FOOBAR'
-    assert upper('FOOBAR') == 'FOOBAR'
-    assert upper('FoObAr') == 'FOOBAR'
-
 def test_lower():
     assert lower('FoObAr') == 'foobar'
     assert lower('FOOBAR') == 'foobar'

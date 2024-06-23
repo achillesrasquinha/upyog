@@ -118,6 +118,25 @@ def sanitize(string, encoding = "utf-8"):
 
 @ejectable()
 def upper(text):
+    """
+        Convert text to uppercase
+
+        Args:
+            text (str): The text to be converted.
+
+        Returns:
+            str: The converted text.
+
+        Example:
+            >>> upper("hello")
+            "HELLO"
+            >>> upper("hello world")
+            "HELLO WORLD"
+            >>> upper("hello world!")
+            "HELLO WORLD!"
+            >>> upper("HELLO")
+            "HELLO"
+    """
     text = text.upper()
     return text
 

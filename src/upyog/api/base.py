@@ -360,14 +360,19 @@ class BaseAPI(BaseObject):
             transport = httpx.AsyncHTTPTransport(retries = self._retries,
                 verify = verify, cert = cert)
             session   = httpx.AsyncClient(transport = transport)
+            
             async with session:
                 wait = req_args.pop("wait", None)
                 if wait:
                     time.sleep(wait)
 
-                response = await session.request(method, url,
+                request  = session.build_request(method, url,
                     headers = req_args["headers"],
                     *req_args["args"], **req_args["kwargs"])
+                while request is not None:
+                    response = await session.send(request)
+                    request  = response.next_request
+
                 return response
 
     def get(self, url, *args, **kwargs):
@@ -502,7 +507,7 @@ class SuperAPI(BaseObject):
 
         self.pool = {
             get_random_str(): {
-                "client": interface(retries = retries, on_error = on_error),
+                 "client": interface(retries = retries, on_error = on_error),
                  "config": cfg
             } for cfg in config
         }

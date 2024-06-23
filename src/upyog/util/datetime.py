@@ -38,9 +38,9 @@ def get_timestamp_str(format_ = '%Y-%m-%d %H:%M:%S'):
 
     Example:
         
-        >>> upy.get_timestamp_str()
+        get_timestamp_str()
         '2021-09-15 14:24:11'
-        >>> upy.get_timestamp_str(format_ = '%d/%m/%Y')
+        get_timestamp_str(format_ = '%d/%m/%Y')
         '15/09/2021'
     """
     import time, datetime as dt
@@ -65,11 +65,11 @@ def check_datetime_format(datetime, format_, raise_err = False):
 
     Example:
 
-        >>> upy.check_datetime_format('2011-11-11', '%Y-%m-%d')
+        check_datetime_format('2011-11-11', '%Y-%m-%d')
         True
-        >>> upy.check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d')
+        check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d')
         False
-        >>> upy.check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d', raise_err = True)
+        check_datetime_format('2011-11-11 11:12:13', '%Y-%m-%d', raise_err = True)
         ValueError: Incorrect datetime format, expected %Y-%m-%d
     """
     try:
@@ -82,14 +82,12 @@ def check_datetime_format(datetime, format_, raise_err = False):
     
     return True
 
-_AUTO_FORMATS = [
+_AUTO_DATETTIME_FORMATS = [
     '%Y-%m-%d %H:%M:%S.%f%z',
     '%Y-%m-%d %H:%M:%S.%f',
     '%Y-%m-%d %H:%M:%S',
     '%Y-%m-%d %H:%M',
     '%Y-%m-%d',
-    '%Y-%m',
-    '%Y',
     '%d-%m-%Y %H:%M:%S.%f%z',
     '%d-%m-%Y %H:%M:%S.%f',
     '%d-%m-%Y %H:%M:%S',
@@ -98,30 +96,49 @@ _AUTO_FORMATS = [
     '%H:%M:%S.%f%z',
     '%H:%M:%S.%f',
     '%H:%M:%S',
+    '%H:%M',
+    '%H',
     '%Y-%m-%dT%H:%M:%S%z',
     '%Y-%m-%dT%H:%M:%S.%f%z'
 ]
 
-@ejectable(globals_ = { "_AUTO_FORMATS": _AUTO_FORMATS })
-def auto_datetime(string):
+@ejectable(globals_ = { "_AUTO_DATETTIME_FORMATS": _AUTO_DATETTIME_FORMATS })
+def auto_datetime(string, raise_err = True):
     """
         Convert string to datetime object
+
+        Args:
+            string (str): The string to be converted.
+            raise_err (bool): Raise an error if the string is not a valid datetime format.
+
+        Returns:
+            datetime.datetime: The datetime object.
+
+        Example:
+            >>> auto_datetime("2021-09-15 14:24:11")
+            datetime.datetime(2021, 9, 15, 14, 24, 11)
+            >>> auto_datetime(1631711051)
+            datetime.datetime(2021, 9, 15, 14, 24, 11)
+            >>> auto_datetime("2021-09-15 14:24:11", raise_err = False)
+            datetime.datetime(2021, 9, 15, 14, 24, 11)
     """
     import datetime as dt
+    from datetime import timezone
 
     if isinstance(string, dt.datetime):
         return string
     
     if isinstance(string, (int, float)):
-        return dt.datetime.fromtimestamp(string)
+        return dt.datetime.fromtimestamp(string, timezone.utc)
 
-    for format_ in _AUTO_FORMATS:
+    for format_ in _AUTO_DATETTIME_FORMATS:
         try:
             return dt.datetime.strptime(string, format_)
         except ValueError:
             pass
 
-    raise ValueError("Incorrect datetime format, expected %s" % _AUTO_FORMATS)
+    if raise_err:
+        raise ValueError("Incorrect datetime format, expected %s" % _AUTO_DATETTIME_FORMATS)
 
 def start_of(dt, type_):
     diff = None

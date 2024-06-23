@@ -34,11 +34,11 @@ def is_python_version(*args, **kwargs):
     import sys
     python_version = sys.version_info
 
-    major   = kwargs.get("major", None)
-    minor   = kwargs.get("minor", None)
-    micro   = kwargs.get("micro", None)
-    release = kwargs.get("release", None)
-    serial  = kwargs.get("serial", None)
+    major   = kwargs.get("major")
+    minor   = kwargs.get("minor")
+    micro   = kwargs.get("micro")
+    release = kwargs.get("release")
+    serial  = kwargs.get("serial")
 
     result  = True
 
@@ -62,8 +62,24 @@ def cmp(a, b):
 
 @ejectable(deps = ["is_python_version"])
 def iteritems(dict_, **kwargs):
+    """
+        Returns an iterator over the items of a dictionary.
+
+        Args:
+            dict_ (dict): Dictionary to iterate over.
+
+        Returns:
+            iterator
+
+        Example::
+            >>> dict_ = {"a": 1, "b": 2}
+            >>> for key, value in iteritems(dict_):
+            ...     print(key, value)
+            a 1
+            b 2
+    """
     if is_python_version(major = 2):
-        iterator = dict_.iteritems()
+        iterator = dict_.iteritems() # pragma: no cover
     else:
         iterator = iter(dict_.items(), **kwargs)
     return iterator
@@ -77,6 +93,22 @@ def iterkeys(dict_, **kwargs):
 
 @ejectable(deps = ["is_python_version"])
 def itervalues(dict_, **kwargs):
+    """
+        Returns an iterator over the values of a dictionary.
+
+        Args:
+            dict_ (dict): Dictionary to iterate over.
+            
+        Returns:
+            iterator
+
+        Example::
+            >>> dict_ = {"a": 1, "b": 2}
+            >>> for value in itervalues(dict_):
+            ...     print(value)
+            1
+            2
+    """
     if is_python_version(major = 2): # pragma: no cover
         iterator = dict_.itervalues()
     else:

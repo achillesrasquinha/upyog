@@ -3,9 +3,10 @@ from functools import partial
 
 # imports - compatibility imports
 from upyog import _compat
-from upyog._compat import iteritems, iterkeys, itervalues, Mapping
-from upyog.util._dict import dict_from_list
+from upyog._compat import iteritems, Mapping
+from upyog.util._dict import dict_from_list, dict_items, dict_keys, dict_values
 from upyog.util.datetime import auto_datetime
+from upyog.util.check import check_array
 from upyog.util.eject import ejectable
 
 # imports - standard imports
@@ -70,7 +71,33 @@ def get_function_arguments(fn):
 
 #     return x
 
-@ejectable()
+@ejectable(deps = ["dict_items"])
+def str2bool(x, raise_err = True):
+    """
+    Convert a string to a boolean.
+
+    :param x: The string to be converted.
+
+    Example::
+
+        >>> str2bool("True")
+        True
+        >>> str2bool("False")
+        False
+    """
+    _map = {
+        True: ("True", "true"), False: ("False", "false"),
+        None: ("None", "null", "NULL")
+    }
+
+    for k, v in dict_items(_map):
+        if x in v:
+            return k
+        
+    if raise_err:
+        raise ValueError("Invalid boolean value: {}".format(x))
+
+@ejectable(deps = ["str2bool", "auto_datetime"])
 def auto_typecast(value):
     """
     Automatically convert a string into its desired data type.
@@ -78,15 +105,12 @@ def auto_typecast(value):
     :param value: The value to be converted.
 
     Example::
-
-        >>> upy.auto_typecast("True")
+        >>> auto_typecast("True")
         True
-        >>> upy.auto_typecast("1.2345")
+        >>> auto_typecast("1.2345")
         1.2345
     """
-    str_to_bool = lambda x: { "True": True, "False": False, "None": None}[x]
-
-    for type_ in (str_to_bool, int, float, auto_datetime):
+    for type_ in (str2bool, int, float, auto_datetime):
         try:
             return type_(value)
         except (KeyError, ValueError, TypeError):
@@ -96,18 +120,52 @@ def auto_typecast(value):
 
 @ejectable()
 def gen2seq(gen, type_ = list):
+    """
+        Convert a Generator to a Sequence.
+
+        Args:
+            gen (generator): The generator to be converted.
+            type_ (type): The type of the sequence to be converted to.
+
+        Returns:
+            type_: The sequence.
+
+        Example::
+            >>> array_filter = gen2seq(filter)
+            >>> arr     = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            >>> array_filter(lambda x: x % 2 == 0, arr)
+            [0, 2, 4, 6, 8]
+    """
     def fn(*args, **kwargs):
         return type_(gen(*args, **kwargs))
     return fn
 
 @ejectable(deps = ["check_array"])
 def filter2(fn, arr, other = False):
+    """
+        Filter a List.
+
+        Args:
+            fn (function): The function to filter the array.
+            arr (list): The array to be filtered.
+            other (bool): If True, returns a tuple of filtered and other elements.
+
+        Returns:
+            list: The filtered list.
+
+        Example::
+            >>> filter2(lambda x: x > 2, [1, 2, 3, 4, 5])
+            [3, 4, 5]
+            >>> filter2(lambda x: x > 2, [1, 2, 3, 4, 5], other = True)
+            ([3, 4, 5], [1, 2])
+    """
     if not callable(fn):
         if check_array(fn, raise_err = False):
             l  = fn
             fn = lambda x: x not in l
         else:
-            fn = lambda x: x != fn
+            f  = fn
+            fn = lambda x: x != f
 
     filtered, others = [], []
     for x in arr:
@@ -117,12 +175,29 @@ def filter2(fn, arr, other = False):
             others.append(x)
     
     if other:
-        return filtered, others
+        return (filtered, others)
     else:
         return filtered
 
 @ejectable(deps = ["gen2seq", "filter2"])
-def lfilter(fn, arr, other = False):
+def array_filter(fn, arr, other = False):
+    """
+        Filter a List that returns a Sequence.
+
+        Args:
+            fn (function): The function to filter the array.
+            arr (list): The array to be filtered.
+            other (bool): If True, returns a tuple of filtered and other elements.
+
+        Returns:
+            list: The filtered list.
+
+        Example::
+            >>> array_filter(lambda x: x > 2, [1, 2, 3, 4, 5])
+            [3, 4, 5]
+            >>> array_filter(lambda x: x > 2, [1, 2, 3, 4, 5], other = True)
+            ([3, 4, 5], [1, 2])
+    """
     return gen2seq(filter2)(fn, arr, other = other)
 
 @ejectable(deps = ["gen2seq"])
@@ -155,29 +230,6 @@ def build_fn(fn, *args, **kwargs):
     return partial(fn, *args, **kwargs)
 
 @ejectable()
-def check_array(o, raise_err = True):
-    """
-    Check if an object is an array.
-
-    :param o: The object to be checked.
-    :param raise_err: If True, raises an error if the object is not an array.
-
-    Example::
-
-        >>> upy.check_array([1, 2, 3])
-        True
-        >>> upy.check_array(1)
-        False
-    """
-    if isinstance(o, (list, tuple, set)):
-        return True
-    else:
-        if raise_err:
-            raise TypeError("Object is not an array.")
-        else:
-            return False
-
-@ejectable()
 def classname(obj):
     """
     Get the name of a class.
@@ -186,9 +238,9 @@ def classname(obj):
 
     Example::
 
-        >>> upy.classname("Hello World")
+        classname("Hello World")
         'str'
-        >>> upy.classname(1)
+        classname(1)
         'int'
     """
     return obj.__class__.__name__
@@ -202,11 +254,11 @@ def is_num_like(x):
 
     Example::
 
-        >>> upy.is_num_like(1)
+        is_num_like(1)
         True
-        >>> upy.is_num_like("Hello World")
+        is_num_like("Hello World")
         False
-        >>> upy.is_num_like("1")
+        is_num_like("1")
         True
     """
     if isinstance(x, str):
@@ -225,9 +277,9 @@ def is_dict_like(x):
 
     Example::
 
-        >>> upy.is_dict_like({ "foo": "bar" })
+        is_dict_like({ "foo": "bar" })
         True
-        >>> upy.is_dict_like([1, 2, 3])
+        is_dict_like([1, 2, 3])
         False
     """
     return isinstance(x, Mapping)
@@ -253,9 +305,10 @@ def to_object(d):
 
     return params
 
-@ejectable()
+@ejectable(deps = ["dict_keys", "dict_values"])
 def combinations(options):
     import itertools
     return [
-        dict(zip(iterkeys(options), value)) for value in itertools.product(*itervalues(options))
+        dict(zip(dict_keys(options), value))
+            for value in itertools.product(*dict_values(options))
     ]

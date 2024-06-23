@@ -1,7 +1,7 @@
 import os.path as osp
 
-from upyog.util.system import check_path, get_basename
 from upyog.model.base  import BaseObject
+from upyog.util.system import check_path, get_basename
 
 class Package(BaseObject):
     def __init__(self, path = None):

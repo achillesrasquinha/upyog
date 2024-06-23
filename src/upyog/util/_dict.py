@@ -1,37 +1,51 @@
-import functools
-
-from collections import defaultdict
+import collections
 
 from upyog._compat import iteritems, Mapping, iterkeys, itervalues
 from upyog.util.eject import ejectable
+from upyog.util.check import check_array
 import upyog as upy
 
-@ejectable(deps = ["iteritems"])
-def merge_deep(source, dest):
+@ejectable(deps = ["items"])
+def merge_deep(dest, source):
+    """
+        Merge Dictionaries Deeply. `merge_deep` will override keys from right to left.
+
+        Args:
+            source (dict): Source dictionary.
+            dest (dict): Destination dictionary.
+
+        Returns:
+            dict: Merged dictionary.
+
+        Example::
+            >>> merge_deep({ 'foo': { 'bar': 'baz' } }, { 'foo': { 'baz': 'boo' } })
+            {'foo': {'bar': 'baz', 'baz': 'boo'}}
+    """
     # https://stackoverflow.com/a/20666342
-    for key, value in iteritems(source):
+    for key, value in dict_items(source):
         if isinstance(value, dict):
             node = dest.setdefault(key, {})
-            merge_deep(value, node)
+            dest[key] = merge_deep(node, value)
         else:
-            dest[key] = value
-            
+            dest[key] = source[key]
+
     return dest
 
 @ejectable(deps = ["merge_deep"])
 def merge_dict(*args, **kwargs):
     """
     Merge Dictionaries.
-    
-    :param args: arguments of dictionaries to be merged. `merge_dict` will override keys from right to left.
 
-    :returns: dict
+    Args:
+        args: arguments of dictionaries to be merged. `merge_dict` will override keys from right to left.
 
-    Example::
-    
-        >>> upy.merge_dict({ 'foo': 'bar' }, { 'bar': 'baz' }, { 'baz': 'boo' })
+    Returns:
+        dict: Merged dictionary.
+
+    Example:
+        >>> merge_dict({ 'foo': 'bar' }, { 'bar': 'baz' }, { 'baz': 'boo' })
         {'foo': 'bar', 'bar': 'baz', 'baz': 'boo'}
-        >>> upy.merge_dict({ 'foo': 'bar' }, { 'foo': 'baz', 'bar': 'boo' })
+        >>> merge_dict({ 'foo': 'bar' }, { 'foo': 'baz', 'bar': 'boo' })
         {'foo': 'baz', 'bar': 'boo'}
     """
     deep = kwargs.get("deep", False)
@@ -42,32 +56,34 @@ def merge_dict(*args, **kwargs):
         copy = arg.copy()
 
         if deep:
-            merged = merge_deep(copy, merged)
+            merged = merge_deep(merged, copy)
         else:
             merged.update(copy)
 
     return merged
 
-@ejectable()
+@ejectable(deps = ["check_array"])
 def dict_from_list(keys, values = None):
     """
     Generate a dictionary from a list of keys and values.
     You can also use this function to generate a dictionary from a list of dictionaries.
 
-    :param keys: A list of keys.
-    :param values: A list of values.
-        If `values` is a string, it will be used as the key to generate the dictionary.
+    Args:
+        keys (list): A list of keys.
+        values (list, str): A list of values. If `values` is a string, it will be used as the key to generate the dictionary.
 
-    :returns: dict
+    Returns:
+        dict: A dictionary.
 
     Example::
-
-        >>> upy.dict_from_list(['a', 'b', 'c'], [1, 2, 3])
+        >>> dict_from_list(['a', 'b', 'c'], [1, 2, 3])
         {'a': 1, 'b': 2, 'c': 3}
-        >>> upy.dict_from_list([{'name': 'foo'}, {'name': 'bar'}], 'name')
+        >>> dict_from_list([{'name': 'foo'}, {'name': 'bar'}], 'name')
         {'foo': {'name': 'foo'}, 'bar': {'name': 'bar'}}
-        >>> upy.dict_from_list(['a', 'b', 'c'])
+        >>> dict_from_list(['a', 'b', 'c'])
         {'a': None, 'b': None, 'c': None}
+        >>> dict_from_list(['a', 'b', 'c'], 1)
+        {'a': 1, 'b': 1, 'c': 1}
     """
     import functools
 
@@ -80,36 +96,50 @@ def dict_from_list(keys, values = None):
             arr, {}
         )
 
+    n_keys = len(keys)
+
     if not values:
-        values = [None] * len(keys)
+        values = [None]   * n_keys
+
+    if not check_array(values, raise_err = False):
+        values = [values] * n_keys
 
     return dict(zip(keys, values))
 
-class AutoDict(defaultdict):
+@ejectable(imports = ["collections"])
+class AutoDict(collections.defaultdict):
     __repr__ = dict.__repr__
 
-@ejectable()
+@ejectable(deps = ["dict_items", "AutoDict"])
 def autodict(*args, **kwargs):
     """
     Automatically adds a key to a dictionary.
 
-    Example::
+    Args:
+        args: arguments of dictionaries to be merged.
+        dict_type (type): The type of the dictionary.
+    
+    Returns:
+        dict: A dictionary.
 
-        >>> d = upy.autodict()
+    Example::
+        >>> d = autodict()
+        >>> d['foo']['bar']['baz'] = 'boo'
+        {'foo': {'bar': {'baz': 'boo'}}}
+
+        >>> d = autodict({ 'foo': 'bar' })
         >>> d['foo']['bar']['baz'] = 'boo'
         {'foo': {'bar': {'baz': 'boo'}}}
     """
     from collections import defaultdict
-
-    class AutoDict(defaultdict):
-        __repr__ = dict.__repr__
+    from collections.abc import Mapping
 
     dict_type = kwargs.pop("dict_type", dict)
 
     _autodict = AutoDict(autodict)
     update    = dict_type(*args, **kwargs)
 
-    for key, value in iteritems(update):
+    for key, value in dict_items(update):
         if isinstance(value, Mapping):
             value = autodict(value)
         
@@ -130,7 +160,7 @@ def lkeys(d):
 
     Example::
 
-        >>> upy.lkeys({ 'foo': 'bar', 'baz': 'boo' })
+        lkeys({ 'foo': 'bar', 'baz': 'boo' })
         ['foo', 'baz']
     """
     return list(iterkeys(d))
@@ -146,7 +176,7 @@ def lvalues(d):
 
     Example::
 
-        >>> upy.lvalues({ 'foo': 'bar', 'baz': 'boo' })
+        lvalues({ 'foo': 'bar', 'baz': 'boo' })
         ['bar', 'boo']
     """
     return list(itervalues(d))
@@ -162,7 +192,7 @@ def litems(d):
 
     Example::
 
-        >>> upy.litems({ 'foo': 'bar', 'baz': 'boo' })
+        litems({ 'foo': 'bar', 'baz': 'boo' })
         [('foo', 'bar'), ('baz', 'boo')]
     """
     return list(iteritems(d))
@@ -182,9 +212,9 @@ def check_struct(d, struct, raise_err = True):
 
     :Example:
 
-        >>> upy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": str } })
+        check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": str } })
         True
-        >>> upy.check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": int } }, raise_err = False)
+        check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": int } }, raise_err = False)
         False
     """
     if not isinstance(d, dict):
@@ -392,3 +422,17 @@ def magic_dict(*args, **kwargs):
             self.__dict__ = self
 
     return AttrDict(*args, **kwargs)
+
+@ejectable()
+def dict_keys(d):
+    return d.keys()
+
+@ejectable()
+def dict_values(d):
+    return d.values()
+
+@ejectable()
+def dict_items(d):
+    return d.items()
+
+

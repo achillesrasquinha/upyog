@@ -10,9 +10,9 @@ def sign(x):
 
     Example::
 
-        >>> upy.sign(1)
+        sign(1)
         1
-        >>> upy.sign(-1)
+        sign(-1)
         -1
     """
     return (1, -1)[x < 0]
@@ -25,7 +25,7 @@ def avg(*args):
 
     Example::
 
-        >>> upy.avg(1, 2, 3)
+        avg(1, 2, 3)
         2.0
     """
     if is_list_like(args[0]):
@@ -53,7 +53,7 @@ def div(a, b):
 
     Example::
 
-        >>> upy.div(1, 2)
+        div(1, 2)
         0.5
     """
     if is_list_like(a) and is_list_like(b):

@@ -27,7 +27,8 @@ def ejectable(deps = None, globals_ = None, sources = None, as_ = None, alias = 
         name = _get_name(fn)
         if not name in _ejectables:
             _ejectables[name] = {
-                "base": None, "deps": [], "globals": [], "sources": []
+                "base": None, "deps": [], "globals": [], "sources": [],
+                "imports": imports
             }
 
         _ejectables[name]["base"] = fn
@@ -49,8 +50,11 @@ def ejectable(deps = None, globals_ = None, sources = None, as_ = None, alias = 
                 source = upy.import_handler(source)
                 _ejectables[name]["sources"].append(source)
 
+        import inspect
+
         def wrapper(*args, **kwargs):
             return fn(*args, **kwargs)
-        return wrapper
+
+        return fn if inspect.isclass(fn) else wrapper
 
     return decorator
