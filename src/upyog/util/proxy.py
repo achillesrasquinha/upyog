@@ -11,10 +11,10 @@ from upyog import log, db
 
 PROXY_COLUMNS = "host,port,secure,anonymity,country_code,available,error_rate,average_response_time"
 
-logger      = log.get_logger(level = log.DEBUG)
-connection  = db.get_connection()
+logger = log.get_logger(level = log.DEBUG)
 
 def save(values):
+    connection = db.get_connection()
     connection.query("""
         BEGIN TRANSACTION;
         %s
