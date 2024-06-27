@@ -8,6 +8,7 @@ from upyog.util.types  import lmap
 from upyog.util.array  import find
 from upyog.util.system import read
 from upyog.util.eject  import ejectable
+from upyog.util.cli    import cli_format
 
 _REGEX_PATTERN_TEXT_QUOTES = r'"([^"]*)"'
 _COLOR_LINE_NUMBER = _cli.GRAY

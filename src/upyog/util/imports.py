@@ -26,7 +26,7 @@ def import_handler(name):
         HANDLER_REGISTRY[name] = get_handler(name)
     return HANDLER_REGISTRY[name]
 
-@ejectable(deps = ["import_handler"])
+@ejectable(deps = ["import_handler", "DependencyNotFoundError"])
 def import_or_raise(package, name = None, dep = "upyog"):
     name = name or package
 

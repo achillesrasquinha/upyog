@@ -30,7 +30,7 @@ iso_weekday = dt.datetime.isoweekday
 EPOCH       = dt.datetime(1970, 1, 1)
 
 @ejectable()
-def get_timestamp_str(format_ = '%Y-%m-%d %H:%M:%S'):
+def get_timestamp_str(format_ = '%Y-%m-%d %H:%M:%S', dtobj = None):
     """
     Get current timestamp string.
 
@@ -45,9 +45,13 @@ def get_timestamp_str(format_ = '%Y-%m-%d %H:%M:%S'):
     """
     import time, datetime as dt
 
-    now       = time.time()
-    
-    datetime_ = dt.datetime.fromtimestamp(now)
+    now       = dtobj or time.time()
+
+    if isinstance(now, (int, float)):
+        datetime_ = dt.datetime.fromtimestamp(now)
+    else:
+        datetime_ = now
+
     string    = datetime_.strftime(format_)
 
     return string

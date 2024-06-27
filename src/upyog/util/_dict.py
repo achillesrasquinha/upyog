@@ -131,7 +131,6 @@ def autodict(*args, **kwargs):
         >>> d['foo']['bar']['baz'] = 'boo'
         {'foo': {'bar': {'baz': 'boo'}}}
     """
-    from collections import defaultdict
     from collections.abc import Mapping
 
     dict_type = kwargs.pop("dict_type", dict)
@@ -197,8 +196,8 @@ def litems(d):
     """
     return list(iteritems(d))
 
-@ejectable(as_ = "check_dict_struct")
-def check_struct(d, struct, raise_err = True):
+@ejectable(deps = ["dict_items"])
+def check_dict_struct(d, struct, raise_err = True):
     """
     Check if a dictionary has a certain structure.
 
@@ -212,9 +211,9 @@ def check_struct(d, struct, raise_err = True):
 
     :Example:
 
-        check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": str } })
+        check_dict_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": str } })
         True
-        check_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": int } }, raise_err = False)
+        check_dict_struct({ "foo": { "bar": "baz" } }, { "foo": { "bar": int } }, raise_err = False)
         False
     """
     if not isinstance(d, dict):
@@ -229,7 +228,7 @@ def check_struct(d, struct, raise_err = True):
         else:
             return False
 
-    for key, value in iteritems(struct):
+    for key, value in dict_items(struct):
         if key not in d:
             if raise_err:
                 raise ValueError("The key '%s' is not in the dictionary." % key)
@@ -237,7 +236,7 @@ def check_struct(d, struct, raise_err = True):
                 return False
 
         if isinstance(value, dict):
-            if not check_struct(d[key], value, raise_err):
+            if not check_dict_struct(d[key], value, raise_err):
                 return False
         else:
             check = True

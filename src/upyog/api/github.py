@@ -1,7 +1,7 @@
-from upyog.api.base import BaseAPI
+from upyog.api.base import BaseClient
 from upyog import request as req
 
-class GitHub(BaseAPI):
+class GitHub(BaseClient):
     url = "https://api.github.com"
 
     def __init__(self, *args, **kwargs):

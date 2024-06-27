@@ -2,12 +2,12 @@ import pytest
 
 from upyog.api.base import (
   _path_to_method_name,
-  BaseAPI
+  BaseClient
 )
 
 URL_HTTPBIN = "https://httpbin.org"
 
-class HttpBin(BaseAPI):
+class HttpBin(BaseClient):
 	url = URL_HTTPBIN
 	api = {
 		"paths": [{
@@ -42,7 +42,7 @@ def test__path_to_method_name():
 
 def test_base_api():
 	with pytest.raises(TypeError):
-		BaseAPI(proxies = 1)
+		BaseClient(proxies = 1)
 
 def test_base_api__create_api_function(httpbin):
 	_assert_response_ok(httpbin.json())

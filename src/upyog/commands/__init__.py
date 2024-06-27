@@ -389,7 +389,9 @@ def _command(*args, **kwargs):
     if a.upy_eject_tests:
         output = ""
 
-        for handler in (handlers + test_handlers):
+        handlers = upy.lset(handlers + test_handlers)
+
+        for handler in handlers:
             test_path = osp.join(PATH["TESTS"], f"test_upyog_{handler}.py")
             if osp.exists(test_path):
                 content = read(test_path)

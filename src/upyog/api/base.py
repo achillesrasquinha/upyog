@@ -17,7 +17,9 @@ from upyog.log                  import get_logger
 from upyog.util.request         import (
     download_file
 )
-from upyog.util.string          import get_random_str
+from upyog.util.string          import get_random_str, lower
+from upyog.util.eject           import ejectable
+from upyog.util._dict           import check_dict_struct
 
 logger = get_logger()
 
@@ -35,7 +37,8 @@ def _path_to_method_name(path):
 
     return method_name
 
-class BaseAPI(BaseObject):
+@ejectable(deps = ["BaseObject"])
+class BaseClient(BaseObject):
     _REPR_ATTRS = ("url",)
 
     """
@@ -49,7 +52,7 @@ class BaseAPI(BaseObject):
                  verbose = False, rate = None, auth = None, session = None, async_ = False,
                  retries = 1, on_error = None, timeout = None, api_key = None, 
                  cert = None, **kwargs):
-        super_ = super(BaseAPI, self)
+        super_ = super(BaseClient, self)
         super_.__init__(**kwargs)
 
         self._url = self._format_uri_path(url or getattr(self, "url") or "",
@@ -366,11 +369,13 @@ class BaseAPI(BaseObject):
                 if wait:
                     time.sleep(wait)
 
+                auth     = req_args["kwargs"].pop("auth", None)
+
                 request  = session.build_request(method, url,
                     headers = req_args["headers"],
                     *req_args["args"], **req_args["kwargs"])
                 while request is not None:
-                    response = await session.send(request)
+                    response = await session.send(request, auth = auth)
                     request  = response.next_request
 
                 return response
@@ -486,28 +491,183 @@ class BaseAPI(BaseObject):
     async def aclose(self):
         if self._async and self._session:
             return await self._session.aclose()
+    
+@ejectable(deps = ["BaseClient"])
+class AsyncBaseClient(BaseClient):
+    def __init__(self, *args, **kwargs):
+        kwargs["async_"] = True
+        super_ = super(AsyncBaseClient, self)
+        super_.__init__(*args, **kwargs)
+
+
+# @ejectable(deps = ["BaseObject", "lower", "check_dict_struct", "import_or_raise"])
+# class BaseClient(BaseObject):
+#     METHODS = (
+#         "HEAD",
+#         "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
+#         "TRACE", "CONNECT"
+#     )
+
+#     """
+#         Base Class for creating a client to interact with an API.
+
+#         Parameters:
+#             - async_ (bool): If True, the client will be asynchronous.
+#             - session (Session): The session to use for the API.
+#             - api_key (str): The API key to use for the API.
+#             - ping (bool): If True, the client will be pinged.
+#     """
+#     def __init__(self,
+#         async_  = False,
+#         session = None,
+
+#         api_key = None,
+
+#         ping    = False,
+
+#         *args, **kwargs):
+#         super_ = super(BaseClient, self)
+#         super_.__init__(*args, **kwargs)
+
+#         self._async   = async_
+#         self._session = session
+
+#         self._api_key = api_key
+
+#         self._setup()
+
+#         if ping:
+#             self.ping()
+
+#     def _setup(self):
+#         if not hasattr(self, "servers"):
+#             raise ValueError("No `servers` defined.")
         
-DEFAULT = {
-    "retries": 5
-}
+#         servers = getattr(self, "servers")
+#         check_dict_struct(servers, {
+#             "default": {
+#                 "url": str
+#             }
+#         })
 
-class SuperAPI(BaseObject):
-    def __init__(self, config = None, retries = DEFAULT["retries"],
-                 on_error = None, **kwargs):
-        super_ = super(SuperAPI, self)
-        super_.__init__(**kwargs)
+#         if not self._session:
+#             if self._async:
+#                 httpx    = import_or_raise("httpx")
+#                 self._session = httpx.AsyncClient()
+#             else:
+#                 requests = import_or_raise("requests")
+#                 self._session = requests.Session()
 
-        self.on_error = on_error
+#         rmethod = self.arequest if self._async else self.request
 
-        config    = sequencify(config or [])
+#         def fn(method):
+#             fn.__doc__ = f"Dispatch a {method} request to the server."
 
-        interface = kwargs.pop("interface", getattr(self, "interface", None))
-        if not interface:
-            raise ValueError("interface not specified")
+#             return lambda url=None, **kwargs: rmethod(method, url=url, **kwargs)
 
-        self.pool = {
-            get_random_str(): {
-                 "client": interface(retries = retries, on_error = on_error),
-                 "config": cfg
-            } for cfg in config
-        }
+#         for name in BaseClient.METHODS:
+#             attr = lower(name)
+#             if self._async:
+#                 attr = f"a{attr}"
+
+#             setattr(self, attr, fn(name))
+
+#     def resurl(self, path = None):
+#         from urllib.parse import urljoin
+
+#         server = getattr(self, "server", "default")
+#         server_config = self.servers[server]
+#         check_dict_struct(server_config, {
+#             "url": str
+#         })
+
+#         url = server_config["url"]
+
+#         if path:
+#             url = urljoin(url, path)
+
+#         return url
+
+#     def _build_request_args(self, url=None, **kwargs):
+#         url = self.resurl(url)
+#         headers = kwargs.get("headers", {})
+
+#         if self._api_key:
+#             headers.update({"X-Api-Key": self._api_key})
+
+#         return url, {
+#             **kwargs,
+#             "headers": headers,
+#         }
+
+#     def request(self, method, url = None, **kwargs):
+#         url, args = self._build_request_args(url, **kwargs)
+#         return self._session.request(method, url, **args)
+
+#     def ping(self):
+#         """
+#             Check if the URL is alive.
+
+#             Example:
+#                 >>> google  = BaseClient(url = 'https://www.google.com')
+#                 >>> google.ping()
+#                 'pong'
+#                 >>> invalid = BaseClient(url = 'https://www.invalid.com')
+#                 >>> invalid.ping()
+#                 ClientError
+#         """
+
+#         self.request("HEAD")
+#         return "pong"
+
+# @ejectable(deps = ["BaseClient"])
+# class AsyncBaseClient(BaseClient):
+#     def __init__(self, *args, **kwargs):
+#         kwargs["async_"] = True
+#         super_ = super(AsyncBaseClient, self)
+#         super_.__init__(*args, **kwargs)
+
+#     async def aping(self):
+#         """
+#             Check if the URL is alive.
+
+#             Example:
+#                 >>> google  = BaseClient(url = 'https://www.google.com', async_ = True)
+#                 >>> await google.ping()
+#                 'pong'
+#                 >>> invalid = BaseClient(url = 'https://www.invalid.com', async_ = True)
+#                 >>> await invalid.ping()
+#                 ClientError
+#         """
+#         await self.arequest("HEAD")
+#         return "pong"
+
+#     async def arequest(self, method, url=None, **kwargs):
+#         url, args, = self._build_request_args(url, **kwargs)
+#         return await self._session.request(method, url, **args)
+
+#     async def __aenter__(self):
+#         return self
+    
+#     async def __aexit__(self, *args, **kwargs):
+#         return await self.aclose()
+
+#     async def aclose(self):
+#         return await self._session.aclose()
+
+# @ejectable(deps = ["BaseObject"])
+# class SuperClient(BaseObject):
+#     def __init__(self, *args, **kwargs):
+#         super_ = super(SuperClient, self)
+#         super_.__init__(*args, **kwargs)
+
+#         self._setup()
+
+#     def _setup(self):
+#         if not hasattr(self, "client"):
+#             raise ValueError("No `client` defined.")
+
+
+# @ejectable(deps = ["SuperClient"])
+# class SuperAsyncClient(SuperClient):
+#     pass

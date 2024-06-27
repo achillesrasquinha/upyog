@@ -18,12 +18,18 @@ from upyog.__attr__ import (
     __description__,
     __author__
 )
+from builtins import *
 from upyog.util.eject import ejectable
 from upyog import cli
 from upyog.__main__    import main
 from upyog.config      import Settings
 from upyog.util.jobs   import run_all as run_all_jobs, run_job
-from upyog.api.base    import BaseAPI, SuperAPI
+from upyog.api.base    import (
+    BaseClient,
+    # AsyncBaseClient,
+    # SuperClient,
+    # SuperAsyncClient
+)
 from upyog.util.cli import (
     get_ansi_code,
     format_ansi
@@ -36,7 +42,7 @@ from upyog.util._dict  import (
     lkeys,
     lvalues,
     litems,
-    check_struct as check_dict_struct,
+    check_dict_struct,
     is_subdict,
     getattr2, hasattr2, setattr2,
     reverse_dict,
@@ -213,7 +219,10 @@ from upyog.cli.parser import (
 from upyog.cli.util import (
     confirm
 )
-from upyog.exception import PopenError
+from upyog.exception import (
+    PopenError,
+    DependencyNotFoundError
+)
 from upyog.i18n import _
 from upyog.model import BaseObject
 from upyog.util.log import (
