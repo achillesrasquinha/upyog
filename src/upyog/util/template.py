@@ -57,8 +57,12 @@ def _render_template_jinja(template, context = None, template_dirs = None):
 
         if template_dirs:
             args["loader"] = jinja2.FileSystemLoader(template_dirs)
+
+        from jinja2 import select_autoescape
             
-        env = jinja2.Environment(**args)
+        env = jinja2.Environment(**args, autoescape = select_autoescape(
+            ["html", "xml"]
+        ))
 
         env.from_string(content) \
             .stream(context) \
