@@ -655,19 +655,37 @@ class AsyncBaseClient(BaseClient):
 #     async def aclose(self):
 #         return await self._session.aclose()
 
-# @ejectable(deps = ["BaseObject"])
-# class SuperClient(BaseObject):
-#     def __init__(self, *args, **kwargs):
-#         super_ = super(SuperClient, self)
-#         super_.__init__(*args, **kwargs)
+@ejectable(deps = ["sequencify", "BaseObject"])
+class SuperClient(BaseObject):
+    def __init__(self,
+        on_error = None, *args, **kwargs):
+        super_ = super(SuperClient, self)
+        super_.__init__(*args, **kwargs)
 
-#         self._setup()
+        self.on_error = on_error
 
-#     def _setup(self):
-#         if not hasattr(self, "client"):
-#             raise ValueError("No `client` defined.")
+        self._setup()
 
+    def _setup(self):
+        if not hasattr(self, "client"):
+            raise ValueError("No `client` defined.")
+        
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, *args, **kwargs):
+        return self.close()
 
-# @ejectable(deps = ["SuperClient"])
-# class SuperAsyncClient(SuperClient):
-#     pass
+    def close(self):
+        raise NotImplementedError("close method not implemented.")
+
+@ejectable(deps = ["SuperClient"])
+class SuperAsyncClient(SuperClient):
+    async def __aenter__(self):
+        return self
+    
+    async def __aexit__(self, *args):
+        return await self.aclose()
+    
+    def aclose(self):
+        raise NotImplementedError("close method not implemented.")
