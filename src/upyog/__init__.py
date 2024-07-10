@@ -78,7 +78,8 @@ from upyog._compat import (
     quote as urlquote,
     StringIO,
     is_python_version,
-    Mapping
+    Mapping,
+    BytesIO
 )
 from upyog.util.array  import (
     compact,

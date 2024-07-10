@@ -22,7 +22,7 @@ def where(data, clause, other = False, clauses = False):
             force  = False
 
     for record in data:
-        add  = []
+        add = []
 
         if callable(clause):
             if not clause(record):
