@@ -11,6 +11,7 @@ from upyog.util.eject import ejectable
 
 ejectable(alias = { "key": "now", "alias": "datetime.datetime.now", "imports": "datetime" })
 now         = dt.datetime.now
+utcnow      = dt.datetime.utcnow
 ejectable(alias = { "key": "utcnow", "alias": "datetime.datetime.utcnow", "imports": "datetime" })
 timedelta   = dt.timedelta
 datetime    = dt.datetime
@@ -28,9 +29,9 @@ iso_weekday = dt.datetime.isoweekday
 
 EPOCH       = dt.datetime(1970, 1, 1)
 
-@ejectable()
-def utcnow():
-    return now(timezone.utc)
+# @ejectable()
+# def utcnow():
+#     return now(dt.timezone.utc)
 
 @ejectable()
 def get_timestamp_str(format_ = '%Y-%m-%d %H:%M:%S', dtobj = None):
