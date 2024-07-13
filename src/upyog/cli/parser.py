@@ -1,10 +1,8 @@
 from __future__ import absolute_import
 
 # imports - standard imports
-import os, sys, os.path as osp
+import sys
 import argparse
-import multiprocessing as mp
-import json
 
 # imports - module imports
 from upyog.__attr__     import (
@@ -18,14 +16,13 @@ from upyog.__attr__     import (
 from upyog.i18n import _
 from upyog.util.environ    import getenv
 from upyog.cli             import util as _cli
-from upyog.util.cli        import cli_format
+from upyog.util.cli        import cli_format, can_ansi_format
 from upyog.cli.formatter   import ArgumentParserFormatter
-from upyog.cli.util        import _CAN_ANSI_FORMAT, add_github_args
+from upyog.cli.util        import add_github_args
 from upyog.util.git        import resolve_git_url
 from upyog.util.system     import check_file
-from upyog.config          import load_config
 from upyog.util.eject      import ejectable
-from upyog.util.array      import sequencify
+from upyog.cli.helper      import ConfigFileAction, ParamAction
 
 _DESCRIPTION_JUMBOTRON = \
 """
@@ -38,30 +35,11 @@ _DESCRIPTION_JUMBOTRON = \
     cli_format(__description__, _cli.BOLD)
 )
 
-class ConfigFileAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string = None):
-        config = load_config(values)
-        setattr(namespace, self.dest, config)
-
-class ParamAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string = None):
-        params = getattr(namespace, self.dest)
-
-        if not params:
-            params = dict()
-
-        if values:
-            values = sequencify(values)
-
-            for value in values:
-                if "=" in value:
-                    key, value = value.split("=")
-                    params[key] = value
-
-        setattr(namespace, self.dest, params)
-
-# @ejectable()
+@ejectable(deps = ["ArgumentParserFormatter", "check_file", "ConfigFileAction", "ParamAction", "can_ansi_format"])
 def get_base_parser(prog, description, help_ = True):
+    import argparse, os
+    import multiprocessing as mp, sys
+
     parser = argparse.ArgumentParser(
         prog            = prog,
         description     = description,
@@ -121,7 +99,7 @@ def get_base_parser(prog, description, help_ = True):
         action  = ParamAction
     )
 
-    if _CAN_ANSI_FORMAT or "pytest" in sys.modules:
+    if can_ansi_format() or "pytest" in sys.modules:
         parser.add_argument("--no-color",
             action  = "store_true",
             default = getenv("NO_COLOR", False),
@@ -135,7 +113,7 @@ def get_base_parser(prog, description, help_ = True):
     )
     parser.add_argument("-v", "--version",
         action  = "version",
-        version = __version__,
+        version = getattr(sys.modules[prog], "__version__", None) if prog in sys.modules else None,
         help    = "Show %s's version number and exit." % __name__
     )
 

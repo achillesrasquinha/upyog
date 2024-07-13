@@ -162,7 +162,10 @@ def environment():
 
     return environ
 
+@ejectable(deps = ["load_json"])
 def load_config(fpath):
+    import os.path as osp
+
     data  = None
 
     fpath = osp.abspath(fpath)

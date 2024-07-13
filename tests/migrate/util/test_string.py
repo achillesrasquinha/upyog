@@ -1,20 +1,10 @@
 import pytest
 
 # imports - module imports
-from upyog.util.string import (strip, strip_ansi, pluralize, kebab_case,
+from upyog.util.string import (strip_ansi, pluralize, kebab_case,
     safe_encode, safe_decode, upper, lower, capitalize,
     ellipsis, get_random_str, check_url, nl, tb, sanitize_html, sanitize_text)
 from upyog import cli
-
-def test_strip():
-    string = "foobar"
-    assert strip(string) == string
-
-    string = "\n   foobar\nfoobar   \n   "
-    assert strip(string) == "foobar\nfoobar"
-
-    string = "\n\n\n"
-    assert strip(string) == ""
 
 def test_strip_ansi():
     assert strip_ansi(cli.format("foobar", cli.GREEN)) == "foobar"

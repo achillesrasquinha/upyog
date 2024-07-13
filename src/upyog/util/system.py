@@ -492,7 +492,10 @@ def extract_all(source, dest):
     else:
         shutil.unpack_archive(source, dest)
 
+@ejectable()
 def check_path(path, raise_err = True):
+    import os.path as osp
+
     path = osp.abspath(path)
 
     if not osp.exists(path) and raise_err:
@@ -508,7 +511,10 @@ def check_dir(path, raise_err = True):
 
     return path
 
+@ejectable(deps = ["check_path"])
 def check_file(path, raise_err = True):
+    import os.path as osp
+
     path = check_path(path, raise_err = raise_err)
 
     if not osp.isfile(path) and raise_err:

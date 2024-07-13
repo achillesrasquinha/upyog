@@ -26,10 +26,11 @@ from upyog.config      import Settings
 from upyog.util.jobs   import run_all as run_all_jobs, run_job
 from upyog.api.base    import (
     BaseClient,
-    # AsyncBaseClient,
+    AsyncBaseClient,
     # SuperClient,
     # SuperAsyncClient
 )
+from upyog.api.response import Response
 from upyog.util.cli import (
     get_ansi_code,
     format_ansi
@@ -130,7 +131,8 @@ from upyog.util.datetime import (
     get_timestamp_str,
     auto_datetime,
     human_datetime,
-    now
+    now,
+    utcnow
 )
 import upyog.util.datetime as dt
 from upyog.util.types    import (
