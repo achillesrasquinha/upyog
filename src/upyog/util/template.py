@@ -61,7 +61,7 @@ def _render_template_jinja(template, context = None, template_dirs = None):
         from jinja2 import select_autoescape
             
         env = jinja2.Environment(**args, autoescape = select_autoescape(
-            ["html", "xml"]
+            # ["html", "xml"]
         ))
 
         env.from_string(content) \
