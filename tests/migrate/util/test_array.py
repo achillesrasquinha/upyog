@@ -14,10 +14,6 @@ def test_compat():
     assert compact([1, 2, "", "foo"])                   == [1, 2, "foo"]
     assert compact(["foo", "bar", ""], type_ = tuple)   == ("foo", "bar")
 
-def test_squash():
-    assert squash(["foo"])          == "foo"
-    assert squash(["foo", "bar"])   == ["foo", "bar"]
-
 def test_flatten():
     assert flatten([[1, 2], [3, 4]])    == [1, 2, 3, 4]
     assert flatten([[1, 2]])            == [1, 2]

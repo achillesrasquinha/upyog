@@ -2,8 +2,9 @@
 import os, random, os.path as osp
 import re
 import string
-import json, time
+import json, time, asyncio
 
+from upyog.util._dict           import autodict, dict_items, check_dict_struct
 from upyog.model.base           import BaseObject
 from upyog.util.imports         import import_or_raise
 from upyog._compat              import (
@@ -12,14 +13,15 @@ from upyog._compat              import (
 )
 from upyog.util.array           import (
     sequencify,
+    squash
 )
 from upyog.log                  import get_logger
 from upyog.util.request         import (
     download_file
 )
-from upyog.util.string          import get_random_str, lower
+from upyog.util.string          import lower, upper
 from upyog.util.eject           import ejectable
-from upyog.util._dict           import check_dict_struct
+from upyog.util._dict           import check_dict_struct, setattr2
 
 logger = get_logger()
 
@@ -491,169 +493,246 @@ class BaseClient(BaseObject):
     async def aclose(self):
         if self._async and self._session:
             return await self._session.aclose()
+
+@ejectable(deps = ["BaseObject", "dict_items", "check_dict_struct", "import_or_raise", "squash"])
+class RootClient(BaseObject):
+    HTTP_METHODS = (
+        "head",
+        "get",
+        "post",
+        "put",
+        "patch",
+        "delete",
+        "options",
+        "trace"
+    )
+
+    def __init__(self,
+        auth = None,
+        *args, **kwargs):
+        super_ = super(RootClient, self)
+        super_.__init__(*args, **kwargs)
+
+        self._auth = auth
+
+        self._setup()
+
+    def _build_uri(self, path, **kwargs):
+        variables = getattr(self, "variables") or {}
+        args = {}
+
+        for key, meta in dict_items(variables):
+            if "default" in meta:
+                args[key] = meta["default"]
+            else:
+                raise ValueError("No default value for variable %s." % key)
+
+        for key, value in dict_items(kwargs):
+            args[key] = value
+
+        formatted = path.format(**args)
+
+        return formatted
     
-@ejectable(deps = ["BaseClient"])
-class AsyncBaseClient(BaseClient):
+    def _build_url(self, uri):
+        server = self.default_server
+        return f"{server['url']}{uri}"
+    
+    def _build_request_kwargs(self, method, kwargs):
+        method = lower(method)
+
+        if method == "get" and "data" in kwargs:
+            kwargs["params"] = kwargs.pop("data")
+
+        if method == "post" and "data" in kwargs:
+            kwargs["json"]   = kwargs.pop("data")
+
+        if self.auth:
+            kwargs["auth"] = self.auth
+
+        return kwargs
+
+    def _build_api_function(self, config):
+        http_method = config.pop("http_method", "get")
+        assert http_method in RootClient.HTTP_METHODS, f"Invalid HTTP method {http_method}."
+
+        async def fn(**kwargs):
+            parameters = config.get("parameters") or config.get("data") or {}
+            if parameters:
+                for key, meta in dict_items(parameters):
+                    required = meta.get("required", False)
+
+                    if required and not key in kwargs:
+                        raise ValueError(f"Missing required parameter {key}.")
+
+                    if key in kwargs:
+                        value = kwargs[key]
+                        if "target" in meta:
+                            target = meta["target"]
+
+                            setattr2(kwargs, target, value)
+
+                            del kwargs[key]
+
+                        ptype = meta.get("type", str)
+                        if not isinstance(ptype, str):
+                            if ptype == str and not isinstance(value, str):
+                                raise ValueError(f"Parameter {key} must be a string.")
+                        
+                        if ptype == "choice":
+                            if "values" not in meta:
+                                raise ValueError(f"Missing 'values' for parameter {key}.")
+                            
+                            if value not in meta["values"]:
+                                raise ValueError(f"Invalid value {value} for parameter {key}. Must be one of {meta['choices']}.")
+                            
+                    if key not in kwargs and "default" in meta:
+                        kwargs[key] = meta["default"]
+
+            uri = self._build_uri(config["path"], **kwargs)
+            if self.async_:
+                function_name = f"a{http_method}"
+
+            function = getattr(self, function_name)
+
+            response = await function(uri, data = kwargs)
+            results  = []
+
+            if "paginate" in config:
+                key    = config["paginate"]
+                rkey   = config["result"]
+
+                result  = response[rkey]
+                results.extend(result)
+
+                while key in response and response[key]:
+                    data     = { key: response[key] }
+                    response = await function(uri, data = data)
+
+                    result   = response[rkey]
+                    results.extend(result)
+            else:
+                if "result" in config:
+                    rkey   = config["result"]
+                    result = response[rkey]
+                else:
+                    result = response
+
+                results.append(result)
+
+            return squash(results)
+
+        if "description" in config:
+            fn.__doc__ = config["description"]
+
+        return fn
+    
+    def _handle_response(self, response):
+        response.raise_for_status()
+
+        result = response.json()
+        return result
+    
+    def request(self, method, uri, **kwargs):
+        url      = self._build_url(uri)
+        kwargs   = self._build_request_kwargs(method, kwargs)
+
+        response = self.session.request(method, url, **kwargs)
+
+        return self._handle_response(response)
+
+    def _setup(self):
+        request_function = self.arequest if self.async_ else self.request
+
+        def fn_http_method(method):
+            fn_http_method.__doc__ = f"Dispatch a {upper(method)} request to the server."
+            return lambda uri, **kwargs: request_function(method, uri, **kwargs)
+
+        for http_method in RootClient.HTTP_METHODS:
+            function_name = lower(http_method)
+            if self.async_:
+                function_name = f"a{function_name}"
+            setattr(self, function_name, fn_http_method(http_method))
+
+        api = getattr(self, "api") or autodict()
+        for config in api["paths"]:
+            function_name = config["function"]
+            function = self._build_api_function(config)
+            setattr(self, function_name, function)
+
+    @property
+    def default_server(self):
+        if not hasattr(self, "servers"):
+            raise ValueError("No `servers` defined.")
+        
+        servers = getattr(self, "servers")
+        if isinstance(servers, str):
+            servers = { "default": { "url": servers } }
+        
+        check_dict_struct(servers, {
+            "default": {
+                "url": str
+            }
+        })
+
+        return servers["default"]
+
+    @property
+    def session(self):
+        """
+            Get the Session Object.
+        """
+        if not hasattr(self, "_session"):
+            if self.async_:
+                httpx     = import_or_raise("httpx")
+                session   = httpx.AsyncClient()
+            else:
+                requests  = import_or_raise("requests")
+                session   = requests.Session()
+
+            self._session = session
+
+        return self._session
+
+    @property
+    def auth(self):
+        return getattr(self, "_auth", None)
+    
+    @auth.setter
+    def auth(self, value):
+        self._auth = value
+
+@ejectable(deps = ["RootClient"])
+class AsyncBaseClient(RootClient):
     def __init__(self, *args, **kwargs):
         kwargs["async_"] = True
         super_ = super(AsyncBaseClient, self)
         super_.__init__(*args, **kwargs)
 
+    async def arequest(self, method, uri, *args, **kwargs):
+        """"
+            Dispatch a request to the server.
 
-# @ejectable(deps = ["BaseObject", "lower", "check_dict_struct", "import_or_raise"])
-# class BaseClient(BaseObject):
-#     METHODS = (
-#         "HEAD",
-#         "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
-#         "TRACE", "CONNECT"
-#     )
+            Parameters:
+                method (str): HTTP Method.
+                uri (str): URI.
+        """
+        url      = self._build_url(uri)
+        kwargs   = self._build_request_kwargs(method, kwargs)
 
-#     """
-#         Base Class for creating a client to interact with an API.
-
-#         Parameters:
-#             - async_ (bool): If True, the client will be asynchronous.
-#             - session (Session): The session to use for the API.
-#             - api_key (str): The API key to use for the API.
-#             - ping (bool): If True, the client will be pinged.
-#     """
-#     def __init__(self,
-#         async_  = False,
-#         session = None,
-
-#         api_key = None,
-
-#         ping    = False,
-
-#         *args, **kwargs):
-#         super_ = super(BaseClient, self)
-#         super_.__init__(*args, **kwargs)
-
-#         self._async   = async_
-#         self._session = session
-
-#         self._api_key = api_key
-
-#         self._setup()
-
-#         if ping:
-#             self.ping()
-
-#     def _setup(self):
-#         if not hasattr(self, "servers"):
-#             raise ValueError("No `servers` defined.")
+        response = await self.session.request(method, url, *args, **kwargs)
         
-#         servers = getattr(self, "servers")
-#         check_dict_struct(servers, {
-#             "default": {
-#                 "url": str
-#             }
-#         })
+        return self._handle_response(response)
 
-#         if not self._session:
-#             if self._async:
-#                 httpx    = import_or_raise("httpx")
-#                 self._session = httpx.AsyncClient()
-#             else:
-#                 requests = import_or_raise("requests")
-#                 self._session = requests.Session()
+    async def __aenter__(self):
+        return self
 
-#         rmethod = self.arequest if self._async else self.request
+    async def __aexit__(self, *args, **kwargs):
+        return await self.aclose()
 
-#         def fn(method):
-#             fn.__doc__ = f"Dispatch a {method} request to the server."
-
-#             return lambda url=None, **kwargs: rmethod(method, url=url, **kwargs)
-
-#         for name in BaseClient.METHODS:
-#             attr = lower(name)
-#             if self._async:
-#                 attr = f"a{attr}"
-
-#             setattr(self, attr, fn(name))
-
-#     def resurl(self, path = None):
-#         from urllib.parse import urljoin
-
-#         server = getattr(self, "server", "default")
-#         server_config = self.servers[server]
-#         check_dict_struct(server_config, {
-#             "url": str
-#         })
-
-#         url = server_config["url"]
-
-#         if path:
-#             url = urljoin(url, path)
-
-#         return url
-
-#     def _build_request_args(self, url=None, **kwargs):
-#         url = self.resurl(url)
-#         headers = kwargs.get("headers", {})
-
-#         if self._api_key:
-#             headers.update({"X-Api-Key": self._api_key})
-
-#         return url, {
-#             **kwargs,
-#             "headers": headers,
-#         }
-
-#     def request(self, method, url = None, **kwargs):
-#         url, args = self._build_request_args(url, **kwargs)
-#         return self._session.request(method, url, **args)
-
-#     def ping(self):
-#         """
-#             Check if the URL is alive.
-
-#             Example:
-#                 >>> google  = BaseClient(url = 'https://www.google.com')
-#                 >>> google.ping()
-#                 'pong'
-#                 >>> invalid = BaseClient(url = 'https://www.invalid.com')
-#                 >>> invalid.ping()
-#                 ClientError
-#         """
-
-#         self.request("HEAD")
-#         return "pong"
-
-# @ejectable(deps = ["BaseClient"])
-# class AsyncBaseClient(BaseClient):
-#     def __init__(self, *args, **kwargs):
-#         kwargs["async_"] = True
-#         super_ = super(AsyncBaseClient, self)
-#         super_.__init__(*args, **kwargs)
-
-#     async def aping(self):
-#         """
-#             Check if the URL is alive.
-
-#             Example:
-#                 >>> google  = BaseClient(url = 'https://www.google.com', async_ = True)
-#                 >>> await google.ping()
-#                 'pong'
-#                 >>> invalid = BaseClient(url = 'https://www.invalid.com', async_ = True)
-#                 >>> await invalid.ping()
-#                 ClientError
-#         """
-#         await self.arequest("HEAD")
-#         return "pong"
-
-#     async def arequest(self, method, url=None, **kwargs):
-#         url, args, = self._build_request_args(url, **kwargs)
-#         return await self._session.request(method, url, **args)
-
-#     async def __aenter__(self):
-#         return self
-    
-#     async def __aexit__(self, *args, **kwargs):
-#         return await self.aclose()
-
-#     async def aclose(self):
-#         return await self._session.aclose()
+    async def aclose(self):
+        if self.session:
+            return await self.session.aclose()
 
 @ejectable(deps = ["sequencify", "BaseObject"])
 class SuperClient(BaseObject):

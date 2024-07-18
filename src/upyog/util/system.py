@@ -44,7 +44,7 @@ VIDEO_EXTENSIONS = (
 )
 
 @ejectable(deps = ["strip"])
-def read(fname, mode = "r", sanitize = False, encoding = "utf-8", clean = True):
+def read(fname, mode = "r", encoding = "utf-8", clean = True):
     """Read content from a given file.
 
     Args:
@@ -595,10 +595,6 @@ def sha256sum(fpath):
 def get_user():
     username = os.environ.get("USER")
     return username
-
-@ejectable()
-def noop(*args, **kwargs):
-    pass
 
 @ejectable(deps = ["strip", "lmap", "squash", "auto_typecast", "is_list_like"])
 def parse_config_string(config, auto_cast = True):

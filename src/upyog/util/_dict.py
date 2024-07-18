@@ -5,7 +5,7 @@ from upyog.util.eject import ejectable
 from upyog.util.check import check_array
 import upyog as upy
 
-@ejectable(deps = ["items"])
+@ejectable(deps = ["dict_items"])
 def merge_deep(dest, source):
     """
         Merge Dictionaries Deeply. `merge_deep` will override keys from right to left.

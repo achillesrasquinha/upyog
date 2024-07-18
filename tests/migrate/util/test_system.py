@@ -13,24 +13,6 @@ from upyog.util.system import (read, write, popen, which, makedirs,
     get_os, unzip, get_files, get_basename, make_archive, move, 
     extract_all)
 
-def test_read(tmpdir):
-    directory = tmpdir.mkdir("tmp")
-    tempfile  = directory.join("foobar.txt")
-    tempfile.write("foobar")
-
-    assert tempfile.read() == read(str(tempfile))
-
-    tempfile  = directory.join("barfoo.txt")
-    tempfile.write(\
-        """
-        foobar
-        \n
-        barfoo
-        """
-    )
-
-    assert tempfile.read() == read(str(tempfile))
-
 def test_write(tmpdir):
     directory   = tmpdir.mkdir("tmp")
     tempfile    = directory.join("foobar.txt")

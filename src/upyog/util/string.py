@@ -162,13 +162,13 @@ def ellipsis(string, threshold = 50, pattern = "..."):
     return string
 
 @ejectable()
-def get_random_str(length = None, remove_hyphen = True):
+def get_random_str(length = None, remove_hyphens = True):
     import uuid
 
     uuid_   = uuid.uuid4()
     string  = str(uuid_)
 
-    if remove_hyphen:
+    if remove_hyphens:
         string  = string.replace("-", "")
 
     if length:

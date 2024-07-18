@@ -20,3 +20,11 @@ def select(x, *keys):
         y[key] = x[key]
 
     return y
+
+@ejectable()
+def noop(*args, **kwargs):
+    pass
+
+@ejectable()
+async def anoop(*args, **kwargs):
+    pass

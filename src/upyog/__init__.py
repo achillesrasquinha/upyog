@@ -172,7 +172,6 @@ from upyog.util.system import (
     read,
     write,
     dict_to_cmd_args,
-    noop,
     copy,
     list_tree,
     list_files,
@@ -202,6 +201,7 @@ from upyog.util.mixin import (
     create_obj_registerer
 )
 from upyog.util.imports import (
+    get_handler,
     import_handler,
     import_or_raise
 )
@@ -249,7 +249,9 @@ from upyog.util.misc import (
 from upyog.util.op import Op, O as OpType
 from upyog.util.fn import (
     cmp,
-    select
+    select,
+    noop,
+    anoop
 )
 from upyog.util.query import where
 from upyog.util.profile import aprofile
@@ -262,8 +264,17 @@ from upyog.util.algo import find_best_groups
 from upyog.util._tqdm import FakeAsyncTqdm
 from upyog.table import Table
 from upyog.api.base import (
+    AsyncBaseClient,
     SuperClient,
     SuperAsyncClient
+)
+from upyog.util._aws import (
+    is_lambda,
+    awsgetenv,
+    get_aws_credentials,
+    AWS_DEFAULT,
+    AWSSigV4Auth,
+    AWSClient
 )
 
 settings = Settings()

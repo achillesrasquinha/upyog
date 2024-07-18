@@ -1,5 +1,3 @@
-import traceback as tb
-
 from upyog.model.base import BaseObject
 from upyog.util.eject import ejectable
 
@@ -30,6 +28,8 @@ class Response(BaseObject):
         self.debug = debug
 
     def set_error(self, type_, err):
+        import traceback as tb
+
         self.code  = type_["code"]
         self.data  = None
 
