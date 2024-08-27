@@ -5,7 +5,7 @@ import httpx
 from upyog.util.environ import getenv
 from upyog.util.string  import get_random_str
 from upyog.util.eject   import ejectable
-from upyog.api.base     import AsyncBaseClient
+from upyog.api.base     import AsyncBaseClient, BaseClient
 
 AWS_DEFAULT = {
     "service": "execute-api",

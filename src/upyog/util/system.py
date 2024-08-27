@@ -143,9 +143,9 @@ def which(executable, raise_err = False):
     
     return exec_
 
-@ejectable()
+@ejectable(deps = ["lmap", "array_filter"])
 def walk(top, *args, **kwargs):
-    import os.path as osp, fnmatch, re
+    import os, os.path as osp, fnmatch, re
 
     abspath = kwargs.pop("abspath", False)
 
@@ -270,7 +270,7 @@ def popen(*args, **kwargs):
 
 @ejectable()
 def makedirs(dirs, exist_ok = False):
-    import os.path as osp, errno
+    import os, os.path as osp, errno
 
     dirs = osp.abspath(dirs)
 

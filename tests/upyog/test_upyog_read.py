@@ -5,6 +5,7 @@ def test_read(tmpdir):
     tempfile  = directory.join("foobar.txt")
     tempfile.write("foobar")
 
+    assert tempfile.read() == upy.read(tempfile)
     assert tempfile.read() == upy.read(str(tempfile))
 
     tempfile  = directory.join("barfoo.txt")

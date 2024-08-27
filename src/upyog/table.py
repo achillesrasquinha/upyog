@@ -79,3 +79,8 @@ class Table(object):
     def __len__(self):
         length = len(self.rows)
         return length
+    
+def render_table(rows, header = None):
+    table  = Table(rows, header = header, type_ = "record")
+    string = table.render()
+    print(string)

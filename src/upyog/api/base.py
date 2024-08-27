@@ -654,7 +654,7 @@ class RootClient(BaseObject):
                 function_name = f"a{function_name}"
             setattr(self, function_name, fn_http_method(http_method))
 
-        api = getattr(self, "api") or autodict()
+        api = getattr(self, "api", None) or autodict()
         for config in api["paths"]:
             function_name = config["function"]
             function = self._build_api_function(config)

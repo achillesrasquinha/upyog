@@ -274,12 +274,12 @@ def getattr2(d, key, default = None):
     value = d
 
     for key in keys:
-        if value and key in value:
+        if value and isinstance(value, dict) and key in value:
             value = value[key]
         else:
             value = None
 
-    return value if value != default else default
+    return value if value != None else default
 
 @ejectable(deps = ["getattr2"])
 def hasattr2(d, key):

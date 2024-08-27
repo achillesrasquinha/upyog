@@ -177,7 +177,8 @@ from upyog.util.system import (
     list_files,
     make_archive,
     readlines,
-    parse_config_string
+    parse_config_string,
+    makepath
 )
 from upyog.util.environ import (
     getenv,
@@ -262,7 +263,10 @@ from upyog.util.time import (
 from upyog.cache import Cache
 from upyog.util.algo import find_best_groups
 from upyog.util._tqdm import FakeAsyncTqdm
-from upyog.table import Table
+from upyog.table import (
+    Table,
+    render_table
+)
 from upyog.api.base import (
     AsyncBaseClient,
     SuperClient,
