@@ -105,7 +105,7 @@ def can_ansi_format():
             or os.fstat(0) == os.fstat(1)
     ) or can_ansi_format_windows()
 
-@ejectable()
+@ejectable(deps = ["get_ansi_code", "can_ansi_format", "can_ansi_format_windows"])
 def cli_format(string, type_):
     import sys
 

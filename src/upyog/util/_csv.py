@@ -5,7 +5,10 @@ from upyog.util.types import lmap, auto_typecast
 from upyog.util.string import strip
 from upyog.util.eject import ejectable
 
-def read(path, *args, **kwargs):
+@ejectable(deps = ["auto_typecast", "dict_from_list", "lmap"])
+def read_csv(path, *args, **kwargs):
+    import csv
+
     data  = []
     type_ = kwargs.pop("type", "dict")
     auto_cast = kwargs.pop("auto_cast", True)

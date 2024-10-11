@@ -494,7 +494,7 @@ class BaseClient(BaseObject):
         if self._async and self._session:
             return await self._session.aclose()
 
-@ejectable(deps = ["BaseObject", "dict_items", "check_dict_struct", "import_or_raise", "squash"])
+@ejectable(deps = ["BaseObject", "dict_items", "check_dict_struct", "import_or_raise", "squash", "upper"])
 class RootClient(BaseObject):
     HTTP_METHODS = (
         "head",
@@ -553,7 +553,7 @@ class RootClient(BaseObject):
         return kwargs
 
     def _build_api_function(self, config):
-        http_method = config.pop("http_method", "get")
+        http_method = config.get("http_method") or "get"
         assert http_method in RootClient.HTTP_METHODS, f"Invalid HTTP method {http_method}."
 
         async def fn(**kwargs):
@@ -628,11 +628,19 @@ class RootClient(BaseObject):
         return fn
     
     def _handle_response(self, response):
+        if response.status_code >= 400:
+            try:
+                output = response.json()
+                self.log("error", f"Response Error: {output}")
+            except:
+                pass
+
         response.raise_for_status()
 
         result = response.json()
+
         return result
-    
+
     def request(self, method, uri, **kwargs):
         url      = self._build_url(uri)
         kwargs   = self._build_request_kwargs(method, kwargs)

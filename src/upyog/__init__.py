@@ -187,7 +187,7 @@ from upyog.util.environ import (
     create_param_string
 )
 from upyog.util._csv import (
-    read as read_csv,
+    read_csv,
     write as write_csv,
     rows_to_dicts
 )

@@ -13,6 +13,12 @@ def test_upyog_autodict():
     d["d"]["e"]["f"] = 4
     assert d == {'a': 1, 'b': 2, 'c': 3, 'd': {'e': {'f': 4}}}
 
+    d["d"]["e"]["g"] = dict({ "h": 5 })
+    assert d == {'a': 1, 'b': 2, 'c': 3, 'd': {'e': {'f': 4, 'g': {'h': 5}}}}
+
+    a = upy.autodict({"foo":{"bar":{"baz":1}}})
+    assert a == {"foo":{"bar":{"baz":1}}}
+
     with pytest.raises(TypeError):
         upy.autodict(1)
 

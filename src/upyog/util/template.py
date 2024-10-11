@@ -19,13 +19,15 @@ from upyog.util.string import _REGEX_HTML
 from upyog._compat     import iteritems, StringIO
 from upyog.config      import PATH
 import upyog as upy
+from upyog.util.eject import ejectable
 
 logger = get_logger()
 
-_TEMPLATE_JINJA_EXTENSION = (".jinja", ".jinja2", ".j2")
+@ejectable(deps = ["read", "import_or_raise", "sequencify"])
+def render_jinja_template(template, context = None, template_dirs = None):
+    import os.path as osp
+    from io import StringIO
 
-# @ejectable()
-def _render_template_jinja(template, context = None, template_dirs = None):
     jinja2 = import_or_raise("jinja2", "Jinja2")
     template_dirs = sequencify(template_dirs or [])
 
@@ -34,7 +36,7 @@ def _render_template_jinja(template, context = None, template_dirs = None):
     if osp.exists(template):
         exists = True
     else:
-        for ext in _TEMPLATE_JINJA_EXTENSION:
+        for ext in (".jinja", ".jinja2", ".j2"):
             path = f"{template}{ext}"
             if osp.exists(path):
                 exists   = True
@@ -44,13 +46,13 @@ def _render_template_jinja(template, context = None, template_dirs = None):
     if not exists:
         raise TemplateNotFoundError("Template %s not found." % template)
 
-    with open(template, "r") as f:
-        content = f.read()
+    content = read(template)
 
-    context = context or { }
-    context = upy.merge_dict(context, {
-        "upy": upy
-    })
+    context = context or {}
+    context = {
+        **context,
+        "upy": globals().get("upy")
+    }
     
     with StringIO() as out:
         args = {}
@@ -70,7 +72,7 @@ def _render_template_jinja(template, context = None, template_dirs = None):
 
         return out.getvalue()
 
-# @ejectable(deps = ["_render_template_jinja"])
+@ejectable(deps = ["render_jinja_template", "sequencify"])
 def render_template(template, context = None, dirs = [ ], **kwargs):
     """
     Renders a template. The template must be of the string format. For more 
@@ -99,7 +101,7 @@ def render_template(template, context = None, dirs = [ ], **kwargs):
     jinja = kwargs.get("jinja", False)
     if jinja:
         template_dirs = kwargs.get("template_dirs")
-        rendered = _render_template_jinja(template, context = context,
+        rendered = render_jinja_template(template, context = context,
             template_dirs = template_dirs)
     else:
         dirs  = sequencify(dirs)

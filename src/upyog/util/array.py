@@ -25,7 +25,7 @@ def compact(arr, type_ = list):
     """
     return type_(filter(bool, arr))
 
-@ejectable()
+@ejectable(deps = ["is_list_like"])
 def squash(seq):
     """
     Return the object in an array in case there is just a single element.
