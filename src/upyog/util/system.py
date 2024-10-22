@@ -618,3 +618,6 @@ def parse_config_string(config, auto_cast = True):
         result[key] = value
     
     return result
+
+def is_tty():
+    return sys.stdout.isatty()

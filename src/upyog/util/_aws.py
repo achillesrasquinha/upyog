@@ -157,6 +157,8 @@ class AWSClient(AsyncBaseClient):
         super_   = super(AWSClient, self)
         super_.__init__(*args, **kwargs)
 
+        role     = getenv("AWS_CLIENT_ROLE", default = role)
+
         if not self.auth:
             profile = str(profile or awsgetenv("PROFILE", default = "default"))
             aws_credentials = get_aws_credentials(role = role)

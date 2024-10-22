@@ -178,7 +178,8 @@ from upyog.util.system import (
     make_archive,
     readlines,
     parse_config_string,
-    makepath
+    makepath,
+    is_tty,
 )
 from upyog.util.environ import (
     getenv,
